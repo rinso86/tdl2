@@ -12,12 +12,15 @@ import javax.swing.JTextField;
 
 import tdl2.controller.Controller;
 
+import org.jdatepicker.*;
+
 public class DetailView {
 
 	private Controller controller;
 	private JPanel jp;
 	private JLabel descrLabel;
 	private JTextField descrTextfield;
+	JDatePicker deadlinePicker;
 	
 	public DetailView(Controller controller) {
 		this.controller = controller;
@@ -25,6 +28,7 @@ public class DetailView {
 		descrLabel = new JLabel("Description");
 		descrTextfield = new JTextField();
 		descrTextfield.setPreferredSize(new Dimension(400, 400));
+		deadlinePicker = null;
 		
 		this.jp = new JPanel(new GridBagLayout());
 		GridBagConstraints labelConstraints = new GridBagConstraints();
