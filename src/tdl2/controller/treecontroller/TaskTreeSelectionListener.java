@@ -26,6 +26,7 @@ public class TaskTreeSelectionListener implements TreeSelectionListener {
 		if(newPath != null) {
 			TaskNode currentNode = (TaskNode) newPath.getLastPathComponent();
 			controller.getDetailView().setDescription(currentNode.getTaskDescription());
+			controller.getDetailView().setDeadline(currentNode.getDeadline());
 		}
 	}
 

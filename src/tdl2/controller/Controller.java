@@ -3,9 +3,8 @@ package tdl2.controller;
 import java.io.IOException;
 
 import javax.swing.JFrame;
-import javax.swing.JTree;
-import javax.swing.tree.DefaultTreeModel;
 
+import tdl2.controller.detailcontroller.DeadlineSelectListener;
 import tdl2.controller.treecontroller.TaskNode;
 import tdl2.controller.treecontroller.TaskTreeModelListener;
 import tdl2.controller.treecontroller.TaskTreeSelectionListener;
@@ -26,13 +25,9 @@ public class Controller {
 	private DetailView detailView;
 	private CalendarView calendarView;
 
-	public Controller() {
+	public Controller() throws ClassNotFoundException, IOException {
 		savior = new Savior();
-		try {
-			baseTask = savior.loadTree(SAVEFILE);
-		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
-		}
+		baseTask = savior.loadTree(SAVEFILE);
 		
 		TaskNode tn = new TaskNode(baseTask);
 		treeView = new TreeView(this, tn);
@@ -41,7 +36,7 @@ public class Controller {
 		
 		detailView = new DetailView(this);
 //		detailView.setOnDescrEditListener(null); <-- we already do this on the tasktreeselectionlistener. 
-//		detailView.setOnDeadlineEditListener(null);
+		detailView.setOnDeadlineEditListener(new DeadlineSelectListener(this));
 //		detailView.setOnAttachmChangeListener(null);
 		
 		calendarView = new CalendarView(this);

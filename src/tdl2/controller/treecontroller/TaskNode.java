@@ -1,5 +1,7 @@
 package tdl2.controller.treecontroller;
 
+import java.util.Date;
+
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import tdl2.model.Task;
@@ -35,5 +37,11 @@ public class TaskNode extends DefaultMutableTreeNode{
 		return task.getDescription();
 	}
 	
+	public Date getDeadline() {
+		return task.getDeadline();
+	}
 	
+	public void setDeadline(Date deadline) {
+		task.setDeadline(deadline);
+	}
 }

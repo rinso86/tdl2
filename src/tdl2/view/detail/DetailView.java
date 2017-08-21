@@ -5,6 +5,10 @@ package tdl2.view.detail;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Date;
+import java.util.Properties;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -12,7 +16,9 @@ import javax.swing.JTextField;
 
 import tdl2.controller.Controller;
 
-import org.jdatepicker.*;
+
+
+import org.jdesktop.swingx.JXDatePicker;
 
 public class DetailView {
 
@@ -20,7 +26,7 @@ public class DetailView {
 	private JPanel jp;
 	private JLabel descrLabel;
 	private JTextField descrTextfield;
-	JDatePicker deadlinePicker;
+	private JXDatePicker deadlinePicker;
 	
 	public DetailView(Controller controller) {
 		this.controller = controller;
@@ -28,7 +34,9 @@ public class DetailView {
 		descrLabel = new JLabel("Description");
 		descrTextfield = new JTextField();
 		descrTextfield.setPreferredSize(new Dimension(400, 400));
-		deadlinePicker = null;
+		
+		// http://pirlwww.lpl.arizona.edu/resources/guide/software/SwingX/org/jdesktop/swingx/JXDatePicker.html
+		deadlinePicker = new JXDatePicker();
 		
 		this.jp = new JPanel(new GridBagLayout());
 		GridBagConstraints labelConstraints = new GridBagConstraints();
@@ -45,17 +53,17 @@ public class DetailView {
         
         jp.add(descrLabel, labelConstraints);
         jp.add(descrTextfield, bigFieldConstraints);
+        jp.add(deadlinePicker, extraConstraints);
 	}
 
 //	public void setOnDescrEditListener(DetailViewOnDescrEditListener detailViewOnDescrEditListener) {
 //		// TODO Auto-generated method stub
 //		
 //	}
-//
-//	public void setOnDeadlineEditListener(DetailViewOnDeadlineEditListener detailViewOnDeadlineEditListener) {
-//		// TODO Auto-generated method stub
-//		
-//	}
+
+	public void setOnDeadlineEditListener(ActionListener l) {
+		deadlinePicker.addActionListener(l);
+	}
 //
 //	public void setOnAttachmChangeListener(DetailViewAttachmChangeListener detailViewAttachmChangeListener) {
 //		// TODO Auto-generated method stub
@@ -72,6 +80,10 @@ public class DetailView {
 
 	public void setDescription(String text) {
 		descrTextfield.setText(text);
+	}
+
+	public void setDeadline(Date deadline) {
+		deadlinePicker.setDate(deadline);
 	}
 
 }
