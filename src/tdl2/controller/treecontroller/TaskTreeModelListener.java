@@ -1,8 +1,9 @@
-package tdl2.controller;
+package tdl2.controller.treecontroller;
 
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 
+import tdl2.controller.Controller;
 import tdl2.model.Task;
 
 

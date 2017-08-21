@@ -1,8 +1,10 @@
-package tdl2.controller;
+package tdl2.controller.treecontroller;
 
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
+
+import tdl2.controller.Controller;
 
 
 public class TaskTreeSelectionListener implements TreeSelectionListener {

@@ -7,7 +7,7 @@ import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 
-import tdl2.controller.TaskNode;
+import tdl2.controller.treecontroller.TaskNode;
 
 
 public class TreePopupListener implements MouseListener {

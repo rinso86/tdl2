@@ -4,6 +4,7 @@ package tdl2.view.detail;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -21,11 +22,11 @@ public class DetailView {
 	public DetailView(Controller controller) {
 		this.controller = controller;
 		
-		descrLabel = new JLabel("description");
+		descrLabel = new JLabel("Description");
 		descrTextfield = new JTextField();
 		descrTextfield.setPreferredSize(new Dimension(400, 400));
 		
-		this.jp = new JPanel();
+		this.jp = new JPanel(new GridBagLayout());
 		GridBagConstraints labelConstraints = new GridBagConstraints();
         labelConstraints.gridx = 0;
         labelConstraints.gridy = 0;

@@ -7,7 +7,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import tdl2.controller.Controller;
-import tdl2.controller.TaskNode;
+import tdl2.controller.treecontroller.TaskNode;
 
 
 @SuppressWarnings("serial")

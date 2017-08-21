@@ -1,4 +1,4 @@
-package tdl2.controller;
+package tdl2.controller.treecontroller;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -18,10 +18,10 @@ public class TaskNode extends DefaultMutableTreeNode{
 		}
 	}
 	
-	@Override
-	public String toString() {
-		return task.getTitle();
-	}
+//	@Override <--- DO NOT override this!!!!!
+//	public String toString() {
+//		return task.getTitle();
+//	}
 
 	public Task getTask() {
 		return task;

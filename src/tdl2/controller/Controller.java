@@ -6,7 +6,9 @@ import javax.swing.JFrame;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
 
-
+import tdl2.controller.treecontroller.TaskNode;
+import tdl2.controller.treecontroller.TaskTreeModelListener;
+import tdl2.controller.treecontroller.TaskTreeSelectionListener;
 import tdl2.model.Task;
 import tdl2.utils.Savior;
 import tdl2.view.calendar.CalendarView;

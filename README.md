@@ -2,7 +2,6 @@
 
 Current todos:
 
-  - Finish refactoring
   -Add deadlines
     - Make selector
     - Color tasks in tree

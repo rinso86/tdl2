@@ -16,8 +16,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import tdl2.controller.Controller;
-import tdl2.controller.TaskNode;
-import tdl2.controller.TaskTreeModelListener;
+import tdl2.controller.treecontroller.TaskNode;
+import tdl2.controller.treecontroller.TaskTreeModelListener;
 
 public class TreeView {
 	
