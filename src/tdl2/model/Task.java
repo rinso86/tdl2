@@ -7,9 +7,6 @@ import java.util.UUID;
 
 public class Task implements Serializable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4314415309059598961L;
 	private Task parent;
 	private ArrayList<Task> children;
@@ -89,5 +86,13 @@ public class Task implements Serializable{
 
 	public void deleteChild(Task child) {
 		children.remove(child);
+	}
+	
+	public String printTree() {
+		String treeString = this.getTitle() + "\n";
+		for(Task childTask : this.getChildren()) {
+			treeString += this.getTitle() +" --> " + childTask.printTree();
+		}
+		return treeString;
 	}
 }

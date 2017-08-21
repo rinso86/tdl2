@@ -3,6 +3,7 @@ package tdl2.utils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,10 +26,11 @@ public class Savior {
 	}
 
 	private Task loadFromFile(String filename) throws IOException, ClassNotFoundException {
+		Task tree = null;
 		InputStream file = new FileInputStream(filename);
 		InputStream buffer = new BufferedInputStream(file);
 		ObjectInput input = new ObjectInputStream (buffer);
-		Task tree = (Task)input.readObject();
+		tree = (Task)input.readObject();
 		input.close();
 		return tree;
 	}

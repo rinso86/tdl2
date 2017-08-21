@@ -1,16 +1,22 @@
 package tdl2.controller;
 
+import java.io.IOException;
+
 import javax.swing.JFrame;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultTreeModel;
+
 
 import tdl2.model.Task;
 import tdl2.utils.Savior;
-import tdl2.view.CalendarView;
-import tdl2.view.DetailView;
-import tdl2.view.OveralView;
-import tdl2.view.TreeView;
+import tdl2.view.calendar.CalendarView;
+import tdl2.view.detail.DetailView;
+import tdl2.view.overal.OveralView;
+import tdl2.view.tree.TreeView;
 
 public class Controller {
 	
+	private static final String SAVEFILE = "mytree.bin";
 	private Savior savior;
 	private Task baseTask;
 	private OveralView oview;
@@ -20,50 +26,58 @@ public class Controller {
 
 	public Controller() {
 		savior = new Savior();
-		baseTask = savior.loadTree("mytree.txt");
+		try {
+			baseTask = savior.loadTree(SAVEFILE);
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
 		
-		treeView = new TreeView();
-		treeView.setOnFocusChangeListener(new TreeViewOnFocusChangeListener());
-		treeView.setOnStructureChangeListener(new TreeViewOnStructureChangeListener());
+		TaskNode tn = new TaskNode(baseTask);
+		treeView = new TreeView(this, tn);
+		treeView.setOnFocusChangeListener(new TaskTreeSelectionListener(this));
+		treeView.setOnStructureChangeListener(new TaskTreeModelListener(this));
 		
-		detailView = new DetailView();
-		detailView.setOnDescrEditListener(new DetailViewOnDescrEditListener());
-		detailView.setOnDeadlineEditListener(new DetailViewOnDeadlineEditListener());
-		detailView.setOnAttachmChangeListener(new DetailViewAttachmChangeListener());
+		detailView = new DetailView(this);
+//		detailView.setOnDescrEditListener(null); <-- we already do this on the tasktreeselectionlistener. 
+//		detailView.setOnDeadlineEditListener(null);
+//		detailView.setOnAttachmChangeListener(null);
 		
-		calendarView = new CalendarView();
+		calendarView = new CalendarView(this);
 		
-		oview = new OveralView(treeView, detailView, calendarView);
-		oview.setOnCloseListener(new OviewOnCloseListener());
+		oview = new OveralView("My Todo-List", treeView, detailView, calendarView);
+		oview.setOnCloseListener(new OnCloseListener(this));
 	}
 	
 	public void run() {
 		JFrame f = oview.getJFrame();
 		f.setVisible(true);
 	}
-	
-	//@todo: make all these interfaces in the views. Also, leave here a implementation of the interfaces
-	class TreeViewOnFocusChangeListener {
-		
+
+	public void saveModelToFile() {
+		try {
+			savior.saveTree(baseTask, SAVEFILE);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-	
-	class TreeViewOnStructureChangeListener {
-		
+
+	public void addNewSubtask(TaskNode node) {
+		Task task = node.getTask();
+		Task subtask = new Task("Set title here");
+		task.addChild(subtask);
+		TaskNode subnode = new TaskNode(subtask);
+		treeView.addChild(node, subnode);
 	}
-	
-	class DetailViewOnDescrEditListener {
-		
+
+	public void deleteTask(TaskNode node) {
+		Task task = node.getTask();
+		Task parenttask = task.getParent();
+		parenttask.deleteChild(task);
+		treeView.removeNode(node);
 	}
-	
-	class DetailViewOnDeadlineEditListener {
-		
+
+	public DetailView getDetailView() {
+		return detailView;
 	}
-	
-	class DetailViewAttachmChangeListener {
-		
-	}
-	
-	class OviewOnCloseListener {
-		
-	}
+
 }
