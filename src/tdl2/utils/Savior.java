@@ -27,7 +27,15 @@ public class Savior {
 
 	private Task loadFromFile(String filename) throws IOException, ClassNotFoundException {
 		Task tree = null;
-		InputStream file = new FileInputStream(filename);
+		InputStream file;
+		try {
+			file = new FileInputStream(filename);
+		}catch(FileNotFoundException e) {
+			System.out.println(filename + " not found. Creating a new empty task-tree.");
+			Task baseTask = new Task("Base task");
+			saveToFile(baseTask, filename);
+			file = new FileInputStream(filename);
+		}
 		InputStream buffer = new BufferedInputStream(file);
 		ObjectInput input = new ObjectInputStream (buffer);
 		tree = (Task)input.readObject();

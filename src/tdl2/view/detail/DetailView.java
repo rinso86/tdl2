@@ -38,6 +38,11 @@ public class DetailView {
 		// http://pirlwww.lpl.arizona.edu/resources/guide/software/SwingX/org/jdesktop/swingx/JXDatePicker.html
 		deadlinePicker = new JXDatePicker();
 		
+//		JPanel dropPanel = new JPanel();
+//		FileDrop fileDrop = new FileDrop (dropPanel, new FileDrop.Listener() {
+//			
+//		});
+		
 		this.jp = new JPanel(new GridBagLayout());
 		GridBagConstraints labelConstraints = new GridBagConstraints();
         labelConstraints.gridx = 0;
