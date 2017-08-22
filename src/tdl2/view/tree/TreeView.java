@@ -14,6 +14,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 import tdl2.controller.Controller;
 import tdl2.controller.treecontroller.TaskNode;
@@ -34,8 +35,10 @@ public class TreeView {
 		this.treeLabel = new JLabel("TaskTree");
 		
 		this.jtree = new JTree(taskNode);
+		jtree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		jtree.setEditable(true);
 		jtree.setPreferredSize(new Dimension(400, 400));
+		jtree.setCellRenderer(new TaskNodeRenderer());
 		
 		TreePopup tp = new TreePopup(controller);
 		jtree.addMouseListener(new TreePopupListener(tp));
@@ -82,5 +85,12 @@ public class TreeView {
 	public void setOnFocusChangeListener(TreeSelectionListener tsl) {
 		jtree.addTreeSelectionListener(tsl);
 	}
+
+	public TaskNode getCurrentNode() {
+		return (TaskNode) jtree.getSelectionPath().getLastPathComponent();
+	}
+
+
+
 
 }

@@ -3,6 +3,8 @@ package tdl2.controller.detailcontroller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import org.jdesktop.swingx.JXDatePicker;
+
 import tdl2.controller.Controller;
 
 public class DeadlineSelectListener implements ActionListener {
@@ -15,8 +17,9 @@ public class DeadlineSelectListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		System.out.println("Picker event: " + e.toString());
-		//@todo: get the date and put it in the task
+		JXDatePicker picker = (JXDatePicker) e.getSource();
+		controller.setDeadlineOnSelectedNode(picker.getDate());
+		controller.getCalendarView().updateList();
 	}
 
 }

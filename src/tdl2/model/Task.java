@@ -2,6 +2,7 @@ package tdl2.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.UUID;
 
@@ -14,7 +15,7 @@ public class Task implements Serializable{
 	private String title;
 	private String description;
 	private Date deadline;
-	
+	private boolean completed;
 	
 	public Task() {
 		this(null, "");
@@ -33,9 +34,23 @@ public class Task implements Serializable{
 		this.parent = parent;
 		this.title = title;
 		this.description = "";
+		this.completed = false;
 		this.children = new ArrayList<Task>();
 		if(parent != null) {
 			parent.registerChild(this);
+		}
+	}
+
+	public boolean isCompleted() {
+		return completed;
+	}
+
+	public void setCompleted(boolean completed) {
+		this.completed = completed;
+		if(completed) {
+			for(Task childTask : children) {
+				childTask.setCompleted(true);
+			}
 		}
 	}
 
@@ -69,6 +84,24 @@ public class Task implements Serializable{
 
 	public void setDeadline(Date deadline) {
 		this.deadline = deadline;
+		adjustDeadlineToParent();
+	}
+	
+	public void adjustDeadlineToParent() {
+		Task parent = this.getParent();
+		if(parent != null) {
+			Date parentDeadline = parent.getDeadline();
+			if(parentDeadline != null) {
+				Date ownDeadline = this.getDeadline();
+				long diff = parentDeadline.getTime() - ownDeadline.getTime();
+				if (diff < 0) {
+					this.setDeadline(parentDeadline);
+				}
+				for(Task subTask : this.getChildren()) {
+					subTask.adjustDeadlineToParent();
+				}
+			}
+		}
 	}
 
 	public UUID getId() {
@@ -94,5 +127,19 @@ public class Task implements Serializable{
 			treeString += this.getTitle() +" --> " + childTask.printTree();
 		}
 		return treeString;
+	}
+
+	public ArrayList<Task> getAllTasks() {
+		ArrayList<Task> tasks = new ArrayList<Task>();
+		tasks.add(this);
+		for(Task child : this.getChildren()) {
+			tasks.addAll(child.getAllTasks());
+		}
+		return tasks;
+	}
+	
+	@Override
+	public String toString() {
+		return this.getTitle();
 	}
 }

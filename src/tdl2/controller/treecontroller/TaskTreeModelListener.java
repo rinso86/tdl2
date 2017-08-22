@@ -28,6 +28,7 @@ public class TaskTreeModelListener implements TreeModelListener {
 				task.setTitle(node.toString());
 			}			
 		}
+		controller.getCalendarView().refreshView();
 	}
 
 	@Override

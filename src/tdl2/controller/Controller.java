@@ -1,6 +1,9 @@
 package tdl2.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 
 import javax.swing.JFrame;
 
@@ -65,6 +68,16 @@ public class Controller {
 		TaskNode subnode = new TaskNode(subtask);
 		treeView.addChild(node, subnode);
 	}
+	
+	public void completeTask(TaskNode node) {
+		Task task = node.getTask();
+		task.setCompleted(true);
+	}
+	
+	public void reactivateTask(TaskNode node) {
+		Task task = node.getTask();
+		task.setCompleted(false);
+	}
 
 	public void deleteTask(TaskNode node) {
 		Task task = node.getTask();
@@ -73,8 +86,46 @@ public class Controller {
 		treeView.removeNode(node);
 	}
 
+	public void setDeadlineOnSelectedNode(Date deadline) {
+		TaskNode currentnode = treeView.getCurrentNode();
+		currentnode.setDeadline(deadline);
+	}
+
+
+	public Task[] getDateSortedTasks() {
+		ArrayList<Task> tasklist = baseTask.getAllTasks();
+		tasklist = sortByDate(tasklist);
+		return tasklist.toArray(new Task[0]);
+	}
+	
+	private ArrayList<Task> sortByDate(ArrayList<Task> tasks) {
+		tasks.sort(new Comparator<Task>() {
+			@Override
+			public int compare(Task task1, Task task2) {
+				Date deadline1 = task1.getDeadline();
+				Date deadline2 = task2.getDeadline();
+				if(deadline1 == null && deadline2 == null) {
+					return 0;
+				} else if (deadline1 == null) {
+					return 1;
+				} else if (deadline2 == null) {
+					return -1;
+				} else {
+					return deadline1.compareTo(deadline2);					
+				}
+			}
+		});
+		return tasks;
+	}
+	
+
 	public DetailView getDetailView() {
 		return detailView;
 	}
+
+	public CalendarView getCalendarView() {
+		return calendarView;
+	}
+
 
 }

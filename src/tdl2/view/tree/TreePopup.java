@@ -16,6 +16,8 @@ public class TreePopup extends JPopupMenu{
 	private Controller controller; 
 	private TaskNode currentnode;
 	private JMenuItem addSubtaskItem;
+	private JMenuItem completeTaskItem;
+	private JMenuItem reactivateTaskItem;
 	private JMenuItem deleteTaskItem;
 	
 	public TreePopup(Controller c) {
@@ -38,6 +40,40 @@ public class TreePopup extends JPopupMenu{
 			public void mouseClicked(MouseEvent e) {}
 		});
 		add(addSubtaskItem);
+		
+		completeTaskItem = new JMenuItem("Task completed");
+		completeTaskItem.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				controller.completeTask(currentnode);
+			}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+			@Override
+			public void mouseExited(MouseEvent e) {}
+			@Override
+			public void mousePressed(MouseEvent e) {}
+		});
+		add(completeTaskItem);
+		
+		reactivateTaskItem = new JMenuItem("Reactivate task");
+		reactivateTaskItem.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				controller.reactivateTask(currentnode);
+			}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+			@Override
+			public void mouseExited(MouseEvent e) {}
+			@Override
+			public void mousePressed(MouseEvent e) {}
+		});
+		add(reactivateTaskItem);
 		
 		deleteTaskItem = new JMenuItem("Delete task");
 		deleteTaskItem.addMouseListener(new MouseListener() {
