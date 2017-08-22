@@ -15,3 +15,6 @@ Current todos:
 - create popup on startup with link to upcoming or passed deadlines
 - attachments
 	- https://stackoverflow.com/questions/9192371/dragn-drop-files-from-the-os-to-java-application-swing
+- allow tasks to be recurring
+  - via context menu
+  - recurring tasks must have a deadline set
