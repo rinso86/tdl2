@@ -1,4 +1,4 @@
-package tdl2.view.calendar;
+package tdl2.view.upcoming;
 
 
 import javax.swing.AbstractListModel;

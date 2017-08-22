@@ -8,15 +8,16 @@ import java.util.Date;
 import javax.swing.JFrame;
 
 import tdl2.controller.detailcontroller.DeadlineSelectListener;
+import tdl2.controller.detailcontroller.MyAttachmentListener;
 import tdl2.controller.treecontroller.TaskNode;
 import tdl2.controller.treecontroller.TaskTreeModelListener;
 import tdl2.controller.treecontroller.TaskTreeSelectionListener;
 import tdl2.model.Task;
 import tdl2.utils.Savior;
-import tdl2.view.calendar.CalendarView;
 import tdl2.view.detail.DetailView;
 import tdl2.view.overal.OveralView;
 import tdl2.view.tree.TreeView;
+import tdl2.view.upcoming.UpcomingView;
 
 public class Controller {
 	
@@ -26,7 +27,7 @@ public class Controller {
 	private OveralView oview;
 	private TreeView treeView;
 	private DetailView detailView;
-	private CalendarView calendarView;
+	private UpcomingView calendarView;
 
 	public Controller() throws ClassNotFoundException, IOException {
 		savior = new Savior();
@@ -40,9 +41,9 @@ public class Controller {
 		detailView = new DetailView(this);
 //		detailView.setOnDescrEditListener(null); <-- we already do this on the tasktreeselectionlistener. 
 		detailView.setOnDeadlineEditListener(new DeadlineSelectListener(this));
-//		detailView.setOnAttachmChangeListener(null);
+		detailView.setOnAttachmChangeListener(new MyAttachmentListener(this));
 		
-		calendarView = new CalendarView(this);
+		calendarView = new UpcomingView(this);
 		
 		oview = new OveralView("My Todo-List", treeView, detailView, calendarView);
 		oview.setOnCloseListener(new OnCloseListener(this));
@@ -123,8 +124,12 @@ public class Controller {
 		return detailView;
 	}
 
-	public CalendarView getCalendarView() {
+	public UpcomingView getCalendarView() {
 		return calendarView;
+	}
+
+	public TreeView getTreeView() {
+		return treeView;
 	}
 
 

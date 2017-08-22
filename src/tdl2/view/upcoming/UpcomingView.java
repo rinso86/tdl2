@@ -1,4 +1,4 @@
-package tdl2.view.calendar;
+package tdl2.view.upcoming;
 
 
 
@@ -14,14 +14,14 @@ import javax.swing.JPanel;
 import tdl2.controller.Controller;
 import tdl2.model.Task;
 
-public class CalendarView {
+public class UpcomingView {
 
 	private Controller controller;
 	private JPanel jp;
 	private JLabel listlabel;
 	private JList<Task> jlist;
 	
-	public CalendarView(Controller controller) {
+	public UpcomingView(Controller controller) {
 		
 		this.controller = controller;
 		

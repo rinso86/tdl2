@@ -1,5 +1,6 @@
 package tdl2.model;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -16,6 +17,7 @@ public class Task implements Serializable{
 	private String description;
 	private Date deadline;
 	private boolean completed;
+	private ArrayList<File> attachments;
 	
 	public Task() {
 		this(null, "");
@@ -39,6 +41,7 @@ public class Task implements Serializable{
 		if(parent != null) {
 			parent.registerChild(this);
 		}
+		this.attachments = new ArrayList<File>();
 	}
 
 	public boolean isCompleted() {
@@ -141,5 +144,13 @@ public class Task implements Serializable{
 	@Override
 	public String toString() {
 		return this.getTitle();
+	}
+
+	public void addAttachments(ArrayList<File> files) {
+		attachments.addAll(files);
+	}
+
+	public ArrayList<File> getAttachments() {
+		return attachments;
 	}
 }

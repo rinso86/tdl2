@@ -7,16 +7,19 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
 
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import tdl2.controller.Controller;
-
-
+import tdl2.utils.FileDrop;
+import tdl2.utils.FileDrop.Listener;
 
 import org.jdesktop.swingx.JXDatePicker;
 
@@ -27,6 +30,9 @@ public class DetailView {
 	private JLabel descrLabel;
 	private JTextField descrTextfield;
 	private JXDatePicker deadlinePicker;
+	private JLabel attachLabel;
+	private JList<File> attachmentList;
+	private FileDrop fileDrop;
 	
 	public DetailView(Controller controller) {
 		this.controller = controller;
@@ -35,13 +41,10 @@ public class DetailView {
 		descrTextfield = new JTextField();
 		descrTextfield.setPreferredSize(new Dimension(400, 400));
 		
-		// http://pirlwww.lpl.arizona.edu/resources/guide/software/SwingX/org/jdesktop/swingx/JXDatePicker.html
 		deadlinePicker = new JXDatePicker();
 		
-//		JPanel dropPanel = new JPanel();
-//		FileDrop fileDrop = new FileDrop (dropPanel, new FileDrop.Listener() {
-//			
-//		});
+		attachLabel = new JLabel("attachments");
+		attachmentList = new JList<File>();
 		
 		this.jp = new JPanel(new GridBagLayout());
 		GridBagConstraints labelConstraints = new GridBagConstraints();
@@ -52,13 +55,22 @@ public class DetailView {
         bigFieldConstraints.gridx = 0;
         bigFieldConstraints.gridy = 1;
         bigFieldConstraints.gridwidth = 2;
+        GridBagConstraints secondBigFieldConstraints = new GridBagConstraints();
+        secondBigFieldConstraints.gridx = 2;
+        secondBigFieldConstraints.gridy = 1;
+        secondBigFieldConstraints.gridwidth = 1;
         GridBagConstraints extraConstraints = new GridBagConstraints();
         extraConstraints.gridx = 1; 
         extraConstraints.gridy = 0;
+        GridBagConstraints secondExtraConstraints = new GridBagConstraints();
+        secondExtraConstraints.gridx = 2; 
+        secondExtraConstraints.gridy = 0;
         
         jp.add(descrLabel, labelConstraints);
         jp.add(descrTextfield, bigFieldConstraints);
         jp.add(deadlinePicker, extraConstraints);
+        jp.add(attachLabel, secondExtraConstraints);
+        jp.add(attachmentList, secondBigFieldConstraints);
 	}
 
 //	public void setOnDescrEditListener(DetailViewOnDescrEditListener detailViewOnDescrEditListener) {
@@ -69,11 +81,10 @@ public class DetailView {
 	public void setOnDeadlineEditListener(ActionListener l) {
 		deadlinePicker.addActionListener(l);
 	}
-//
-//	public void setOnAttachmChangeListener(DetailViewAttachmChangeListener detailViewAttachmChangeListener) {
-//		// TODO Auto-generated method stub
-//		
-//	}
+
+	public void setOnAttachmChangeListener(Listener listener) {
+		fileDrop = new FileDrop (attachmentList, listener);
+	}
 
 	public JPanel getPanel() {
 		return jp;
@@ -93,6 +104,11 @@ public class DetailView {
 
 	public Date getDeadline() {
 		return deadlinePicker.getDate();
+	}
+
+	public void setAttachmentList(ArrayList<File> attachments) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

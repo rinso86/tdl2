@@ -6,16 +6,16 @@ import java.awt.event.WindowListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import tdl2.view.calendar.CalendarView;
 import tdl2.view.detail.DetailView;
 import tdl2.view.tree.TreeView;
+import tdl2.view.upcoming.UpcomingView;
 
 public class OveralView {
 	
 	private JPanel jp;
 	private JFrame jf;
 	
-	public OveralView (String title, TreeView treeView, DetailView detailView, CalendarView calendarView) {
+	public OveralView (String title, TreeView treeView, DetailView detailView, UpcomingView calendarView) {
 		jp = new JPanel();
 		jp.setLayout(new FlowLayout());
 		
