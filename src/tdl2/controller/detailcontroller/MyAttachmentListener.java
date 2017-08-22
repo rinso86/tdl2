@@ -20,6 +20,7 @@ public class MyAttachmentListener implements Listener {
 		ArrayList<File> fileList = new ArrayList<File>();
 		for(int i = 0; i < files.length; i++) {
 			fileList.add(files[i]);
+			System.out.println("Added file " + files[i].getName());
 		}
 		controller.getTreeView().getCurrentNode().getTask().addAttachments(fileList);
 	}

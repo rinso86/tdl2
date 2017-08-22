@@ -3,7 +3,9 @@
 Current todos:
 
 - attachments
-	- https://stackoverflow.com/questions/9192371/dragn-drop-files-from-the-os-to-java-application-swing
+	- context-menu
+		- allow deletion
+		- open file
 - allow tasks to be recurring
   - via context menu
   - recurring tasks must have a deadline set

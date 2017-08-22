@@ -44,7 +44,8 @@ public class DetailView {
 		deadlinePicker = new JXDatePicker();
 		
 		attachLabel = new JLabel("attachments");
-		attachmentList = new JList<File>();
+		attachmentList = new JList<File>(new AttachmentListModel(new ArrayList<File>()));
+		attachmentList.setPreferredSize(new Dimension(200, 400));
 		
 		this.jp = new JPanel(new GridBagLayout());
 		GridBagConstraints labelConstraints = new GridBagConstraints();
@@ -107,8 +108,8 @@ public class DetailView {
 	}
 
 	public void setAttachmentList(ArrayList<File> attachments) {
-		// TODO Auto-generated method stub
-		
+		AttachmentListModel alm = (AttachmentListModel) attachmentList.getModel();
+		alm.setData(attachments);
 	}
 
 }

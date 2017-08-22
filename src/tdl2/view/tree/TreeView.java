@@ -39,6 +39,7 @@ public class TreeView {
 		jtree.setEditable(true);
 		jtree.setPreferredSize(new Dimension(200, 400));
 		jtree.setCellRenderer(new TaskNodeRenderer());
+		jtree.setSelectionPath(new TreePath(taskNode));
 		
 		TreePopup tp = new TreePopup(controller);
 		jtree.addMouseListener(new TreePopupListener(tp));

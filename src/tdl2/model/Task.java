@@ -147,7 +147,9 @@ public class Task implements Serializable{
 	}
 
 	public void addAttachments(ArrayList<File> files) {
-		attachments.addAll(files);
+		for(File file : files) {
+			attachments.add(file);
+		}
 	}
 
 	public ArrayList<File> getAttachments() {
