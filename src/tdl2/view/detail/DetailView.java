@@ -86,4 +86,8 @@ public class DetailView {
 		deadlinePicker.setDate(deadline);
 	}
 
+	public Date getDeadline() {
+		return deadlinePicker.getDate();
+	}
+
 }
