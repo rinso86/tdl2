@@ -4,6 +4,7 @@
 	<groupId>org.langbein.michael</groupId>
 	<artifactId>tdl2</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -16,6 +17,20 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+			<plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.0.2</version>
+            <configuration>
+                <archive>
+                    <index>true</index>
+                    <manifest>
+                    	<addClasspath>true</addClasspath>
+                        <mainClass>tdl2.AppMain</mainClass>
+                    </manifest>
+                </archive>
+            </configuration>
+        </plugin>
 		</plugins>
 	</build>
 
