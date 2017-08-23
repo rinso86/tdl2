@@ -15,6 +15,7 @@ import java.util.Properties;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import tdl2.controller.Controller;
@@ -28,7 +29,7 @@ public class DetailView {
 	private Controller controller;
 	private JPanel jp;
 	private JLabel descrLabel;
-	private JTextField descrTextfield;
+	private JTextArea descrTextfield;
 	private JXDatePicker deadlinePicker;
 	private JLabel attachLabel;
 	private JList<File> attachmentList;
@@ -38,8 +39,10 @@ public class DetailView {
 		this.controller = controller;
 		
 		descrLabel = new JLabel("Description");
-		descrTextfield = new JTextField();
+		descrTextfield = new JTextArea();
 		descrTextfield.setPreferredSize(new Dimension(400, 400));
+		descrTextfield.setLineWrap(true);
+		descrTextfield.setWrapStyleWord(true);
 		
 		deadlinePicker = new JXDatePicker();
 		
