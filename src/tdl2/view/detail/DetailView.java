@@ -117,5 +117,9 @@ public class DetailView {
 	public void setAttachmentList(ArrayList<File> attachments) {
 		attachmentView.setAttachmentList(attachments);
 	}
+	
+	public AttachmentView getAttachmentView() {
+		return attachmentView;
+	}
 
 }

@@ -44,5 +44,10 @@ public class AttachmentView {
 		AttachmentListModel alm = (AttachmentListModel) attachmentList.getModel();
 		alm.setData(attachments);
 	}
+	
+	public void refresh() {
+		AttachmentListModel alm = (AttachmentListModel) attachmentList.getModel();
+		alm.refresh();
+	}
 
 }

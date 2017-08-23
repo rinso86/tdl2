@@ -2,8 +2,6 @@
 
 Current todos:
 
-- abgeschlossene aufgaben: text in grau und durchgestrichen
-- attachments: update immediately after adding
 - allow tasks to be recurring
   - via context menu
   - recurring tasks must have a deadline set

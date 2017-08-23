@@ -97,9 +97,20 @@ public class Controller {
 	public Task[] getDateSortedTasks() {
 		ArrayList<Task> tasklist = baseTask.getAllTasks();
 		tasklist = sortByDate(tasklist);
+		tasklist = filterByCompletion(tasklist);
 		return tasklist.toArray(new Task[0]);
 	}
 	
+	private ArrayList<Task> filterByCompletion(ArrayList<Task> tasklist) {
+		ArrayList<Task> filtered = new ArrayList<Task>();
+		for(Task t : tasklist) {
+			if( ! t.isCompleted() ) {
+				filtered.add(t);
+			}
+		}
+		return filtered;
+	}
+
 	private ArrayList<Task> sortByDate(ArrayList<Task> tasks) {
 		tasks.sort(new Comparator<Task>() {
 			@Override

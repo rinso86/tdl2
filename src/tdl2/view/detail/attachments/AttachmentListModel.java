@@ -4,10 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.AbstractListModel;
+import javax.swing.DefaultListModel;
 
 
 @SuppressWarnings("serial")
-public class AttachmentListModel extends AbstractListModel<File> {
+public class AttachmentListModel extends DefaultListModel<File> {
 	
 	private ArrayList<File> files;
 
@@ -28,14 +29,17 @@ public class AttachmentListModel extends AbstractListModel<File> {
 	public void setData(ArrayList<File> newfiles) {
 		if(newfiles != null) {			
 			this.files = newfiles;
-			refreshView();
+			refresh();
 		} 
 	}
-
-	public void refreshView() {
-		if(this.getSize() > 0) {
-			fireContentsChanged(this, 0, this.getSize());			
+	
+	public void refresh() {
+		if(files.size() > 0) {			
+			fireContentsChanged(this, 0, files.size());
+		}else {
+			fireIntervalRemoved(this, 0, 0);
 		}
 	}
+
 	
 }

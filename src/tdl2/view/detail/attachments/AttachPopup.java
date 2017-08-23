@@ -52,6 +52,8 @@ public class AttachPopup extends JPopupMenu {
 			public void mousePressed(MouseEvent e) {
 				File current = (File) list.getSelectedValue();
 				controller.deleteFileFromCurrentNode(current);
+				AttachmentListModel alm = (AttachmentListModel) list.getModel();
+				alm.refresh();
 			}
 			@Override
 			public void mouseReleased(MouseEvent e) {}
