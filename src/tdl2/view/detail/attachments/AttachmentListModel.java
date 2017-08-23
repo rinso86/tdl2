@@ -1,4 +1,4 @@
-package tdl2.view.detail;
+package tdl2.view.detail.attachments;
 
 import java.io.File;
 import java.util.ArrayList;

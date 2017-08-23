@@ -2,16 +2,15 @@
 
 Current todos:
 
-- attachments
-	- context-menu
-		- allow deletion
-		- open file
+- abgeschlossene aufgaben: text in grau und durchgestrichen
+- attachments: update immediately after adding
 - allow tasks to be recurring
   - via context menu
   - recurring tasks must have a deadline set
-- on close, export as filetree
-  - make optional import functionality
+- save as and import from filetree
+- upcoming
+	- make link to focus on task
+- task-tree: drag and drop tasks and folders
 - make deadlines include hour
   - add hour to selector
-- calendarview
-	- make link to focus on task
+

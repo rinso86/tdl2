@@ -37,7 +37,7 @@ public class TreeView {
 		this.jtree = new JTree(taskNode);
 		jtree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		jtree.setEditable(true);
-		jtree.setPreferredSize(new Dimension(200, 400));
+		jtree.setPreferredSize(new Dimension(300, 400));
 		jtree.setCellRenderer(new TaskNodeRenderer());
 		jtree.setSelectionPath(new TreePath(taskNode));
 		

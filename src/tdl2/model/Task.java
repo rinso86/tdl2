@@ -155,4 +155,8 @@ public class Task implements Serializable{
 	public ArrayList<File> getAttachments() {
 		return attachments;
 	}
+
+	public void deleteAttachment(File file) {
+		attachments.remove(file);
+	}
 }

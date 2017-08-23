@@ -21,6 +21,8 @@ import javax.swing.JTextField;
 import tdl2.controller.Controller;
 import tdl2.utils.FileDrop;
 import tdl2.utils.FileDrop.Listener;
+import tdl2.view.detail.attachments.AttachmentListModel;
+import tdl2.view.detail.attachments.AttachmentView;
 
 import org.jdesktop.swingx.JXDatePicker;
 
@@ -32,8 +34,9 @@ public class DetailView {
 	private JTextArea descrTextfield;
 	private JXDatePicker deadlinePicker;
 	private JLabel attachLabel;
-	private JList<File> attachmentList;
-	private FileDrop fileDrop;
+	private AttachmentView attachmentView;
+	private JPanel attachmentListPanel;
+	
 	
 	public DetailView(Controller controller) {
 		this.controller = controller;
@@ -47,8 +50,9 @@ public class DetailView {
 		deadlinePicker = new JXDatePicker();
 		
 		attachLabel = new JLabel("attachments");
-		attachmentList = new JList<File>(new AttachmentListModel(new ArrayList<File>()));
-		attachmentList.setPreferredSize(new Dimension(200, 400));
+		attachmentView = new AttachmentView(controller);
+		attachmentListPanel = attachmentView.getJPanel();
+		
 		
 		this.jp = new JPanel(new GridBagLayout());
 		GridBagConstraints labelConstraints = new GridBagConstraints();
@@ -74,7 +78,7 @@ public class DetailView {
         jp.add(descrTextfield, bigFieldConstraints);
         jp.add(deadlinePicker, extraConstraints);
         jp.add(attachLabel, secondExtraConstraints);
-        jp.add(attachmentList, secondBigFieldConstraints);
+        jp.add(attachmentListPanel, secondBigFieldConstraints);
 	}
 
 //	public void setOnDescrEditListener(DetailViewOnDescrEditListener detailViewOnDescrEditListener) {
@@ -87,7 +91,7 @@ public class DetailView {
 	}
 
 	public void setOnAttachmChangeListener(Listener listener) {
-		fileDrop = new FileDrop (attachmentList, listener);
+		attachmentView.setOnAttachmChangeListener(listener);
 	}
 
 	public JPanel getPanel() {
@@ -111,8 +115,7 @@ public class DetailView {
 	}
 
 	public void setAttachmentList(ArrayList<File> attachments) {
-		AttachmentListModel alm = (AttachmentListModel) attachmentList.getModel();
-		alm.setData(attachments);
+		attachmentView.setAttachmentList(attachments);
 	}
 
 }

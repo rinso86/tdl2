@@ -1,5 +1,6 @@
 package tdl2.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -118,6 +119,15 @@ public class Controller {
 		});
 		return tasks;
 	}
+	
+
+
+	public void deleteFileFromCurrentNode(File file) {
+		TaskNode currentnode = treeView.getCurrentNode();
+		currentnode.getTask().deleteAttachment(file);
+		detailView.setAttachmentList(currentnode.getTask().getAttachments());
+	}
+	
 	
 
 	public DetailView getDetailView() {
