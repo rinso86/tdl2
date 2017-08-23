@@ -14,6 +14,7 @@ import tdl2.controller.treecontroller.TaskNode;
 import tdl2.controller.treecontroller.TaskTreeModelListener;
 import tdl2.controller.treecontroller.TaskTreeSelectionListener;
 import tdl2.model.Task;
+import tdl2.utils.ResourceManager;
 import tdl2.utils.Savior;
 import tdl2.view.detail.DetailView;
 import tdl2.view.overal.OveralView;
@@ -29,8 +30,10 @@ public class Controller {
 	private TreeView treeView;
 	private DetailView detailView;
 	private UpcomingView calendarView;
+	private ResourceManager resourceManager;
 
 	public Controller() throws ClassNotFoundException, IOException {
+		resourceManager = new ResourceManager();
 		savior = new Savior();
 		baseTask = savior.loadTree(SAVEFILE);
 		
@@ -49,7 +52,8 @@ public class Controller {
 		oview = new OveralView("My Todo-List", treeView, detailView, calendarView);
 		oview.setOnCloseListener(new OnCloseListener(this));
 	}
-	
+
+
 	public void run() {
 		JFrame f = oview.getJFrame();
 		f.setVisible(true);
@@ -137,6 +141,7 @@ public class Controller {
 		TaskNode currentnode = treeView.getCurrentNode();
 		currentnode.getTask().deleteAttachment(file);
 		detailView.setAttachmentList(currentnode.getTask().getAttachments());
+		resourceManager.deleteFileFromResources(file);
 	}
 	
 	
@@ -151,6 +156,11 @@ public class Controller {
 
 	public TreeView getTreeView() {
 		return treeView;
+	}
+
+	
+	public ResourceManager getResourceManager() {
+		return resourceManager;
 	}
 
 

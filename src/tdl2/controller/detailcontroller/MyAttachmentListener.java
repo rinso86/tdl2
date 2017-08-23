@@ -1,6 +1,7 @@
 package tdl2.controller.detailcontroller;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import tdl2.controller.Controller;
@@ -16,11 +17,17 @@ public class MyAttachmentListener implements Listener {
 
 	@Override
 	public void filesDropped(File[] files) {
-		ArrayList<File> fileList = new ArrayList<File>();
+		ArrayList<File> savedFiles = new ArrayList<File>();
 		for(int i = 0; i < files.length; i++) {
-			fileList.add(files[i]);
+			File savedFile = null;
+			try {
+				savedFile = controller.getResourceManager().saveToResources(files[i]);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			savedFiles.add(savedFile);
 		}
-		controller.getTreeView().getCurrentNode().getTask().addAttachments(fileList);
+		controller.getTreeView().getCurrentNode().getTask().addAttachments(savedFiles);
 		controller.getDetailView().getAttachmentView().refresh();
 	}
 
