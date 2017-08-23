@@ -9,6 +9,8 @@ Current todos:
 - allow tasks to be recurring
   - via context menu
   - recurring tasks must have a deadline set
+- on close, export as filetree
+  - make optional import functionality
 - make deadlines include hour
   - add hour to selector
 - calendarview
