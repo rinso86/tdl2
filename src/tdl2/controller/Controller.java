@@ -13,6 +13,7 @@ import tdl2.controller.detailcontroller.MyAttachmentListener;
 import tdl2.controller.treecontroller.TaskNode;
 import tdl2.controller.treecontroller.TaskTreeModelListener;
 import tdl2.controller.treecontroller.TaskTreeSelectionListener;
+import tdl2.controller.wisecracker.WiseCrackerController;
 import tdl2.model.Task;
 import tdl2.utils.ResourceManager;
 import tdl2.utils.Savior;
@@ -31,6 +32,7 @@ public class Controller {
 	private DetailView detailView;
 	private UpcomingView calendarView;
 	private ResourceManager resourceManager;
+	private WiseCrackerController wcc;
 
 	public Controller() throws ClassNotFoundException, IOException {
 		resourceManager = new ResourceManager();
@@ -51,6 +53,8 @@ public class Controller {
 		
 		oview = new OveralView("My Todo-List", treeView, detailView, calendarView);
 		oview.setOnCloseListener(new OnCloseListener(this));
+		
+		wcc = new WiseCrackerController(oview.getJFrame());
 	}
 
 
