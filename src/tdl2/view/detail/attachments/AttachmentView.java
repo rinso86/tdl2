@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import tdl2.controller.Controller;
 import tdl2.utils.FileDrop;
@@ -15,21 +16,23 @@ public class AttachmentView {
 
 	private Controller controller;
 	private JPanel jp;
-	private JList<File> attachmentList;
 	private AttachPopup ap;
 	private FileDrop fileDrop;
+	private JList<File> attachmentList;
+	private JScrollPane attchscrollpane;
 
 	public AttachmentView(Controller c) {
 		controller = c;
 		jp = new JPanel();
 		
 		attachmentList = new JList<File>(new AttachmentListModel(new ArrayList<File>()));
-		attachmentList.setPreferredSize(new Dimension(350, 400));
+		attchscrollpane = new JScrollPane(attachmentList);
+		attchscrollpane.setPreferredSize(new Dimension(300, 400));
 		
 		ap = new AttachPopup(c, attachmentList);
 		attachmentList.addMouseListener(new AttachPopupListener(ap, attachmentList, controller));
 		
-		jp.add(attachmentList);
+		jp.add(attchscrollpane);
 	}
 
 	public JPanel getJPanel() {

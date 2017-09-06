@@ -15,6 +15,7 @@ import java.util.Properties;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -32,6 +33,7 @@ public class DetailView {
 	private JPanel jp;
 	private JLabel descrLabel;
 	private JTextArea descrTextfield;
+	private JScrollPane descrscollpane;
 	private JXDatePicker deadlinePicker;
 	private JLabel attachLabel;
 	private AttachmentView attachmentView;
@@ -43,9 +45,10 @@ public class DetailView {
 		
 		descrLabel = new JLabel("Description");
 		descrTextfield = new JTextArea();
-		descrTextfield.setPreferredSize(new Dimension(400, 400));
 		descrTextfield.setLineWrap(true);
 		descrTextfield.setWrapStyleWord(true);
+		descrscollpane = new JScrollPane(descrTextfield);
+		descrscollpane.setPreferredSize(new Dimension(400, 400));
 		
 		deadlinePicker = new JXDatePicker();
 		
@@ -75,7 +78,7 @@ public class DetailView {
         secondExtraConstraints.gridy = 0;
         
         jp.add(descrLabel, labelConstraints);
-        jp.add(descrTextfield, bigFieldConstraints);
+        jp.add(descrscollpane, bigFieldConstraints);
         jp.add(deadlinePicker, extraConstraints);
         jp.add(attachLabel, secondExtraConstraints);
         jp.add(attachmentListPanel, secondBigFieldConstraints);

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import tdl2.controller.Controller;
 import tdl2.model.Task;
@@ -20,6 +21,7 @@ public class UpcomingView {
 	private JPanel jp;
 	private JLabel listlabel;
 	private JList<Task> jlist;
+	private JScrollPane listscrollpane;
 	
 	public UpcomingView(Controller controller) {
 		
@@ -44,8 +46,9 @@ public class UpcomingView {
 		Task[] tasks = controller.getDateSortedTasks();
 		jlist = new JList<Task>(new TaskListModel(tasks));
 		jlist.setCellRenderer(new TaskListRenderer());
-		jlist.setPreferredSize(new Dimension(400,  400));
-		jp.add(jlist, bigFieldConstraints);
+		listscrollpane = new JScrollPane(jlist);
+		listscrollpane.setPreferredSize(new Dimension(400, 400));
+		jp.add(listscrollpane, bigFieldConstraints);
 	}
 
 	public JPanel getPanel() {

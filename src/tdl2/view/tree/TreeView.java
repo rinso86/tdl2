@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -25,8 +26,9 @@ public class TreeView {
 	private Controller controller;
 	private JPanel jp;
 	private TaskNode taskNode;
-	private JTree jtree;
 	private JLabel treeLabel;
+	private JTree jtree;
+	private JScrollPane treescrollpane;
 	
 	public TreeView(Controller controller, TaskNode taskNode) {
 		
@@ -37,13 +39,13 @@ public class TreeView {
 		this.jtree = new JTree(taskNode);
 		jtree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		jtree.setEditable(true);
-		jtree.setPreferredSize(new Dimension(300, 400));
 		jtree.setCellRenderer(new TaskNodeRenderer());
 		jtree.setSelectionPath(new TreePath(taskNode));
 		
 		TreePopup tp = new TreePopup(controller);
 		jtree.addMouseListener(new TreePopupListener(tp));
-		
+		treescrollpane = new JScrollPane(jtree);
+		treescrollpane.setPreferredSize(new Dimension(300, 400));
 		
 		this.jp = new JPanel(new GridBagLayout());
 		GridBagConstraints labelConstraints = new GridBagConstraints();
@@ -59,7 +61,7 @@ public class TreeView {
         extraConstraints.gridy = 0;
 		
         jp.add(treeLabel, labelConstraints);
-        jp.add(jtree, bigFieldConstraints);
+        jp.add(treescrollpane, bigFieldConstraints);
 	}
 
 	
