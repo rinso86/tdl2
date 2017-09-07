@@ -20,6 +20,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import tdl2.controller.Controller;
+import tdl2.controller.treecontroller.TaskNode;
+import tdl2.model.Task;
 import tdl2.utils.FileDrop;
 import tdl2.utils.FileDrop.Listener;
 import tdl2.view.detail.attachments.AttachmentListModel;
@@ -105,11 +107,11 @@ public class DetailView {
 		return descrTextfield.getText();
 	}
 
-	public void setDescription(String text) {
+	private void setDescription(String text) {
 		descrTextfield.setText(text);
 	}
 
-	public void setDeadline(Date deadline) {
+	private void setDeadline(Date deadline) {
 		deadlinePicker.setDate(deadline);
 	}
 
@@ -117,12 +119,19 @@ public class DetailView {
 		return deadlinePicker.getDate();
 	}
 
-	public void setAttachmentList(ArrayList<File> attachments) {
+	private void setAttachmentList(ArrayList<File> attachments) {
 		attachmentView.setAttachmentList(attachments);
 	}
 	
 	public AttachmentView getAttachmentView() {
 		return attachmentView;
+	}
+
+
+	public void setCurrentTask(Task currentTask) {
+		setDescription(currentTask.getDescription());
+		setDeadline(currentTask.getDeadline());
+		setAttachmentList(currentTask.getAttachments());
 	}
 
 }

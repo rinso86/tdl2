@@ -20,6 +20,7 @@ import javax.swing.tree.TreeSelectionModel;
 import tdl2.controller.Controller;
 import tdl2.controller.treecontroller.TaskNode;
 import tdl2.controller.treecontroller.TaskTreeModelListener;
+import tdl2.model.Task;
 
 public class TreeView {
 	
@@ -91,6 +92,25 @@ public class TreeView {
 
 	public TaskNode getCurrentNode() {
 		return (TaskNode) jtree.getSelectionPath().getLastPathComponent();
+	}
+	
+	public Task getCurrentTask() {
+		return getCurrentNode().getTask();
+	}
+	
+	public void setCurrentTask(Task currentTask) {
+		TaskNode tn = getNodeForTask(currentTask);
+		TreePath path = new TreePath(tn.getPath());
+		jtree.setSelectionPath(path);
+		jtree.scrollPathToVisible(path);
+	}
+
+
+
+
+	private TaskNode getNodeForTask(Task currentTask) {
+		TaskNode tn = taskNode.search(currentTask);
+		return tn;
 	}
 
 

@@ -1,6 +1,7 @@
 package tdl2.controller.treecontroller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -44,5 +45,26 @@ public class TaskNode extends DefaultMutableTreeNode{
 	
 	public void setDeadline(Date deadline) {
 		task.setDeadline(deadline);
+	}
+
+	public ArrayList<File> getAttachmentList() {
+		return task.getAttachments();
+	}
+
+	public TaskNode search(Task searchedTask) {
+		TaskNode foundNode = null;
+		if(this.task == searchedTask) {
+			foundNode = this;
+		} else {
+			for(int i = 0; i < this.getChildCount(); i++) {
+				TaskNode child = (TaskNode) this.getChildAt(i);
+				TaskNode result = child.search(searchedTask);
+				if(result != null) {
+					foundNode = result;
+					break;
+				}
+			}
+		}
+		return foundNode;
 	}
 }

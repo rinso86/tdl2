@@ -19,7 +19,7 @@ public class DeadlineSelectListener implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		JXDatePicker picker = (JXDatePicker) e.getSource();
 		controller.setDeadlineOnSelectedNode(picker.getDate());
-		controller.getCalendarView().updateList();
+		controller.getUpcomingView().updateList();
 	}
 
 }

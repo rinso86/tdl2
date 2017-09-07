@@ -30,7 +30,7 @@ public class Controller {
 	private OveralView oview;
 	private TreeView treeView;
 	private DetailView detailView;
-	private UpcomingView calendarView;
+	private UpcomingView upcomingView;
 	private ResourceManager resourceManager;
 	private WiseCrackerController wcc;
 
@@ -49,9 +49,9 @@ public class Controller {
 		detailView.setOnDeadlineEditListener(new DeadlineSelectListener(this));
 		detailView.setOnAttachmChangeListener(new MyAttachmentListener(this));
 		
-		calendarView = new UpcomingView(this);
+		upcomingView = new UpcomingView(this);
 		
-		oview = new OveralView("My Todo-List", treeView, detailView, calendarView);
+		oview = new OveralView("My Todo-List", treeView, detailView, upcomingView);
 		oview.setOnCloseListener(new OnCloseListener(this));
 		
 		wcc = new WiseCrackerController(oview.getJFrame());
@@ -142,9 +142,9 @@ public class Controller {
 
 
 	public void deleteFileFromCurrentNode(File file) {
-		TaskNode currentnode = treeView.getCurrentNode();
-		currentnode.getTask().deleteAttachment(file);
-		detailView.setAttachmentList(currentnode.getTask().getAttachments());
+		Task currentTask = treeView.getCurrentTask();
+		currentTask.deleteAttachment(file);
+		detailView.setCurrentTask(currentTask);
 		resourceManager.deleteFileFromResources(file);
 	}
 	
@@ -154,8 +154,8 @@ public class Controller {
 		return detailView;
 	}
 
-	public UpcomingView getCalendarView() {
-		return calendarView;
+	public UpcomingView getUpcomingView() {
+		return upcomingView;
 	}
 
 	public TreeView getTreeView() {
@@ -165,6 +165,13 @@ public class Controller {
 	
 	public ResourceManager getResourceManager() {
 		return resourceManager;
+	}
+
+
+	public void setActive(Task currentTask) {
+		treeView.setCurrentTask(currentTask);
+		detailView.setCurrentTask(currentTask);
+		upcomingView.setCurrentTask(currentTask);
 	}
 
 

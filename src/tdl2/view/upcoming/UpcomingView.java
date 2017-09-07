@@ -5,7 +5,6 @@ package tdl2.view.upcoming;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.ArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -13,7 +12,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import tdl2.controller.Controller;
+import tdl2.controller.treecontroller.TaskNode;
 import tdl2.model.Task;
+import tdl2.view.tree.TreePopup;
+import tdl2.view.tree.TreePopupListener;
 
 public class UpcomingView {
 
@@ -46,6 +48,10 @@ public class UpcomingView {
 		Task[] tasks = controller.getDateSortedTasks();
 		jlist = new JList<Task>(new TaskListModel(tasks));
 		jlist.setCellRenderer(new TaskListRenderer());
+		
+		UpcomingPopup up = new UpcomingPopup(controller);
+		jlist.addMouseListener(new UpcomingPopupListener(up));
+		
 		listscrollpane = new JScrollPane(jlist);
 		listscrollpane.setPreferredSize(new Dimension(400, 400));
 		jp.add(listscrollpane, bigFieldConstraints);
@@ -64,6 +70,11 @@ public class UpcomingView {
 	public void refreshView() {
 		TaskListModel model = (TaskListModel) jlist.getModel();
 		model.refreshView();
+	}
+
+
+	public void setCurrentTask(Task currentTask) {
+		jlist.setSelectedValue(currentTask, true);
 	}
 
 }
