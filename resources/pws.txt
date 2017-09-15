@@ -1,0 +1,131 @@
+https://mailtrap.io/
+	michael_langbein@hotmail.de
+	postman
+	kennwort: EFv8VoPsqw2r7XYu7ygiNzA
+	Anwendungs-ID: b8ca5268-9a0a-4fc3-ac1d-6d94a0c11767
+	Anwendungs-ID-URL: api://b8ca5268-9a0a-4fc3-ac1d-6d94a0c11767
+
+
+Zeus
+	Michael Langbein	
+	rinso86
+
+Wiski
+	Mittels citrix
+
+
+Citrix
+	https://citrix.rz-sued.bybn.de/vpn/index.html
+	https://citrix.rz-sued.bybn.de/AG-IN-WI/site/default.aspx
+	Langbein_M
+	[aktuelles PW]
+	Umwelt
+
+
+
+Informationsdienste Grundwasser
+	Benutzername:       86-langbein
+	Kennwort:           Augsburg2016
+	http://zdvu-sv-ph14208.umwelt.bayern.de/kistersweb/main.php
+	
+
+https://servicedesk.rz-nord.bayern.de/CAisd/pdmweb2.exe
+	umwelt\lfu-hnd
+	qwertzui
+
+
+BayRMS
+	Langbein_M
+	Michael86
+
+
+FTP-Server
+	ftp.hnd.bayern.de
+	datendienst
+	ciThJM
+	oder:
+	austausch
+	MJhTic
+
+Wiksi
+	
+
+Wiski Web
+http://zdvu-sv-ph14208.umwelt.bayern.de/kistersweb/main.php
+	86-langbein
+	Augsburg2016
+
+
+urchin
+http://webalytics.bybn.de/  
+	User hnd
+	PW niedrigwasser
+
+
+Proxy
+http://www.proxy.bybn.de:80
+
+
+Interne Seite
+www.hnd-login.bayern.de
+	u:hnd-intern 
+	p:TaKaWaLaSt98
+
+
+webgrind
+	&XDEBUG_PROFILE 
+
+
+zabbix:
+	admin
+	zabbix
+
+Piwik
+https://webalytics.bayern.de/piwik/index.php?module=CoreHome&action=index&idSite=202&period=range&date=last30#?module=Dashboard&action=embeddedIndex&idSite=202&period=range&date=last30&idDashboard=1
+	Username: StMUV_Gesamt 
+	Passwort: j9gAKu5qnA9
+	
+Lasrim-Blog:
+	Nutzer: hnd-by
+	PW: hndinfo
+
+
+SMS-Trade
+	Email: hnd@lfu.bayern.de
+	Passwort: eDJJxQbR
+	Gateway-Key: 99kkHFrc6070743bub2BqPk
+
+
+pingdom
+	www.pingdom.com
+	hnd@lfu.bayern.de
+	PW: hndinfo
+
+
+jenkins
+	Michael
+	rinso86
+
+
+gitlab
+http://10.112.70.138:9090/
+root
+dorfdepp
+
+
+http://gkd2.ixshare.de/gkd2/public/de/
+Nutzer: lfu
+Passwort: gkd2017
+
+
+
+neue server
+	Name				Kennung	Passwort
+	-----------------------------------------------------------------------
+	Alfons Vogelbacher		zrz-voal	iB8Ob42eiGJXeQqE
+	Katja Moritz			zrz-moka	oukvPVwxrskFE5Jp
+	Michael Langbein		zrz-lami	mCIIrvXzINqP2thM
+	Daniel Waldmann		zrz-wada	Ur1TYF0eI63fghmt
+	Stefan Laurent			zrz-last		YC84VcDSseW+Ci/A	
+	HND-Servicekennung		zrz-hnd-svc	9Jj8ns4ovbycAhivhrJEHPRj
+		

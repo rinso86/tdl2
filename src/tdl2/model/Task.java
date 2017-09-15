@@ -155,6 +155,15 @@ public class Task implements Serializable{
 	public ArrayList<File> getAttachments() {
 		return attachments;
 	}
+	
+	public ArrayList<File> getAttachmentsInclParents() {
+		ArrayList<File> atchs = new ArrayList<File>();
+		atchs.addAll(attachments);
+		if(this.parent != null) {
+			atchs.addAll(this.parent.getAttachmentsInclParents());
+		}
+		return atchs;
+	}
 
 	public void deleteAttachment(File file) {
 		attachments.remove(file);

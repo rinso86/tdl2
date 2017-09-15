@@ -26,6 +26,7 @@ public class AttachmentView {
 		jp = new JPanel();
 		
 		attachmentList = new JList<File>(new AttachmentListModel(new ArrayList<File>()));
+		attachmentList.setCellRenderer(new AttachmentListCellRenderer(controller));
 		attchscrollpane = new JScrollPane(attachmentList);
 		attchscrollpane.setPreferredSize(new Dimension(300, 400));
 		

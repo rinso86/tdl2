@@ -131,7 +131,7 @@ public class DetailView {
 	public void setCurrentTask(Task currentTask) {
 		setDescription(currentTask.getDescription());
 		setDeadline(currentTask.getDeadline());
-		setAttachmentList(currentTask.getAttachments());
+		setAttachmentList(currentTask.getAttachmentsInclParents());
 	}
 
 }

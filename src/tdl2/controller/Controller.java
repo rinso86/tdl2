@@ -175,4 +175,9 @@ public class Controller {
 	}
 
 
+	public Task getCurrentTask() {
+		return this.treeView.getCurrentTask();
+	}
+
+
 }
