@@ -21,6 +21,7 @@ public class Task implements Serializable{
 	
 	public Task() {
 		this(null, "");
+		System.out.println("Constructed task " + title + " with attachments" + attachments.toString());
 	}
 	
 	public ArrayList<Task> getChildren() {
@@ -38,10 +39,10 @@ public class Task implements Serializable{
 		this.description = "";
 		this.completed = false;
 		this.children = new ArrayList<Task>();
+		this.attachments = new ArrayList<File>();
 		if(parent != null) {
 			parent.registerChild(this);
 		}
-		this.attachments = new ArrayList<File>();
 	}
 
 	public boolean isCompleted() {
@@ -167,5 +168,9 @@ public class Task implements Serializable{
 
 	public void deleteAttachment(File file) {
 		attachments.remove(file);
+	}
+
+	public void setAttachments(ArrayList<File> arrayList) {
+		attachments = arrayList;
 	}
 }
