@@ -1,0 +1,27 @@
+Strategy:
+
+ 1. the only class that should have state (i.e. the task tree) is the controller
+ 2. no view should be allowed to edit the task tree. 
+   Instead, it sends a request to the controller to update the tree 
+   and then fetches fresh data from the controller
+   
+   
+To achieve this:
+ 
+interface Task
+    get*
+
+class MutableTask
+    get*
+    set*
+    
+Controller gets MutableTask tree, 
+but gives to views only Task tree.
+
+
+
+3. Controller has no direct influence on views, only notifies them about changes in model.
+
+
+To achieve this: 
+all view-setters are private and only called from 'receiveMessage'

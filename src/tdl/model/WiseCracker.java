@@ -1,4 +1,4 @@
-package tdl2.model;
+package tdl.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
