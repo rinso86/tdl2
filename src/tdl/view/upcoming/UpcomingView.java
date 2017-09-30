@@ -13,6 +13,7 @@ import javax.swing.JScrollPane;
 
 import tdl.controller.Controller;
 import tdl.messages.Message;
+import tdl.messages.MessageType;
 import tdl.messages.Recipient;
 import tdl.model.Task;
 import tdl.view.upcoming.popup.UpcomingPopup;
@@ -64,27 +65,46 @@ public class UpcomingView implements Recipient {
 
 	@Override
 	public void receiveMessage(Message message) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("UpcomingView now receiving " + message.getMessageType());
+		switch(message.getMessageType()) {
+		case UPDATED_TASK:
+			updateList();
+			setCurrentTask( (Task) message.getHeaders().get("task") );
+			break;
+		case NEW_TASK_ACTIVE:
+			updateList();
+			setCurrentTask( (Task) message.getHeaders().get("task") );
+			break;
+		case ADDED_SUBTASK:
+			updateList();
+			break;
+		default:
+			break;
+		}
 	}
 	
 	private void updateList() {
 		TaskListModel model = (TaskListModel) jlist.getModel();
 		model.setData(controller.getBaseTask());
+		refreshView();
+	}
+	
+	private void setCurrentTask(Task currentTask) {
+		jlist.setSelectedValue(currentTask, true);
+		refreshView();
 	}
 	
 	private void refreshView() {
 		TaskListModel model = (TaskListModel) jlist.getModel();
 		model.refreshView();
 	}
-		
-	private void setCurrentTask(Task currentTask) {
-		jlist.setSelectedValue(currentTask, true);
-	}
 
 	public void onPopupSetActiveRequested(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		Task selectedTask = jlist.getModel().getElementAt(jlist.locationToIndex(e.getPoint()));
+		Message m = new Message(MessageType.NEW_TASK_ACTIVE_REQUEST);
+		m.addHeader("task", selectedTask);
+		System.out.println("UpcomingView now messaging " + m.getMessageType() + " for task "+ selectedTask.getTitle());
+		controller.receiveMessage(m);
 	}
 
 }

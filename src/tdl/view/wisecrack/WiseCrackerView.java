@@ -7,9 +7,11 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
+import tdl.messages.Message;
+import tdl.messages.Recipient;
 import tdl.model.WiseCracker;
 
-public class WiseCrackerView implements ActionListener {
+public class WiseCrackerView implements ActionListener, Recipient {
 	private JFrame jf;
 	private WiseCracker wc;
 	private Timer timer;
@@ -29,5 +31,11 @@ public class WiseCrackerView implements ActionListener {
 		int imax = this.wc.wiseStuffCount();
 		int i = ThreadLocalRandom.current().nextInt(0, imax);
 		this.jf.setTitle(this.wc.getWiseStuff(i));
+	}
+
+
+	@Override
+	public void receiveMessage(Message message) {
+		
 	}
 }

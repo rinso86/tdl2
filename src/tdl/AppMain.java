@@ -1,6 +1,5 @@
 package tdl;
 
-import java.io.IOException;
 
 import tdl.controller.Controller;
 

@@ -86,26 +86,46 @@ public class DetailView implements Recipient {
         jp.add(attachmentListPanel, secondBigFieldConstraints);
 	}
 
-
 	public JPanel getPanel() {
 		return jp;
 	}
-	
 
 	public Task getCurrentTask() {
 		return controller.getCurrentTask();
 	}
 	
+	public ArrayList<File> getCurrentAttachmentList() {
+		return getCurrentTask().getAttachmentsInclParents();
+	}
+	
 	@Override
 	public void receiveMessage(Message message) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("DetailView now receiving " + message.getMessageType());
+		switch(message.getMessageType()) {
+		case FILE_DROPPED_IN:
+			controller.receiveMessage(message);
+			break;
+		case UPDATED_TASK:
+			setCurrentTask((Task) message.getHeaders().get("task"));
+			attachmentView.receiveMessage(message);
+			break;
+		case NEW_TASK_ACTIVE:
+			setCurrentTask((Task) message.getHeaders().get("task"));
+			attachmentView.receiveMessage(message);
+			break;
+		case ADDED_SUBTASK:
+			break;
+		case DELETE_FILE_REQUEST:
+			controller.receiveMessage(message);
+			break;
+		default:
+			break;
+		}
 	}
 
 	private void setCurrentTask(Task currentTask) {
 		setDescription(currentTask.getDescription());
 		setDeadline(currentTask.getDeadline());
-		setAttachmentList(currentTask.getAttachmentsInclParents());
 	}
 
 	private void setDeadline(Date deadline) {
@@ -115,11 +135,6 @@ public class DetailView implements Recipient {
 
 	private void setDescription(String description) {
 		descrTextfield.setText(description);
-	}
-	
-	
-	private void setAttachmentList(ArrayList<File> attachments) {
-		attachmentView.setAttachmentList(attachments);
 	}
 
 }

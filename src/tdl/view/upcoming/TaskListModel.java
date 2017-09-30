@@ -1,6 +1,9 @@
 package tdl.view.upcoming;
 
 
+import java.util.ArrayList;
+import java.util.Comparator;
+
 import javax.swing.AbstractListModel;
 
 import tdl.model.Task;
@@ -17,8 +20,29 @@ public class TaskListModel extends AbstractListModel<Task> {
 	}
 
 	private Task[] getDateSortedTasks(Task baseTask) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Task> tasksList = treeToArray(baseTask);
+		ArrayList<Task> tasksSorted = sort(tasksList);
+		Task[] tasksSortedArray = tasksSorted.toArray(new Task[tasksSorted.size()]);
+		return tasksSortedArray;
+	}
+	
+	private ArrayList<Task> sort(ArrayList<Task> tasksList) {
+		tasksList.sort(new Comparator<Task>() {
+			@Override
+			public int compare(Task t1, Task t2) {
+				return t1.getDeadline().compareTo(t2.getDeadline());
+			}
+		});
+		return tasksList;
+	}
+
+	private ArrayList<Task> treeToArray(Task task) {
+		ArrayList<Task> tasks = new ArrayList<Task>();
+		tasks.add(task);
+		for(Task child : task.getChildren()) {
+			tasks.addAll(treeToArray(child));
+		}
+		return tasks;
 	}
 
 	@Override

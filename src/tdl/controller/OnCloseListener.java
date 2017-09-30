@@ -1,9 +1,7 @@
-package tdl.controller.listeners;
+package tdl.controller;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-import tdl.controller.Controller;
 
 public class OnCloseListener extends WindowAdapter {
 	

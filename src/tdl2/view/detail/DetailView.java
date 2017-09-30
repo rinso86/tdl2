@@ -87,7 +87,7 @@ public class DetailView {
 	}
 
 //	public void setOnDescrEditListener(DetailViewOnDescrEditListener detailViewOnDescrEditListener) {
-//		// TODO Auto-generated method stub
+//		// Auto-generated method stub
 //		
 //	}
 

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public class MutableTask implements Serializable, Task {
 
@@ -150,10 +151,15 @@ public class MutableTask implements Serializable, Task {
 	public String toString() {
 		return this.getTitle();
 	}
+	
+
+	public void addAttachment(File f) {
+		attachments.add(f);
+	}
 
 	public void addAttachments(ArrayList<File> files) {
 		for(File file : files) {
-			attachments.add(file);
+			addAttachment(file);
 		}
 	}
 
@@ -185,4 +191,36 @@ public class MutableTask implements Serializable, Task {
 	public long getSecondsActive() {
 		return this.secondsActive;
 	}
+	
+	public ArrayList<MutableTask> searchChildren(Predicate<MutableTask> pred) {
+		ArrayList<MutableTask> foundTasks = new ArrayList<MutableTask>();
+		if(pred.test(this)) {
+			foundTasks.add(this);
+		}else {
+			for(MutableTask child : getMutableChildren()) {
+				ArrayList<MutableTask> subResults = child.searchChildren(pred);
+				if(subResults.size() > 0) {
+					foundTasks.addAll(subResults);
+				}
+			}
+		}
+		return foundTasks;
+	}
+	
+	public MutableTask searchChildrenUnique(Predicate<MutableTask> pred) {
+		MutableTask foundTask = null;
+		if(pred.test(this)) {
+			return this;
+		}else {
+			for(MutableTask child : getMutableChildren()) {
+				MutableTask subResult = child.searchChildrenUnique(pred);
+				if(subResult != null) {
+					foundTask = subResult;
+					break;
+				}
+			}
+		}
+		return foundTask;
+	}
+
 }

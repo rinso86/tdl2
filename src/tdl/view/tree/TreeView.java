@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseEvent;
+import java.util.UUID;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -17,13 +18,14 @@ import javax.swing.tree.TreeSelectionModel;
 
 import tdl.controller.Controller;
 import tdl.messages.Message;
+import tdl.messages.MessageType;
 import tdl.messages.Recipient;
 import tdl.model.Task;
 import tdl.view.tree.popup.TreePopup;
 import tdl.view.tree.popup.TreePopupListener;
+import tdl2.controller.treecontroller.TaskNode;
 
 public class TreeView implements Recipient {
-	
 	
 	private Controller controller;
 	private TaskNode baseTaskNode;
@@ -86,10 +88,63 @@ public class TreeView implements Recipient {
 
 	@Override
 	public void receiveMessage(Message message) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("TreeView now receiving " + message.getMessageType());
+		switch(message.getMessageType()) {
+		case NEW_TASK_ACTIVE:
+			setCurrentTask( (Task) message.getHeaders().get("task"));
+			break;
+		case ADDED_SUBTASK:
+			Task task = (Task) message.getHeaders().get("task");
+			Task parent = task.getParent();
+			TaskNode parentNode = getNodeForTask(parent);
+			TaskNode childNode = new TaskNode( task );
+			addChild(parentNode, childNode);
+			refresh();
+			break;
+		case UPDATED_TASK:
+		case COMPLETED_TASK:
+		case REACTIVATED_TASK:
+			refresh();
+			break;
+		case DELETED_TASK:
+			pruneTree(baseTaskNode);
+			refresh();
+		case DELETED_FILE:
+			break;
+		default:
+			break;
+		}
 	}
-	
+
+	/*
+	 * deletes all branches that have lost their reference to a task
+	 */
+	private void pruneTree(TaskNode base) {
+		if(base.getTask() == null) {
+			removeNode(base);
+		}else {
+			int I = base.getChildCount();
+			TaskNode[] children = new TaskNode[I];
+			for(int i = 0; i < I; i++) {
+				children[i] = (TaskNode) base.getChildAt(i);
+			}
+			for(TaskNode child : children) {
+				pruneTree(child);
+			}
+		}
+	}
+
+	private void refresh() {
+//		Task baseTask = controller.getBaseTask();
+//		Task currentTask = controller.getCurrentTask();
+//		TaskNode baseTaskNode = new TaskNode(baseTask);
+//		TaskNode currentTaskNode = baseTaskNode.search(currentTask);
+//		
+		DefaultTreeModel model = (DefaultTreeModel) jtree.getModel();
+		model.reload();
+//		jtree.setSelectionPath(new TreePath(currentTaskNode));
+	}
+
 	private void setCurrentTask(Task currentTask) {
 		TaskNode tn = getNodeForTask(currentTask);
 		TreePath path = new TreePath(tn.getPath());
@@ -99,6 +154,11 @@ public class TreeView implements Recipient {
 	
 	private TaskNode getNodeForTask(Task currentTask) {
 		TaskNode tn = baseTaskNode.search(currentTask);
+		return tn;
+	}
+	
+	private TaskNode getNodeForPath(TreePath path) {
+		TaskNode tn = (TaskNode) path.getLastPathComponent();
 		return tn;
 	}
 
@@ -121,23 +181,39 @@ public class TreeView implements Recipient {
 	
 	
 	public void onPopupAddSubtaskRequested(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		TreePath path = jtree.getPathForLocation(e.getX(), e.getY());
+		TaskNode tn = getNodeForPath(path);
+		Message m = new Message(MessageType.ADD_SUBTASK_REQUEST);
+		m.addHeader("task", tn.getTask());
+		System.out.println("TreeView now messaging " + m.getMessageType() + " for task "+ tn.getTask().getTitle());
+		controller.receiveMessage(m);
 	}
 
 	public void onPopupTaskCompleteRequested(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		TreePath path = jtree.getPathForLocation(e.getX(), e.getY());
+		TaskNode tn = getNodeForPath(path);
+		Message m = new Message(MessageType.COMPLETE_TASK_REQUEST);
+		m.addHeader("task", tn.getTask());
+		System.out.println("TreeView now messaging " + m.getMessageType() + " for task "+ tn.getTask().getTitle());
+		controller.receiveMessage(m);
 	}
 
 	public void onPopupDeleteTaskRequested(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		TreePath path = jtree.getPathForLocation(e.getX(), e.getY());
+		TaskNode tn = getNodeForPath(path);
+		Message m = new Message(MessageType.DELETE_TASK_REQUEST);
+		m.addHeader("task", tn.getTask());
+		System.out.println("TreeView now messaging " + m.getMessageType() + " for task "+ tn.getTask().getTitle());
+		controller.receiveMessage(m);
 	}
 
 	public void onPopupReactivateTaskRequested(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		TreePath path = jtree.getPathForLocation(e.getX(), e.getY());
+		TaskNode tn = getNodeForPath(path);
+		Message m = new Message(MessageType.REACTIVATE_TASK_REQUEST);
+		m.addHeader("task", tn.getTask());
+		System.out.println("TreeView now messaging " + m.getMessageType() + " for task "+ tn.getTask().getTitle());
+		controller.receiveMessage(m);
 	}
 
 

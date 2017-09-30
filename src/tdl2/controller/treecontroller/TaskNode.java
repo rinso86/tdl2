@@ -6,7 +6,7 @@ import java.util.Date;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import tdl2.model.Task;
+import tdl.model.Task;
 
 @SuppressWarnings("serial")
 public class TaskNode extends DefaultMutableTreeNode{
@@ -31,20 +31,12 @@ public class TaskNode extends DefaultMutableTreeNode{
 		return task;
 	}
 
-	public void setTaskDescription(String description) {
-		task.setDescription(description);
-	}
-
 	public String getTaskDescription() {
 		return task.getDescription();
 	}
 	
 	public Date getDeadline() {
 		return task.getDeadline();
-	}
-	
-	public void setDeadline(Date deadline) {
-		task.setDeadline(deadline);
 	}
 
 	public ArrayList<File> getAttachmentList() {
