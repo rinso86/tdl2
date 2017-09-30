@@ -3,9 +3,7 @@ package tdl.view.tree.popup;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import javax.swing.JTree;
 import javax.swing.SwingUtilities;
-import javax.swing.tree.TreePath;
 
 
 public class TreePopupListener implements MouseListener {

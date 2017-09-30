@@ -6,12 +6,12 @@ import java.awt.event.MouseListener;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import tdl.model.Task;
 import tdl.view.upcoming.UpcomingView;
 
 @SuppressWarnings("serial")
 public class UpcomingPopup extends JPopupMenu {
 	
+	@SuppressWarnings("unused")
 	private UpcomingView view;
 	private JMenuItem focusOnSubtaskItem;
 	

@@ -6,7 +6,6 @@ import java.util.Date;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import tdl.model.MutableTask;
 import tdl.model.Task;
 
 @SuppressWarnings("serial")

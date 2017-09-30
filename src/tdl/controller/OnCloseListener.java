@@ -3,6 +3,9 @@ package tdl.controller;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import tdl.messages.Message;
+import tdl.messages.MessageType;
+
 public class OnCloseListener extends WindowAdapter {
 	
 	private Controller controller;
@@ -13,7 +16,8 @@ public class OnCloseListener extends WindowAdapter {
 	
 	@Override
 	public void windowClosing(WindowEvent e) {
-		controller.saveModelToFile();
+		Message m = new Message(MessageType.PREPARE_WINDOW_CLOSING);
+		controller.receiveMessage(m);
 		super.windowClosing(e);
 	}
 }

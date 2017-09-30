@@ -6,12 +6,13 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseEvent;
-import java.util.UUID;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -23,7 +24,6 @@ import tdl.messages.Recipient;
 import tdl.model.Task;
 import tdl.view.tree.popup.TreePopup;
 import tdl.view.tree.popup.TreePopupListener;
-import tdl2.controller.treecontroller.TaskNode;
 
 public class TreeView implements Recipient {
 	
@@ -46,6 +46,7 @@ public class TreeView implements Recipient {
 		jtree.setEditable(true);
 		jtree.setCellRenderer(new TaskNodeRenderer());
 		jtree.setSelectionPath(new TreePath(baseTaskNode));
+		jtree.addTreeSelectionListener(new FocusChangeListener() );
 		
 		TreePopup tp = new TreePopup(this);
 		jtree.addMouseListener(new TreePopupListener(tp));
@@ -79,8 +80,6 @@ public class TreeView implements Recipient {
 	}
 	
 	
-	
-	
 	//-------------------------------------------------------------//
 	//-------- Methods for handling messages  ---------------------//
 	//-------------------------------------------------------------//
@@ -94,10 +93,10 @@ public class TreeView implements Recipient {
 			setCurrentTask( (Task) message.getHeaders().get("task"));
 			break;
 		case ADDED_SUBTASK:
-			Task task = (Task) message.getHeaders().get("task");
-			Task parent = task.getParent();
+			Task child = (Task) message.getHeaders().get("child");
+			Task parent = (Task) message.getHeaders().get("parent");
 			TaskNode parentNode = getNodeForTask(parent);
-			TaskNode childNode = new TaskNode( task );
+			TaskNode childNode = new TaskNode(child);
 			addChild(parentNode, childNode);
 			refresh();
 			break;
@@ -178,6 +177,20 @@ public class TreeView implements Recipient {
 	//-------- Methods for handling popup events ------------------//
 	//-------------------------------------------------------------//
 	
+	
+	
+	private class FocusChangeListener implements TreeSelectionListener {
+		@Override
+		public void valueChanged(TreeSelectionEvent e) {
+			TreePath newPath = e.getPath();
+			if(newPath != null) {
+				TaskNode newNode = (TaskNode) newPath.getLastPathComponent();
+				Message m = new Message(MessageType.NEW_TASK_ACTIVE_REQUEST);
+				m.addHeader("task", newNode.getTask());
+				controller.receiveMessage(m);
+			}
+		}
+	}
 	
 	
 	public void onPopupAddSubtaskRequested(MouseEvent e) {

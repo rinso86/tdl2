@@ -3,7 +3,6 @@ package tdl.view.details.attachments;
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.swing.AbstractListModel;
 import javax.swing.DefaultListModel;
 
 

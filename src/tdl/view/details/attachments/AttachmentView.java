@@ -76,6 +76,7 @@ public class AttachmentView implements Recipient {
 	
 	@Override
 	public void receiveMessage(Message message) {
+		System.out.println("Attachment view now receiving message " + message.getMessageType());
 		switch(message.getMessageType()) {
 		case UPDATED_TASK:
 			Task currentTask = (Task) message.getHeaders().get("task");
@@ -84,6 +85,11 @@ public class AttachmentView implements Recipient {
 		case NEW_TASK_ACTIVE:
 			Task newCurrentTask = (Task) message.getHeaders().get("task");
 			setAttachmentList(newCurrentTask.getAttachmentsInclParents());
+			break;
+		case DELETED_FILE:
+			refresh();
+			break;
+		default:
 			break;
 		}
 	}

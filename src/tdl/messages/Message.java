@@ -1,6 +1,5 @@
 package tdl.messages;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Message {
@@ -10,6 +9,7 @@ public class Message {
 	
 	public Message(MessageType messageType) {
 		this.messageType = messageType;
+		this.headers = new HashMap<String, Object>();
 	}
 	
 	public HashMap<String,Object> getHeaders() {

@@ -21,4 +21,6 @@ public enum MessageType {
 	
 	DELETE_FILE_REQUEST, 
 	DELETED_FILE, 
+	
+	PREPARE_WINDOW_CLOSING, 
 }

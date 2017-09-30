@@ -3,6 +3,7 @@ package tdl.view.upcoming;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 
 import javax.swing.AbstractListModel;
 
@@ -30,7 +31,12 @@ public class TaskListModel extends AbstractListModel<Task> {
 		tasksList.sort(new Comparator<Task>() {
 			@Override
 			public int compare(Task t1, Task t2) {
-				return t1.getDeadline().compareTo(t2.getDeadline());
+				Date deadline1 = t1.getDeadline();
+				Date deadline2 = t2.getDeadline();
+				if(deadline1 != null && deadline2 == null) return 1;
+				if(deadline1 == null && deadline2 != null) return -1;
+				if(deadline1 == null && deadline2 == null) return 0;
+				else return t1.getDeadline().compareTo(t2.getDeadline());
 			}
 		});
 		return tasksList;

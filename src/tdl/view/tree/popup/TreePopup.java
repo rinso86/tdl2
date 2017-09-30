@@ -6,13 +6,13 @@ import java.awt.event.MouseListener;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import tdl.controller.Controller;
 import tdl.view.tree.TreeView;
 
 
 @SuppressWarnings("serial")
 public class TreePopup extends JPopupMenu {
 
+	@SuppressWarnings("unused")
 	private TreeView treeView; 
 	private JMenuItem addSubtaskItem;
 	private JMenuItem completeTaskItem;

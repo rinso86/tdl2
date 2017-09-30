@@ -4,26 +4,19 @@ package tdl.view.details;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Properties;
 
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
 import tdl.controller.Controller;
 import tdl.messages.Message;
 import tdl.messages.Recipient;
 import tdl.model.Task;
-import tdl.utils.FileDrop;
-import tdl.utils.FileDrop.Listener;
 import tdl.view.details.attachments.AttachmentView;
 
 import org.jdesktop.swingx.JXDatePicker;
@@ -118,6 +111,9 @@ public class DetailView implements Recipient {
 		case DELETE_FILE_REQUEST:
 			controller.receiveMessage(message);
 			break;
+		case DELETED_FILE:
+			attachmentView.receiveMessage(message);
+			break;
 		default:
 			break;
 		}
@@ -135,6 +131,10 @@ public class DetailView implements Recipient {
 
 	private void setDescription(String description) {
 		descrTextfield.setText(description);
+	}
+
+	public String getDescription() {
+		return descrTextfield.getText();
 	}
 
 }

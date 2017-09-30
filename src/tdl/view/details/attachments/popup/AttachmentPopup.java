@@ -14,6 +14,7 @@ import tdl.view.details.attachments.AttachmentView;
 public class AttachmentPopup extends JPopupMenu {
 
 	
+	@SuppressWarnings("unused")
 	private AttachmentView view;
 	private JMenuItem openFileItem;
 	private JMenuItem deleteFileItem;

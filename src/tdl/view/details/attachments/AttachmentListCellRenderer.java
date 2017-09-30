@@ -8,14 +8,13 @@ import java.util.ArrayList;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.ListCellRenderer;
 
 import tdl.model.Task;
 
 
 public class AttachmentListCellRenderer extends DefaultListCellRenderer{
 
-
+	private static final long serialVersionUID = 1L;
 	private AttachmentView view;
 
 	public AttachmentListCellRenderer(AttachmentView view) {
