@@ -1,38 +1,32 @@
 package tdl.view.details.attachments.popup;
 
-import java.awt.Desktop;
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.IOException;
 
-import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+
+import tdl.view.details.attachments.AttachmentView;
 
 
 @SuppressWarnings("serial")
 public class AttachmentPopup extends JPopupMenu {
 
-	private JList<File> list;
-	private Controller controller;
+	
+	private AttachmentView view;
 	private JMenuItem openFileItem;
 	private JMenuItem deleteFileItem;
 
-	public AttachmentPopup(Controller c, JList<File> attachmentList) {
-		this.controller = c;
-		this.list = attachmentList;
+	
+	public AttachmentPopup(AttachmentView view) {
+		this.view = view;
 		
 		openFileItem = new JMenuItem("Open");
 		openFileItem.addMouseListener(new MouseListener() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				File current = (File) list.getSelectedValue();
-				try {
-					Desktop.getDesktop().open(current);
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+				view.onPopupOpenFileRequested(e);
 			}
 			@Override
 			public void mouseReleased(MouseEvent e) {}
@@ -49,10 +43,7 @@ public class AttachmentPopup extends JPopupMenu {
 		deleteFileItem.addMouseListener(new MouseListener() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				File current = (File) list.getSelectedValue();
-				controller.deleteFileFromCurrentNode(current);
-				AttachmentListModel alm = (AttachmentListModel) list.getModel();
-				alm.refresh();
+				view.onPopupDeleteFileRequested(e);
 			}
 			@Override
 			public void mouseReleased(MouseEvent e) {}

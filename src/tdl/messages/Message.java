@@ -1,21 +1,20 @@
 package tdl.messages;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Message {
 
-	private Event event;
-	private ArrayList<Recipient> recipients;
+	private HashMap<String,Object> headers;
 	
-	public Message() {
-		
+	public Message() {}
+	
+	public HashMap<String,Object> getHeaders() {
+		return headers;
 	}
 	
-	public ArrayList<Recipient> getRecipients() {
-		return recipients;
+	public void addHeader(String key,  Object val) {
+		headers.put(key, val);
 	}
 	
-	public void addRecipient (Recipient recipient) {
-		
-	}
 }

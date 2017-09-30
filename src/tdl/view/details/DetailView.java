@@ -1,7 +1,6 @@
 package tdl.view.details;
 
 
-
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -28,6 +27,7 @@ import tdl.utils.FileDrop.Listener;
 import tdl.view.details.attachments.AttachmentView;
 
 import org.jdesktop.swingx.JXDatePicker;
+
 
 public class DetailView implements Recipient {
 
@@ -91,14 +91,15 @@ public class DetailView implements Recipient {
 		return jp;
 	}
 	
+
+	public Task getCurrentTask() {
+		return controller.getCurrentTask();
+	}
+	
 	@Override
 	public void receiveMessage(Message message) {
 		// TODO Auto-generated method stub
 		
-	}
-
-	private void setAttachmentList(ArrayList<File> attachments) {
-		attachmentView.setAttachmentList(attachments);
 	}
 
 	private void setCurrentTask(Task currentTask) {
@@ -107,5 +108,18 @@ public class DetailView implements Recipient {
 		setAttachmentList(currentTask.getAttachmentsInclParents());
 	}
 
+	private void setDeadline(Date deadline) {
+		deadlinePicker.setDate(deadline);
+	}
+
+
+	private void setDescription(String description) {
+		descrTextfield.setText(description);
+	}
+	
+	
+	private void setAttachmentList(ArrayList<File> attachments) {
+		attachmentView.setAttachmentList(attachments);
+	}
 
 }

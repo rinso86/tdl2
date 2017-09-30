@@ -2,6 +2,8 @@ package tdl.controller;
 
 import java.io.IOException;
 
+import javax.swing.JFrame;
+
 import tdl.model.MutableTask;
 import tdl.model.Task;
 import tdl.utils.ResourceManager;
@@ -56,16 +58,16 @@ public class Controller implements Recipient{
 	}
 
 	public void run() {
-		// TODO Auto-generated method stub
-		
+		JFrame f = overalView.getJFrame();
+		f.setVisible(true);
 	}
-
-	public void saveModelToFile() {
-		try {
-			savior.saveTree(baseTask, SAVEFILE);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	
+	public Task getBaseTask() {
+		return (Task) baseTask;
+	}
+	
+	public Task getCurrentTask() {
+		return (Task) currentTask;
 	}
 
 	@Override
@@ -73,8 +75,12 @@ public class Controller implements Recipient{
 		// TODO Auto-generated method stub
 		
 	}
-
-	public Task getBaseTask() {
-		return (Task) baseTask;
+	
+	public void saveModelToFile() {
+		try {
+			savior.saveTree(baseTask, SAVEFILE);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -1,10 +1,9 @@
 package tdl.view.details.attachments.popup;
 
+import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 
-import javax.swing.JList;
 import javax.swing.SwingUtilities;
 
 
@@ -12,18 +11,15 @@ import javax.swing.SwingUtilities;
 public class AttachmentPopupListener implements MouseListener {
 
 	private AttachmentPopup popup;
-	private JList<File> list;
 	
-	public AttachmentPopupListener(AttachmentPopup ap, JList<File> attachmentList) {
-		this.popup = ap;
-		this.list = attachmentList;
+	public AttachmentPopupListener(AttachmentPopup ap) {
+		popup = ap;
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(SwingUtilities.isRightMouseButton(e)) {
-			list.setSelectedIndex(list.locationToIndex(e.getPoint()));
-			File selectedFile = (File) list.getSelectedValue();
+			Component list = e.getComponent();
 			popup.show(list, e.getX(), e.getY());
 		}
 	}
