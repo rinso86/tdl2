@@ -52,7 +52,7 @@ public class UpcomingView implements Recipient {
 		jlist.setCellRenderer(new TaskListRenderer());
 		
 		UpcomingPopup up = new UpcomingPopup(this);
-		jlist.addMouseListener(new UpcomingPopupListener(up));
+		jlist.addMouseListener(new UpcomingPopupListener(up, this));
 		
 		listscrollpane = new JScrollPane(jlist);
 		listscrollpane.setPreferredSize(new Dimension(400, 400));
@@ -99,12 +99,15 @@ public class UpcomingView implements Recipient {
 		model.refreshView();
 	}
 
-	public void onPopupSetActiveRequested(MouseEvent e) {
-		Task selectedTask = jlist.getModel().getElementAt(jlist.locationToIndex(e.getPoint()));
+	public void onPopupSetActiveRequested(Task clickedTask) {
 		Message m = new Message(MessageType.NEW_TASK_ACTIVE_REQUEST);
-		m.addHeader("task", selectedTask);
-		System.out.println("UpcomingView now messaging " + m.getMessageType() + " for task "+ selectedTask.getTitle());
+		m.addHeader("task", clickedTask);
+		System.out.println("UpcomingView now messaging " + m.getMessageType() + " for task "+ clickedTask.getTitle());
 		controller.receiveMessage(m);
+	}
+
+	public Task getTaskForEvent(MouseEvent e) {
+		return jlist.getModel().getElementAt(jlist.locationToIndex(e.getPoint()));
 	}
 
 }

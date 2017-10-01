@@ -3,6 +3,7 @@ package tdl.view.details.attachments.popup;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -18,6 +19,7 @@ public class AttachmentPopup extends JPopupMenu {
 	private AttachmentView view;
 	private JMenuItem openFileItem;
 	private JMenuItem deleteFileItem;
+	private File clickedFile;
 
 	
 	public AttachmentPopup(AttachmentView view) {
@@ -27,7 +29,7 @@ public class AttachmentPopup extends JPopupMenu {
 		openFileItem.addMouseListener(new MouseListener() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				view.onPopupOpenFileRequested(e);
+				view.onPopupOpenFileRequested(clickedFile);
 			}
 			@Override
 			public void mouseReleased(MouseEvent e) {}
@@ -44,7 +46,7 @@ public class AttachmentPopup extends JPopupMenu {
 		deleteFileItem.addMouseListener(new MouseListener() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				view.onPopupDeleteFileRequested(e);
+				view.onPopupDeleteFileRequested(clickedFile);
 			}
 			@Override
 			public void mouseReleased(MouseEvent e) {}
@@ -56,6 +58,11 @@ public class AttachmentPopup extends JPopupMenu {
 			public void mouseClicked(MouseEvent e) {}
 		});
 		add(deleteFileItem);
+	}
+
+
+	public void setClickedFile(File file) {
+		this.clickedFile = file;
 	}
 
 }

@@ -6,6 +6,7 @@ import java.awt.event.MouseListener;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import tdl.model.Task;
 import tdl.view.upcoming.UpcomingView;
 
 @SuppressWarnings("serial")
@@ -14,6 +15,7 @@ public class UpcomingPopup extends JPopupMenu {
 	@SuppressWarnings("unused")
 	private UpcomingView view;
 	private JMenuItem focusOnSubtaskItem;
+	private Task clickedTask;
 	
 	public UpcomingPopup(UpcomingView view) {
 		this.view = view;
@@ -22,7 +24,7 @@ public class UpcomingPopup extends JPopupMenu {
 		focusOnSubtaskItem.addMouseListener(new MouseListener() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				view.onPopupSetActiveRequested(e);
+				view.onPopupSetActiveRequested(clickedTask);
 			}
 			@Override
 			public void mouseReleased(MouseEvent e) {}
@@ -35,5 +37,9 @@ public class UpcomingPopup extends JPopupMenu {
 		});
 		add(focusOnSubtaskItem);
 		
+	}
+
+	public void setClickedTask(Task t) {
+		this.clickedTask = t;
 	}
 }

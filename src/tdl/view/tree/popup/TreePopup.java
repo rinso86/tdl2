@@ -6,6 +6,7 @@ import java.awt.event.MouseListener;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import tdl.view.tree.TaskNode;
 import tdl.view.tree.TreeView;
 
 
@@ -18,6 +19,7 @@ public class TreePopup extends JPopupMenu {
 	private JMenuItem completeTaskItem;
 	private JMenuItem reactivateTaskItem;
 	private JMenuItem deleteTaskItem;
+	private TaskNode clickedNode;
 	
 	public TreePopup(TreeView treeView) {
 		this.treeView = treeView;
@@ -26,7 +28,7 @@ public class TreePopup extends JPopupMenu {
 		addSubtaskItem.addMouseListener(new MouseListener() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				treeView.onPopupAddSubtaskRequested(e);
+				treeView.onPopupAddSubtaskRequested(clickedNode);
 			}
 			@Override
 			public void mouseReleased(MouseEvent e) {}
@@ -43,7 +45,7 @@ public class TreePopup extends JPopupMenu {
 		completeTaskItem.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				treeView.onPopupTaskCompleteRequested(e);
+				treeView.onPopupTaskCompleteRequested(clickedNode);
 			}
 			@Override
 			public void mouseClicked(MouseEvent arg0) {}
@@ -60,7 +62,7 @@ public class TreePopup extends JPopupMenu {
 		reactivateTaskItem.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				treeView.onPopupReactivateTaskRequested(e);
+				treeView.onPopupReactivateTaskRequested(clickedNode);
 			}
 			@Override
 			public void mouseClicked(MouseEvent arg0) {}
@@ -77,7 +79,7 @@ public class TreePopup extends JPopupMenu {
 		deleteTaskItem.addMouseListener(new MouseListener() {
 			@Override
 			public void mousePressed (MouseEvent e) {
-				treeView.onPopupDeleteTaskRequested(e);
+				treeView.onPopupDeleteTaskRequested(clickedNode);
 			}
 			@Override
 			public void mouseReleased(MouseEvent e) {}
@@ -89,6 +91,10 @@ public class TreePopup extends JPopupMenu {
 			public void mouseEntered(MouseEvent e) {}
 		});
 		add(deleteTaskItem);
+	}
+
+	public void setClickedNode(TaskNode tn) {
+		this.clickedNode = tn;
 	}
 
 }

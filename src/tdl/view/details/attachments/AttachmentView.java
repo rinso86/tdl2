@@ -41,7 +41,7 @@ public class AttachmentView implements Recipient {
 		attchscrollpane.setPreferredSize(new Dimension(300, 400));
 		
 		ap = new AttachmentPopup(this);
-		attachmentList.addMouseListener(new AttachmentPopupListener(ap));
+		attachmentList.addMouseListener(new AttachmentPopupListener(ap, this));
 		
 		fileDrop = new FileDrop (attachmentList, new MyFileDropListener());
 
@@ -116,21 +116,25 @@ public class AttachmentView implements Recipient {
 	//-------------------------------------------------------------//
 	
 	
-	public void onPopupOpenFileRequested(MouseEvent e) {
-		File fileToOpen = attachmentList.getModel().getElementAt(attachmentList.locationToIndex(e.getPoint()));
+	public void onPopupOpenFileRequested(File clickedFile) {
 		try {
-			Desktop.getDesktop().open(fileToOpen);
+			Desktop.getDesktop().open(clickedFile);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 	}
 
-	public void onPopupDeleteFileRequested(MouseEvent e) {
-		File file = attachmentList.getModel().getElementAt(attachmentList.locationToIndex(e.getPoint()));
+	public void onPopupDeleteFileRequested(File clickedFile) {
 		Message m = new Message(MessageType.DELETE_FILE_REQUEST);
-		m.addHeader("file", file);
+		m.addHeader("file", clickedFile);
 		m.addHeader("task", view.getCurrentTask());
 		view.receiveMessage(m);
+	}
+
+
+	public File getFileForEvent(MouseEvent e) {
+		return attachmentList.getModel().getElementAt(attachmentList.locationToIndex(e.getPoint()));
+		
 	}
 
 

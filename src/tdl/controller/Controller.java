@@ -129,16 +129,20 @@ public class Controller implements Recipient{
 	}
 
 	private void deleteTask(Message message) {
+		Message response1 = new Message(MessageType.PREPARE_DELETING_TASK);
+		response1.addHeader("task", message.getHeaders().get("task"));
+		broadcast(response1);
+		
 		MutableTask task = fetchMutableTask((Task) message.getHeaders().get("task"));
 		UUID id = task.getId();
 		String title = task.getTitle();
 		MutableTask parent = task.getParent();
 		parent.deleteChild(task);
 		
-		Message response = new Message(MessageType.DELETED_TASK);
-		response.addHeader("taskId", id);
+		Message response2 = new Message(MessageType.DELETED_TASK);
+		response2.addHeader("taskId", id);
 		System.out.println("Controller deleted task " + title);
-		broadcast(response);
+		broadcast(response2);
 	}
 
 	private void completeTask(Message message) {

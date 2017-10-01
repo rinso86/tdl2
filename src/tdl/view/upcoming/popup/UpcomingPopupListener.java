@@ -5,18 +5,25 @@ import java.awt.event.MouseListener;
 
 import javax.swing.SwingUtilities;
 
+import tdl.model.Task;
+import tdl.view.upcoming.UpcomingView;
+
 
 public class UpcomingPopupListener implements MouseListener {
 	
-	UpcomingPopup up;
+	private UpcomingPopup up;
+	private UpcomingView uv;
 
-	public UpcomingPopupListener(UpcomingPopup up) {
+	public UpcomingPopupListener(UpcomingPopup up, UpcomingView uv) {
 		this.up = up;
+		this.uv = uv;
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(SwingUtilities.isRightMouseButton(e)) {
+			Task t = uv.getTaskForEvent(e);
+			up.setClickedTask(t);
 			up.show(e.getComponent(), e.getX(), e.getY());
 		}
 	}
