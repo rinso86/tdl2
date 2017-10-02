@@ -5,18 +5,25 @@ package tdl.view.tree;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Point;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.DropMode;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.TransferHandler;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -47,8 +54,11 @@ public class TreeView implements Recipient {
 		this.jtree = new JTree(baseTaskNode);
 		jtree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		jtree.setEditable(true);
+		jtree.setDragEnabled(true);
+		jtree.setDropMode(DropMode.USE_SELECTION);
 		jtree.setCellRenderer(new TaskNodeRenderer());
 		jtree.setSelectionPath(new TreePath(baseTaskNode));
+		jtree.setDropTarget(new DropTarget(jtree, TransferHandler.MOVE, new MyDropTargetAdapter()));
 		
 		// Listeners
 		jtree.addTreeSelectionListener(new FocusChangeListener() );
@@ -251,6 +261,39 @@ public class TreeView implements Recipient {
 		public void mouseExited(MouseEvent e) {}
 		@Override
 		public void mouseReleased(MouseEvent e) {}
+	}
+	
+	
+	private class MyDropTargetAdapter extends DropTargetAdapter {
+		@Override
+		public void drop(DropTargetDropEvent evt) {
+			
+			Point dropLocation = evt.getLocation();
+			
+			TreePath selectionPath = jtree.getSelectionPath();
+            TreePath sourcePath = selectionPath.getParentPath();
+            TreePath targetPath = jtree.getClosestPathForLocation(dropLocation.x, dropLocation.y);
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
+            
+            if (isDropAllowed(sourcePath, targetPath, selectedNode)) {
+            	DefaultMutableTreeNode targetParentNode = (DefaultMutableTreeNode) targetPath.getLastPathComponent();
+                DefaultMutableTreeNode sourceParentNode = (DefaultMutableTreeNode) sourcePath.getLastPathComponent();
+                
+                sourceParentNode.remove(selectedNode);
+                targetParentNode.add(selectedNode);
+                
+                evt.dropComplete(true);
+                jtree.updateUI();
+            } else {
+            	System.out.println("drop: reject");
+                evt.rejectDrop();
+                evt.dropComplete(false);
+            }
+		}
+
+		private boolean isDropAllowed(TreePath sourcePath, TreePath targetPath, DefaultMutableTreeNode selectedNode) {
+			return true;
+		}
 	}
 	
 	
