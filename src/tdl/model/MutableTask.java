@@ -139,11 +139,24 @@ public class MutableTask implements Serializable, Task {
 	}
 	
 	public String printTree() {
-		String treeString = this.getTitle() + "\n";
-		for(Task childTask : this.getChildren()) {
-			treeString += this.getTitle() +" --> " + childTask.printTree();
+		ArrayList<String> list = printTreeList();
+		String string = String.join("\n", list);
+		return string;
+	}
+	
+	public ArrayList<String> printTreeList() {
+		ArrayList<String> list = new ArrayList<String>();
+		
+		list.add(this.getTitle());
+		
+		for(MutableTask child : this.getMutableChildren()) {
+			ArrayList<String> sublist = child.printTreeList();
+			for(String s : sublist) {
+				list.add("    " + s);
+			}
 		}
-		return treeString;
+		
+		return list;
 	}
 	
 	@Override

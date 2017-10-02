@@ -102,9 +102,23 @@ public class Controller implements Recipient{
 		case PREPARE_WINDOW_CLOSING:
 			prepareWindowClosing(message);
 			break;
+		case TASK_CHANGE_TITLE_REQUEST:
+			changeTitle(message);
+			break;
 		default:
 			break;
 		}
+	}
+
+	private void changeTitle(Message message) {
+		Task t = (Task) message.getHeaders().get("task");
+		MutableTask mt = fetchMutableTask(t); 
+		String title = (String) message.getHeaders().get("title");
+		mt.setTitle(title);
+		
+		Message response = new Message(MessageType.UPDATED_TASK);
+		response.addHeader("task", (Task) mt);
+		broadcast(response);
 	}
 
 	private void deleteFile(Message message) {
@@ -129,15 +143,26 @@ public class Controller implements Recipient{
 	}
 
 	private void deleteTask(Message message) {
+		
+		MutableTask taskToDelete = (MutableTask) message.getHeaders().get("task");
+		MutableTask parent = fetchMutableTask(taskToDelete.getParent());
+		Message internalMessage = new Message(MessageType.NEW_TASK_ACTIVE_REQUEST);
+		internalMessage.addHeader("task", (Task) parent);
+		changeCurrentTask(internalMessage);
+		
+		System.out.println("Tree before delete");
+		System.out.println(baseTask.printTree());
+
 		Message response1 = new Message(MessageType.PREPARE_DELETING_TASK);
-		response1.addHeader("task", message.getHeaders().get("task"));
+		response1.addHeader("task", (Task) taskToDelete);
 		broadcast(response1);
 		
-		MutableTask task = fetchMutableTask((Task) message.getHeaders().get("task"));
-		UUID id = task.getId();
-		String title = task.getTitle();
-		MutableTask parent = task.getParent();
-		parent.deleteChild(task);
+		UUID id = taskToDelete.getId();
+		String title = taskToDelete.getTitle();
+		parent.deleteChild(taskToDelete);
+		
+		System.out.println("Tree after delete");
+		System.out.println(baseTask.printTree());
 		
 		Message response2 = new Message(MessageType.DELETED_TASK);
 		response2.addHeader("taskId", id);
@@ -188,6 +213,7 @@ public class Controller implements Recipient{
 		MutableTask mt = fetchMutableTask(t);
 		mt.addAttachment(f);
 		Message response = new Message(MessageType.UPDATED_TASK);
+		response.addHeader("task", t);
 		System.out.println("Controller added file " +f.getName() +" to task " +t.getTitle());
 		broadcast(response);
 	}

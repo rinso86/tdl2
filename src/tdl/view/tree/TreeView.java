@@ -6,11 +6,15 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
@@ -22,8 +26,6 @@ import tdl.messages.Message;
 import tdl.messages.MessageType;
 import tdl.messages.Recipient;
 import tdl.model.Task;
-import tdl.view.tree.popup.TreePopup;
-import tdl.view.tree.popup.TreePopupListener;
 
 public class TreeView implements Recipient {
 	
@@ -41,15 +43,20 @@ public class TreeView implements Recipient {
 		this.baseTaskNode = new TaskNode(controller.getBaseTask());
 		this.treeLabel = new JLabel("TaskTree");
 		
+		// JTree basic setup
 		this.jtree = new JTree(baseTaskNode);
 		jtree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		jtree.setEditable(true);
 		jtree.setCellRenderer(new TaskNodeRenderer());
 		jtree.setSelectionPath(new TreePath(baseTaskNode));
-		jtree.addTreeSelectionListener(new FocusChangeListener() );
 		
+		// Listeners
+		jtree.addTreeSelectionListener(new FocusChangeListener() );
+		jtree.getModel().addTreeModelListener( new NodeEditListener() );
 		TreePopup tp = new TreePopup(this);
 		jtree.addMouseListener(new TreePopupListener(tp, this));
+		
+		// Layout
 		treescrollpane = new JScrollPane(jtree);
 		treescrollpane.setPreferredSize(new Dimension(300, 400));
 		
@@ -110,6 +117,7 @@ public class TreeView implements Recipient {
 			break;
 		case DELETED_TASK:
 			refresh();
+			break;
 		case DELETED_FILE:
 			break;
 		default:
@@ -145,7 +153,7 @@ public class TreeView implements Recipient {
 //		Task currentTask = controller.getCurrentTask();
 //		TaskNode baseTaskNode = new TaskNode(baseTask);
 //		TaskNode currentTaskNode = baseTaskNode.search(currentTask);
-//		
+		
 		DefaultTreeModel model = (DefaultTreeModel) jtree.getModel();
 		model.reload();
 //		jtree.setSelectionPath(new TreePath(currentTaskNode));
@@ -180,15 +188,27 @@ public class TreeView implements Recipient {
 	
 	private void removeNode(TaskNode node) {
 		DefaultTreeModel dtm = (DefaultTreeModel) jtree.getModel();
-		dtm.removeNodeFromParent(node); 
+		dtm.removeNodeFromParent(node);
 	}
 
 	
-	
-	//-------------------------------------------------------------//
-	//-------- Methods for handling popup events ------------------//
-	//-------------------------------------------------------------//
-	
+	private class NodeEditListener implements TreeModelListener {
+		@Override
+		public void treeNodesChanged(TreeModelEvent e) {
+			TaskNode parent = (TaskNode) (e.getTreePath().getLastPathComponent());
+			TaskNode editedNode = getCurrentNode(); // is there no better way to get the just edited node?!
+			Message m = new Message(MessageType.TASK_CHANGE_TITLE_REQUEST);
+			m.addHeader("task", editedNode.getTask());
+			m.addHeader("title", editedNode.getUserObject());
+			controller.receiveMessage(m);
+		}
+		@Override
+		public void treeNodesInserted(TreeModelEvent e) {}
+		@Override
+		public void treeNodesRemoved(TreeModelEvent e) {}
+		@Override
+		public void treeStructureChanged(TreeModelEvent e) {}
+	}
 	
 	
 	private class FocusChangeListener implements TreeSelectionListener {
@@ -204,6 +224,39 @@ public class TreeView implements Recipient {
 		}
 	}
 	
+	private class TreePopupListener implements MouseListener {
+		
+		TreePopup tp;
+		private TreeView tv;
+
+		public TreePopupListener(TreePopup tp, TreeView tv) {
+			this.tp = tp;
+			this.tv = tv;
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if(SwingUtilities.isRightMouseButton(e)) {
+				TaskNode tn = tv.getNodeForEvent(e);
+				tp.setClickedNode(tn);
+				tp.show(e.getComponent(), e.getX(), e.getY());
+			}
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {}
+		@Override
+		public void mouseEntered(MouseEvent e) {}
+		@Override
+		public void mouseExited(MouseEvent e) {}
+		@Override
+		public void mouseReleased(MouseEvent e) {}
+	}
+	
+	
+	//-------------------------------------------------------------//
+	//-------- Methods for handling popup events ------------------//
+	//-------------------------------------------------------------//
 	
 	public void onPopupAddSubtaskRequested(TaskNode clickedNode) {
 		Message m = new Message(MessageType.ADD_SUBTASK_REQUEST);

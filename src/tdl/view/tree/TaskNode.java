@@ -10,7 +10,7 @@ import tdl.model.Task;
 
 @SuppressWarnings("serial")
 public class TaskNode extends DefaultMutableTreeNode {
-
+	
 	private Task task;
 
 	public TaskNode(Task task) {

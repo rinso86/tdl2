@@ -1,13 +1,10 @@
-package tdl.view.tree.popup;
+package tdl.view.tree;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-
-import tdl.view.tree.TaskNode;
-import tdl.view.tree.TreeView;
 
 
 @SuppressWarnings("serial")

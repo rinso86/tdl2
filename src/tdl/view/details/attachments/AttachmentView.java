@@ -54,6 +54,7 @@ public class AttachmentView implements Recipient {
 			for(File file : files) {
 				Message m = new Message(MessageType.FILE_DROPPED_IN);
 				m.addHeader("file", file);
+				m.addHeader("task", view.getCurrentTask());
 				view.receiveMessage(m);
 			}
 		}
