@@ -83,7 +83,8 @@ public class Controller implements Recipient{
 	}
 	
 	public int estimateTimeToComplete(Task t) {
-		return analyst.estimateTimeToComplete(t);
+		double estimate = analyst.estimateTimeToComplete(t);
+		return (int)estimate;
 	}
 
 	@Override
