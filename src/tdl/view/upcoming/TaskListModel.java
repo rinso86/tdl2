@@ -23,10 +23,23 @@ public class TaskListModel extends AbstractListModel<Task> {
 	private Task[] getDateSortedTasks(Task baseTask) {
 		ArrayList<Task> tasksList = treeToArray(baseTask);
 		ArrayList<Task> tasksSorted = sort(tasksList);
-		Task[] tasksSortedArray = tasksSorted.toArray(new Task[tasksSorted.size()]);
+		ArrayList<Task> tasksSortedFiltered = filter(tasksSorted);
+		Task[] tasksSortedArray = tasksSortedFiltered.toArray(new Task[tasksSortedFiltered.size()]);
 		return tasksSortedArray;
 	}
 	
+
+
+	private ArrayList<Task> filter(ArrayList<Task> tasksSorted) {
+		ArrayList<Task> filtered = new ArrayList<Task>();
+		for(Task t : tasksSorted) {
+			if((!t.isCompleted()) && (t.getDeadline() != null) ) {
+				filtered.add(t);
+			}
+		}
+		return filtered;
+	}
+
 	private ArrayList<Task> sort(ArrayList<Task> tasksList) {
 		tasksList.sort(new Comparator<Task>() {
 			@Override
