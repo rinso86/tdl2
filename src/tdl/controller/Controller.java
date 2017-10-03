@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 
 import tdl.model.MutableTask;
 import tdl.model.Task;
+import tdl.utils.Analysis;
 import tdl.utils.ResourceManager;
 import tdl.utils.Savior;
 import tdl.messages.Message;
@@ -30,11 +31,13 @@ public class Controller implements Recipient{
 	// Model
 	private MutableTask baseTask;
 	private MutableTask currentTask;
+	private Date currentTaskActiveSince;
 	
 	// Utils
 	@SuppressWarnings("unused")
 	private ResourceManager resourceManager;
 	private Savior savior;
+	private Analysis analyst;
 	
 	// Views
 	private TreeView treeView;
@@ -42,6 +45,8 @@ public class Controller implements Recipient{
 	private DetailView detailView;
 	public WiseCrackerView wiseCrackView;
 	private OveralView overalView;
+
+
 	
 	
 	public Controller() throws ClassNotFoundException, IOException {
@@ -51,6 +56,9 @@ public class Controller implements Recipient{
 		savior = new Savior();
 		baseTask = savior.loadTree(SAVEFILE);
 		currentTask = baseTask;
+		analyst = new Analysis();
+		analyst.calculateModelParameters(baseTask);
+		currentTaskActiveSince = new Date();
 		
 		// Views
 		treeView = new TreeView(this);
@@ -72,6 +80,10 @@ public class Controller implements Recipient{
 	
 	public Task getCurrentTask() {
 		return (Task) currentTask;
+	}
+	
+	public int estimateTimeToComplete(Task t) {
+		return analyst.estimateTimeToComplete(t);
 	}
 
 	@Override
@@ -105,9 +117,34 @@ public class Controller implements Recipient{
 		case TASK_CHANGE_TITLE_REQUEST:
 			changeTitle(message);
 			break;
+		case MOVE_TASK_REQUEST:
+			moveTask(message);
+			break;
 		default:
 			break;
 		}
+	}
+
+	private void moveTask(Message message) {
+		Task task = (Task) message.getHeaders().get("task");
+		Task oldParent = (Task) message.getHeaders().get("fromParent");
+		Task newParent = (Task) message.getHeaders().get("toParent");
+		
+		MutableTask mtask = fetchMutableTask(task);
+		MutableTask moldParent = fetchMutableTask(oldParent);
+		MutableTask mnewParent = fetchMutableTask(newParent);
+		
+		System.out.println("Controller now moving " + task.getTitle() + " from " + oldParent.getTitle() + " to " + newParent.getTitle());
+		moldParent.deleteChild(mtask);
+		mnewParent.addChild(mtask);
+
+		analyst.calculateModelParameters(baseTask);
+		
+		Message response = new Message(MessageType.MOVED_TASK);
+		response.addHeader("task", (Task) mtask);
+		response.addHeader("fromParent", (Task) moldParent);
+		response.addHeader("toParent", (Task) mnewParent);
+		broadcast(response);
 	}
 
 	private void changeTitle(Message message) {
@@ -172,7 +209,13 @@ public class Controller implements Recipient{
 
 	private void completeTask(Message message) {
 		MutableTask task = fetchMutableTask((Task) message.getHeaders().get("task"));
+		Date currentTime = new Date();
+		int currentTaskActivePeriod = (int) Math.floor((currentTime.getTime() - currentTaskActiveSince.getTime())/1000);
+		task.incrementSecondsActive(currentTaskActivePeriod);
 		task.setCompleted(new Date());
+		
+		analyst.calculateModelParameters(baseTask);
+		
 		Message response = new Message(MessageType.COMPLETED_TASK);
 		response.addHeader("task", (Task) task);
 		System.out.println("Controller completed task " +task.getTitle());
@@ -193,8 +236,14 @@ public class Controller implements Recipient{
 		MutableTask newCurrentTask = fetchMutableTask((Task) message.getHeaders().get("task"));
 		System.out.println("Controller changing active task from " + currentTask.getTitle() + " to " + newCurrentTask.getTitle());
 		
+		Date currentTime = new Date();
+		int currentTaskActivePeriod = (int) Math.floor((currentTime.getTime() - currentTaskActiveSince.getTime())/1000);
+		currentTask.incrementSecondsActive(currentTaskActivePeriod);
+		
 		saveDetailsToTask();
 		currentTask = newCurrentTask;
+		currentTaskActiveSince = currentTime;
+		
 		Message response = new Message(MessageType.NEW_TASK_ACTIVE);
 		response.addHeader("task", (Task) newCurrentTask);
 		broadcast(response);

@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ToolTipManager;
 
 import tdl.controller.Controller;
 import tdl.messages.Message;
@@ -38,7 +39,10 @@ public class DetailView implements Recipient {
 	public DetailView(Controller controller) {
 		this.controller = controller;
 		
+		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+		
 		descrLabel = new JLabel("Description");
+		descrLabel.setToolTipText(getHoverText());
 		descrTextfield = new JTextArea();
 		descrTextfield.setLineWrap(true);
 		descrTextfield.setWrapStyleWord(true);
@@ -136,5 +140,57 @@ public class DetailView implements Recipient {
 	public String getDescription() {
 		return descrTextfield.getText();
 	}
+	
+
+	private String getHoverText() {
+		return "<html><small><h2>Four principles</h2>\r\n" + 
+				"<p><em>How to Solve It</em> suggests the following steps when solving a <a title=\"Mathematical problem\" href=\"https://en.wikipedia.org/wiki/Mathematical_problem\">mathematical problem</a>:</p>\r\n" + 
+				"<ol>\r\n" + 
+				"<li>First, you have to <em><a title=\"Understanding\" href=\"https://en.wikipedia.org/wiki/Understanding\">understand</a> the <a title=\"Problem\" href=\"https://en.wikipedia.org/wiki/Problem\">problem</a></em>.<sup></sup></li>\r\n" + 
+				"<li>After understanding, <em><a title=\"Plan\" href=\"https://en.wikipedia.org/wiki/Plan\">make a plan</a></em>.</li>\r\n" + 
+				"<li><em>Carry out the plan</em>.</li>\r\n" + 
+				"<li><em><a title=\"Review\" href=\"https://en.wikipedia.org/wiki/Review\">Look back</a></em> on your work.<sup></sup> <a title=\"Scientific method\" href=\"https://en.wikipedia.org/wiki/Scientific_method\">How could it be better</a>?</li>\r\n" + 
+				"</ol>\r\n" + 
+				"<p>If this technique fails, P&oacute;lya advises: \"If you can't solve a problem, then there is an easier problem you can solve: find it.\" Or: \"If you cannot solve the proposed problem, try to solve first some related problem. Could you imagine a more accessible related problem?\"</p>\r\n" + 
+				"<h3>First principle: Understand the problem</h3>\r\n" + 
+				"<p>\"Understand the problem\" is often neglected as being obvious and is not even mentioned in many mathematics classes. Yet students are often stymied in their efforts to solve it, simply because they don't understand it fully, or even in part. In order to remedy this oversight, P&oacute;lya taught teachers how to prompt each student with appropriate questions,&nbsp;depending on the situation, such as:</p>\r\n" + 
+				"<ul>\r\n" + 
+				"<li>What are you asked to find or show?</li>\r\n" + 
+				"<li>Can you restate the problem in your own words?</li>\r\n" + 
+				"<li>Can you think of a picture or a diagram that might help you understand the problem?</li>\r\n" + 
+				"<li>Is there enough information to enable you to find a solution?</li>\r\n" + 
+				"<li>Do you understand all the words used in stating the problem?</li>\r\n" + 
+				"<li>Do you need to ask a question to get the answer?</li>\r\n" + 
+				"</ul>\r\n" + 
+				"<p>The teacher is to select the question with the appropriate level of difficulty for each student to ascertain if each student understands at their own level, moving up or down the list to prompt each student, until each one can respond with something constructive.</p>\r\n" + 
+				"<h3>Second principle: Devise a plan</h3>\r\n" + 
+				"<p>P&oacute;lya mentions that there are many reasonable ways to solve problems.<sup></sup> The skill at choosing an appropriate strategy is best learned by solving many problems. You will find choosing a strategy increasingly easy. A partial list of strategies is included:</p>\r\n" + 
+				"<ul>\r\n" + 
+				"<li>Guess and check<sup></sup></li>\r\n" + 
+				"<li>Make an orderly list<sup></sup></li>\r\n" + 
+				"<li>Eliminate possibilities<sup></sup></li>\r\n" + 
+				"<li>Use symmetry<sup></sup></li>\r\n" + 
+				"<li>Consider special cases<sup></sup></li>\r\n" + 
+				"<li>Use direct reasoning</li>\r\n" + 
+				"<li>Solve an equation<sup></sup></li>\r\n" + 
+				"</ul>\r\n" + 
+				"<p>Also suggested:</p>\r\n" + 
+				"<ul>\r\n" + 
+				"<li>Look for a pattern<sup></sup></li>\r\n" + 
+				"<li>Draw a picture<sup></sup></li>\r\n" + 
+				"<li>Solve a simpler problem<sup></sup></li>\r\n" + 
+				"<li>Use a model<sup></sup></li>\r\n" + 
+				"<li>Work backward<sup></sup></li>\r\n" + 
+				"<li>Use a formula<sup></sup></li>\r\n" + 
+				"<li>Be creative<sup></sup></li>\r\n" + 
+				"<li>Use your head/noggin<sup></sup></li>\r\n" + 
+				"</ul>\r\n" + 
+				"<h3>Third principle: Carry out the plan</h3>\r\n" + 
+				"<p>This step is usually easier than devising the plan.<sup></sup> In general, all you need is care and patience, given that you have the necessary skills. Persist with the plan that you have chosen. If it continues not to work, discard it and choose another. Don't be misled; this is how mathematics is done, even by professionals.</p>\r\n" + 
+				"<h3>Fourth principle: Review/extend</h3>\r\n" + 
+				"<p>P&oacute;lya mentions that much can be gained by taking the time to reflect and look back at what you have done, what worked and what didn't.<sup></sup><sup></sup> Doing this will enable you to predict what strategy to use to solve future problems, if these relate to the original problem.</p>"
+				+ "</small></html>";
+	}
+
 
 }

@@ -9,15 +9,18 @@ import java.awt.Point;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.DropMode;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 import javax.swing.TransferHandler;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
@@ -56,12 +59,13 @@ public class TreeView implements Recipient {
 		jtree.setEditable(true);
 		jtree.setDragEnabled(true);
 		jtree.setDropMode(DropMode.USE_SELECTION);
-		jtree.setCellRenderer(new TaskNodeRenderer());
+		jtree.setCellRenderer(new TaskNodeRenderer(this));
 		jtree.setSelectionPath(new TreePath(baseTaskNode));
 		jtree.setDropTarget(new DropTarget(jtree, TransferHandler.MOVE, new MyDropTargetAdapter()));
 		
 		// Listeners
 		jtree.addTreeSelectionListener(new FocusChangeListener() );
+		ToolTipManager.sharedInstance().registerComponent(jtree);
 		jtree.getModel().addTreeModelListener( new NodeEditListener() );
 		TreePopup tp = new TreePopup(this);
 		jtree.addMouseListener(new TreePopupListener(tp, this));
@@ -130,6 +134,12 @@ public class TreeView implements Recipient {
 			break;
 		case DELETED_FILE:
 			break;
+		case MOVED_TASK:
+			Task task = (Task) message.getHeaders().get("task");
+			Task oldParent = (Task) message.getHeaders().get("fromParent");
+			Task newParent = (Task) message.getHeaders().get("toParent");
+			moveTask(task, oldParent, newParent);
+			break;
 		default:
 			break;
 		}
@@ -152,6 +162,15 @@ public class TreeView implements Recipient {
 //			}
 //		}
 //	}
+
+	private void moveTask(Task task, Task oldParent, Task newParent) {
+		TaskNode movedNode = getNodeForTask(task);
+		TaskNode sourceParentNode = getNodeForTask(oldParent);
+		TaskNode targetParentNode = getNodeForTask(newParent);
+		
+		sourceParentNode.remove(movedNode);
+		targetParentNode.add(movedNode);
+	}
 
 	private void deleteNodeForTask(Task task) {
 		TaskNode nodeToDelete = getNodeForTask(task);
@@ -252,7 +271,7 @@ public class TreeView implements Recipient {
 				tp.show(e.getComponent(), e.getX(), e.getY());
 			}
 		}
-
+		
 		@Override
 		public void mousePressed(MouseEvent e) {}
 		@Override
@@ -262,8 +281,7 @@ public class TreeView implements Recipient {
 		@Override
 		public void mouseReleased(MouseEvent e) {}
 	}
-	
-	
+		
 	private class MyDropTargetAdapter extends DropTargetAdapter {
 		@Override
 		public void drop(DropTargetDropEvent evt) {
@@ -273,26 +291,34 @@ public class TreeView implements Recipient {
 			TreePath selectionPath = jtree.getSelectionPath();
             TreePath sourcePath = selectionPath.getParentPath();
             TreePath targetPath = jtree.getClosestPathForLocation(dropLocation.x, dropLocation.y);
-            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
+            TaskNode selectedNode = (TaskNode) selectionPath.getLastPathComponent();
+            TaskNode targetParentNode = (TaskNode) targetPath.getLastPathComponent();
+            TaskNode sourceParentNode = (TaskNode) sourcePath.getLastPathComponent();
             
             if (isDropAllowed(sourcePath, targetPath, selectedNode)) {
-            	DefaultMutableTreeNode targetParentNode = (DefaultMutableTreeNode) targetPath.getLastPathComponent();
-                DefaultMutableTreeNode sourceParentNode = (DefaultMutableTreeNode) sourcePath.getLastPathComponent();
                 
-                sourceParentNode.remove(selectedNode);
-                targetParentNode.add(selectedNode);
+            	System.out.println("TreeView requesting to move " + selectedNode.getTask().getTitle() + " under " + targetParentNode.getTask().getTitle());
+                Message m = new Message(MessageType.MOVE_TASK_REQUEST);
+                m.addHeader("task", selectedNode.getTask());
+                m.addHeader("toParent", targetParentNode.getTask());
+                m.addHeader("fromParent", sourceParentNode.getTask());
+                controller.receiveMessage(m);
+          
+//          	This is done on receiveMessage      
+//              sourceParentNode.remove(selectedNode);
+//              targetParentNode.add(selectedNode);
                 
                 evt.dropComplete(true);
                 jtree.updateUI();
             } else {
-            	System.out.println("drop: reject");
+            	System.out.println("drop: rejected");
                 evt.rejectDrop();
                 evt.dropComplete(false);
             }
 		}
 
 		private boolean isDropAllowed(TreePath sourcePath, TreePath targetPath, DefaultMutableTreeNode selectedNode) {
-			return true;
+			return true; // TODO
 		}
 	}
 	
@@ -328,5 +354,17 @@ public class TreeView implements Recipient {
 		System.out.println("TreeView now messaging " + m.getMessageType() + " for task "+ clickedNode.getTask().getTitle());
 		controller.receiveMessage(m);
 	}
-
+	
+	
+	// wird verwendet von taskNodeRenderer
+	public String getHoverText(TaskNode node) {
+		String text = "";
+		if(node.getTask().isCompleted()) {
+			text += "<html>Task completed in "+node.getTask().getSecondsActive()+" seconds.</html>";
+		} else {
+			text += "<html>Task active since netto " + node.getTask().getSecondsActive() + " seconds. </br>"
+					+ "Estimated brutto time to complete: " + controller.estimateTimeToComplete(node.getTask()) + "seconds.<html>";
+		}
+		return text;
+	}
 }

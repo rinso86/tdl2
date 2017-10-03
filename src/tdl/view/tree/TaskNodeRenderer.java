@@ -16,11 +16,13 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 @SuppressWarnings("serial")
 public class TaskNodeRenderer extends DefaultTreeCellRenderer {
 	
+	private TreeView view;
 	private Font normalFont;
 	private Font crossedFont;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public TaskNodeRenderer () {
+	public TaskNodeRenderer (TreeView view) {
+		this.view = view;
 		Map attr = new HashMap();
 		normalFont = new Font(attr);
 		Map attrc = new HashMap();
@@ -54,6 +56,8 @@ public class TaskNodeRenderer extends DefaultTreeCellRenderer {
 					}					
 				}
 			}
+			
+			setToolTipText(view.getHoverText(tn));
 		}
 		return component;
 	}

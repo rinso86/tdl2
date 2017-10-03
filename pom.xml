@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.langbein.michael</groupId>
 	<artifactId>tdl</artifactId>
-	<version>0.1.0</version>
+	<version>0.1.1</version>
 
 
 	<build>
@@ -37,7 +37,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>tdl2.AppMain</mainClass>
+							<mainClass>tdl.AppMain</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

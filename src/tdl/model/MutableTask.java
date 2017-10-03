@@ -36,6 +36,7 @@ public class MutableTask implements Serializable, Task {
 		this.completed = null;
 		this.children = new ArrayList<MutableTask>();
 		this.attachments = new ArrayList<File>();
+		this.secondsActive = 0;
 		if(parent != null) {
 			parent.registerChild(this);
 		}
@@ -197,7 +198,9 @@ public class MutableTask implements Serializable, Task {
 	}
 	
 	public void incrementSecondsActive(long sec) {
-		this.secondsActive += sec;
+		if(!isCompleted()) {
+			this.secondsActive += sec;			
+		}
 	}
 	
 	public long getSecondsActive() {
