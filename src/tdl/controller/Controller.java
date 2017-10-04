@@ -227,7 +227,7 @@ public class Controller implements Recipient{
 		Date currentTime = new Date();
 		int currentTaskActivePeriod = (int) Math.floor((currentTime.getTime() - currentTaskActiveSince.getTime())/1000);
 		task.incrementSecondsActive(currentTaskActivePeriod);
-		task.setCompleted(new Date());
+		task.setCompletedRecursive(new Date());
 		
 		analyst.calculateModelParameters(baseTask);
 		
@@ -240,6 +240,9 @@ public class Controller implements Recipient{
 	private void addSubtask(Message message) {
 		MutableTask parent = fetchMutableTask((Task) message.getHeaders().get("task"));
 		MutableTask child = new MutableTask(parent, "new task");
+
+		analyst.calculateModelParameters(baseTask);
+		
 		Message response = new Message(MessageType.ADDED_SUBTASK);
 		response.addHeader("child", child);
 		response.addHeader("parent", parent);

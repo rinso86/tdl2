@@ -31,42 +31,55 @@ import tdl.model.Task;
 public class Analysis {
 
 	
-	private Double[] meansNetto;
+	private HashMap<Integer, Double> meansNetto;
 	
 	
 	public Analysis() {}
 	
 	public void calculateModelParameters(Task root) {
 		HashMap<Integer, ArrayList<Long>> data = extractData(root); 
+		root.printTree();
 		printData(data);
 		
-		meansNetto = new Double[data.size()];
+		meansNetto = new HashMap<Integer, Double>();
 		
-		for(int i = 0; i < data.size(); i++) {
-			meansNetto[i] = meanTime(data.get(i));
+		for(Integer depth : data.keySet()) {
+			Double mean = meanTime(data.get(depth));
+			meansNetto.put(depth, mean);
 		}
 	}
 
 	public double estimateTimeToComplete(Task tree) {
-		int level = getDepth(tree) - 1;
-		Double E_T_brutto = meansNetto[level];
-		if(E_T_brutto == null) {
-			E_T_brutto = 0D;
+		Double E_T_brutto;
+		
+		if(tree.isCompleted()) {
+			E_T_brutto = (double) tree.getSecondsActive();
 		}
-		for(Task child : tree.getChildren()) {
-			E_T_brutto += estimateTimeToComplete(child);
-		}	
+		
+		else {
+			
+			int level = getDepth(tree);
+			E_T_brutto = meansNetto.get(level);
+			if(E_T_brutto == null) {
+				E_T_brutto = 0D;
+			}
+			for(Task child : tree.getChildren()) {
+				E_T_brutto += estimateTimeToComplete(child);
+			}
+			
+		}
+		
 		return E_T_brutto;
 	}
 
 	private Double meanTime(ArrayList<Long> nettoTimes) {
 		Double result = null;
-		Long sum = 0L;
-		for(Long nettoTime : nettoTimes) {
-			sum += nettoTime;
-		}
 		Integer count = nettoTimes.size();
 		if(count > 0) {
+			Long sum = 0L;
+			for(Long nettoTime : nettoTimes) {
+				sum += nettoTime;
+			}
 			result = new Double(sum) / new Double(count);
 		}
 		return result;
@@ -78,7 +91,7 @@ public class Analysis {
 		// Setting up data structure
 		Integer depth = getDepth(root);
 		HashMap<Integer, ArrayList<Long>> data = new HashMap<Integer, ArrayList<Long>>();
-		for(Integer i = 0; i < depth; i++) {
+		for(Integer i = 1; i <= depth; i++) {
 			data.put(i, new ArrayList<Long>());
 		}
 		
@@ -89,17 +102,19 @@ public class Analysis {
 	}
 	
 	/*
+	 * Has every node in the tree calculate its depth and add its 
+	 * worktime to the datastructure under that depth.
+	 * 
 	 *  HashMap<Integer, ArrayList<Integer>>
 	 *  		depth    nettoTimes on this depth
 	 */
 	
 	private HashMap<Integer, ArrayList<Long>> fillLevelTimesMap(Task root, HashMap<Integer, ArrayList<Long>> data) {
 		
-		Integer depth = getDepth(root);
-		for(Task child : root.getChildren()) {
-			if(child.isCompleted() && child.getSecondsActive() > 0) {
-				data.get(depth - 1).add(child.getSecondsActive());				
-			}
+		if(root.isCompleted() && root.getSecondsActive() > 0) {			
+			Integer depth = getDepth(root);
+			long secsNetto = root.getSecondsActive();
+			data.get(depth).add(secsNetto);	
 		}
 		
 		for(Task child : root.getChildren()) {
@@ -122,9 +137,10 @@ public class Analysis {
 	private void printData(HashMap<Integer, ArrayList<Long>> data) {
 		System.out.println("Depth | Data");
 		System.out.println("------|------------------------");
-		for(int i = 0; i < data.size(); i++) {
-			String newline = i + "     |  ";
-			ArrayList<Long> rowData = data.get(i);
+		
+		for (Integer depth : data.keySet()) {
+			String newline = depth + "     |  ";
+			ArrayList<Long> rowData = data.get(depth);
 			for(Long netTime : rowData) {
 				newline = newline + netTime + "  ";
 			}
