@@ -48,10 +48,18 @@ public class AttachmentView implements Recipient {
 		jp.add(attchscrollpane);
 	}
 
+	public JPanel getJPanel() {
+		return jp;
+	}
+
+	public Task getCurrentTask() {
+		return view.getCurrentTask();
+	}	
+	
 	private class MyFileDropListener implements Listener {
 		@Override
 		public void filesDropped(File[] files) {
-			for(File file : files) {
+			for(File file : files) {	
 				Message m = new Message(MessageType.FILE_DROPPED_IN);
 				m.addHeader("file", file);
 				m.addHeader("task", view.getCurrentTask());
@@ -59,21 +67,10 @@ public class AttachmentView implements Recipient {
 			}
 		}
 	}
-
-	public JPanel getJPanel() {
-		return jp;
-	}
-	
-
-	public Task getCurrentTask() {
-		return view.getCurrentTask();
-	}	
-
 	
 	//-------------------------------------------------------------//
 	//-------- Methods for handling messages  ---------------------//
-	//-------------------------------------------------------------//
-	
+	//-------------------------------------------------------------//	
 	
 	@Override
 	public void receiveMessage(Message message) {

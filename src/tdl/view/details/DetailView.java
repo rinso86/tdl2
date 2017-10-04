@@ -4,6 +4,8 @@ package tdl.view.details;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,6 +18,7 @@ import javax.swing.ToolTipManager;
 
 import tdl.controller.Controller;
 import tdl.messages.Message;
+import tdl.messages.MessageType;
 import tdl.messages.Recipient;
 import tdl.model.Task;
 import tdl.view.details.attachments.AttachmentView;
@@ -50,6 +53,7 @@ public class DetailView implements Recipient {
 		descrscollpane.setPreferredSize(new Dimension(400, 400));
 		
 		deadlinePicker = new JXDatePicker();
+		deadlinePicker.addActionListener(new DatePickerListener());
 		
 		attachLabel = new JLabel("attachments");
 		attachmentView = new AttachmentView(this);
@@ -94,6 +98,20 @@ public class DetailView implements Recipient {
 	public ArrayList<File> getCurrentAttachmentList() {
 		return getCurrentTask().getAttachmentsInclParents();
 	}
+	
+	
+	private class DatePickerListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JXDatePicker picker = (JXDatePicker) e.getSource();
+			Date selectedDate = picker.getDate();
+			Message m = new Message(MessageType.TASK_CHANGE_DEADLINE_REQUEST);
+			m.addHeader("task", getCurrentTask());
+			m.addHeader("deadline", selectedDate);
+			controller.receiveMessage(m);
+		}
+	}
+	
 	
 	@Override
 	public void receiveMessage(Message message) {

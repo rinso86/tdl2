@@ -38,6 +38,7 @@ public class Analysis {
 	
 	public void calculateModelParameters(Task root) {
 		HashMap<Integer, ArrayList<Long>> data = extractData(root); 
+		printData(data);
 		
 		meansNetto = new Double[data.size()];
 		
@@ -47,8 +48,11 @@ public class Analysis {
 	}
 
 	public double estimateTimeToComplete(Task tree) {
-		int level = getDepth(tree);
+		int level = getDepth(tree) - 1;
 		Double E_T_brutto = meansNetto[level];
+		if(E_T_brutto == null) {
+			E_T_brutto = 0D;
+		}
 		for(Task child : tree.getChildren()) {
 			E_T_brutto += estimateTimeToComplete(child);
 		}	
@@ -113,6 +117,19 @@ public class Analysis {
 			maxChildDepth = Math.max(maxChildDepth, maxChildDepthCandidate);
 		}
 		return depth + maxChildDepth;
-	}	
+	}
+	
+	private void printData(HashMap<Integer, ArrayList<Long>> data) {
+		System.out.println("Depth | Data");
+		System.out.println("------|------------------------");
+		for(int i = 0; i < data.size(); i++) {
+			String newline = i + "     |  ";
+			ArrayList<Long> rowData = data.get(i);
+			for(Long netTime : rowData) {
+				newline = newline + netTime + "  ";
+			}
+			System.out.println(newline);
+		}
+	}
 	
 }

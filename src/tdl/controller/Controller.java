@@ -34,7 +34,6 @@ public class Controller implements Recipient{
 	private Date currentTaskActiveSince;
 	
 	// Utils
-	@SuppressWarnings("unused")
 	private ResourceManager resourceManager;
 	private Savior savior;
 	private Analysis analyst;
@@ -43,7 +42,7 @@ public class Controller implements Recipient{
 	private TreeView treeView;
 	private UpcomingView upcomingView;
 	private DetailView detailView;
-	public WiseCrackerView wiseCrackView;
+	private WiseCrackerView wiseCrackView;
 	private OveralView overalView;
 
 
@@ -118,6 +117,9 @@ public class Controller implements Recipient{
 		case TASK_CHANGE_TITLE_REQUEST:
 			changeTitle(message);
 			break;
+		case TASK_CHANGE_DEADLINE_REQUEST:
+			changeDeadline(message);
+			break;
 		case MOVE_TASK_REQUEST:
 			moveTask(message);
 			break;
@@ -153,6 +155,18 @@ public class Controller implements Recipient{
 		MutableTask mt = fetchMutableTask(t); 
 		String title = (String) message.getHeaders().get("title");
 		mt.setTitle(title);
+		
+		Message response = new Message(MessageType.UPDATED_TASK);
+		response.addHeader("task", (Task) mt);
+		broadcast(response);
+	}
+	
+
+	private void changeDeadline(Message message) {
+		Task t = (Task) message.getHeaders().get("task");
+		MutableTask mt = fetchMutableTask(t);
+		Date newDeadline = (Date) message.getHeaders().get("deadline");
+		mt.setDeadline(newDeadline);
 		
 		Message response = new Message(MessageType.UPDATED_TASK);
 		response.addHeader("task", (Task) mt);
@@ -261,7 +275,15 @@ public class Controller implements Recipient{
 		File f = (File) headers.get("file");
 		Task t = (Task) headers.get("task");
 		MutableTask mt = fetchMutableTask(t);
-		mt.addAttachment(f);
+		
+		File savedFile = null;
+		try {
+			savedFile = resourceManager.saveToResources(f);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		mt.addAttachment(savedFile);
+		
 		Message response = new Message(MessageType.UPDATED_TASK);
 		response.addHeader("task", t);
 		System.out.println("Controller added file " +f.getName() +" to task " +t.getTitle());
