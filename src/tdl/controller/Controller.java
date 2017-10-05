@@ -133,6 +133,8 @@ public class Controller implements Recipient{
 		Task oldParent = (Task) message.getHeaders().get("fromParent");
 		Task newParent = (Task) message.getHeaders().get("toParent");
 		
+		saveDetailsToTask();
+		
 		MutableTask mtask = fetchMutableTask(task);
 		MutableTask moldParent = fetchMutableTask(oldParent);
 		MutableTask mnewParent = fetchMutableTask(newParent);
@@ -223,6 +225,8 @@ public class Controller implements Recipient{
 	}
 
 	private void completeTask(Message message) {
+		saveDetailsToTask();
+		
 		MutableTask task = fetchMutableTask((Task) message.getHeaders().get("task"));
 		Date currentTime = new Date();
 		int currentTaskActivePeriod = (int) Math.floor((currentTime.getTime() - currentTaskActiveSince.getTime())/1000);
@@ -238,6 +242,8 @@ public class Controller implements Recipient{
 	}
 
 	private void addSubtask(Message message) {
+		saveDetailsToTask();
+		
 		MutableTask parent = fetchMutableTask((Task) message.getHeaders().get("task"));
 		MutableTask child = new MutableTask(parent, "new task");
 
