@@ -113,7 +113,7 @@ public class Analysis {
 		
 		if(root.isCompleted() && root.getSecondsActive() > 0) {			
 			Integer depth = getDepth(root);
-			long secsNetto = root.getSecondsActive();
+			long secsNetto = root.getSecondsActiveRecursive();
 			data.get(depth).add(secsNetto);	
 		}
 		

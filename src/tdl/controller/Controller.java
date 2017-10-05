@@ -275,7 +275,7 @@ public class Controller implements Recipient{
 	
 	// This is a unfortunate special case, where the controller has to go out to the view and fetch the changes.
 	private void saveDetailsToTask() {
-		System.out.println("Controller fetches and saves details to task " + currentTask.getTitle());
+		System.out.println("Controller fetches and saves details to task " + currentTask.getTitle() + ": " + detailView.getDescription());
 		currentTask.setDescription( detailView.getDescription() );
 	}
 

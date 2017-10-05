@@ -363,9 +363,9 @@ public class TreeView implements Recipient {
 			String readable = secondsToHumanReadable(node.getTask().getSecondsActiveRecursive());
 			text += "<html>Task completed in "+ readable +".</html>";
 		} else {
-			String readable = secondsToHumanReadable(node.getTask().getSecondsActive());
+			String readable = secondsToHumanReadable(node.getTask().getSecondsActiveRecursive());
 			String readable2 = secondsToHumanReadable(controller.estimateTimeToComplete(node.getTask()));
-			text += "<html>Task active since netto " + readable + ". </br>"
+			text += "<html>Task active since brutto " + readable + ". </br>"
 					+ "Estimated brutto time to complete: " + readable2 + ".<html>";
 		}
 		return text;
