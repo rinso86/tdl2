@@ -27,6 +27,8 @@ public interface Task {
 	
 	public long getSecondsActive();
 
+	public long getSecondsActiveRecursive();
+
 	public String printTree();
 	
 	

@@ -360,11 +360,23 @@ public class TreeView implements Recipient {
 	public String getHoverText(TaskNode node) {
 		String text = "";
 		if(node.getTask().isCompleted()) {
-			text += "<html>Task completed in "+node.getTask().getSecondsActive()+" seconds.</html>";
+			String readable = secondsToHumanReadable(node.getTask().getSecondsActiveRecursive());
+			text += "<html>Task completed in "+ readable +".</html>";
 		} else {
-			text += "<html>Task active since netto " + node.getTask().getSecondsActive() + " seconds. </br>"
-					+ "Estimated brutto time to complete: " + controller.estimateTimeToComplete(node.getTask()) + "seconds.<html>";
+			String readable = secondsToHumanReadable(node.getTask().getSecondsActive());
+			String readable2 = secondsToHumanReadable(controller.estimateTimeToComplete(node.getTask()));
+			text += "<html>Task active since netto " + readable + ". </br>"
+					+ "Estimated brutto time to complete: " + readable2 + ".<html>";
 		}
 		return text;
+	}
+	
+	private String secondsToHumanReadable(long seconds) {
+		long numberOfDays = seconds / 28800;
+		long numberOfHours = (seconds % 28800 ) / 3600;
+		long numberOfMinutes = ((seconds % 28800 ) % 3600 ) / 60;
+		long numberOfSeconds = ((seconds % 28800 ) % 3600 ) % 60;
+		String readable = numberOfDays + "d, " + numberOfHours + "h, " + numberOfMinutes + "m, " + numberOfSeconds + "s";
+		return readable;
 	}
 }

@@ -221,7 +221,14 @@ public class MutableTask implements Serializable, Task {
 	public long getSecondsActive() {
 		return this.secondsActive;
 	}
-	
+
+	public long getSecondsActiveRecursive() {
+		long secs = this.secondsActive;
+		for(Task child : getChildren()) {
+			secs += child.getSecondsActiveRecursive();
+		}
+		return secs;
+	}
 	public ArrayList<MutableTask> searchChildren(Predicate<MutableTask> pred) {
 		ArrayList<MutableTask> foundTasks = new ArrayList<MutableTask>();
 		if(pred.test(this)) {
