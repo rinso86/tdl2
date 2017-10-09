@@ -16,6 +16,7 @@ public class WiseCracker {
 		wiseStuff.add("Bad: 'Im glad its over!'. Good: 'Oh, so sad its over!'");
 		wiseStuff.add("Having a technical job doesn't mean that you don't need any social skills.");
 		wiseStuff.add("Explore and discover");
+        wiseStuff.add("Nach oben hin ist Platz.");
 	}
 	
 	public String getWiseStuff(int i) {

@@ -111,7 +111,7 @@ public class Analysis {
 	
 	private HashMap<Integer, ArrayList<Long>> fillLevelTimesMap(Task root, HashMap<Integer, ArrayList<Long>> data) {
 		
-		if(root.isCompleted() && root.getSecondsActive() > 0) {			
+		if(root.isCompleted() && root.getSecondsActive() > 0) {		
 			Integer depth = getDepth(root);
 			long secsNetto = root.getSecondsActiveRecursive();
 			data.get(depth).add(secsNetto);	
