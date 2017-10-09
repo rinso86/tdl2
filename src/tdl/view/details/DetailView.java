@@ -133,12 +133,24 @@ public class DetailView implements Recipient {
 		case DELETE_FILE_REQUEST:
 			controller.receiveMessage(message);
 			break;
+		case PREPARE_DELETING_TASK:
+			Task taskToDelete = (Task) message.getHeaders().get("task");
+			if(taskToDelete == getCurrentTask()) {
+				saveDetails();
+			}
+			break;
 		case DELETED_FILE:
 			attachmentView.receiveMessage(message);
 			break;
 		default:
 			break;
 		}
+	}
+
+	private void saveDetails() {
+		Message m = new Message(MessageType.SAVE_TASK_REQUEST);
+		m.addHeader("task", getCurrentTask());
+		controller.receiveMessage(m);
 	}
 
 	private void setCurrentTask(Task currentTask) {

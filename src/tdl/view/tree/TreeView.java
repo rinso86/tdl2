@@ -111,7 +111,7 @@ public class TreeView implements Recipient {
 		System.out.println("TreeView now receiving " + message.getMessageType());
 		switch(message.getMessageType()) {
 		case NEW_TASK_ACTIVE:
-			setCurrentTask( (Task) message.getHeaders().get("task"));
+			setCurrentTask( (Task) message.getHeaders().get("task") );
 			break;
 		case ADDED_SUBTASK:
 			Task child = (Task) message.getHeaders().get("child");
@@ -120,11 +120,13 @@ public class TreeView implements Recipient {
 			TaskNode childNode = new TaskNode(child);
 			addChild(parentNode, childNode);
 			refresh();
+			setCurrentTask(child);
 			break;
 		case UPDATED_TASK:
 		case COMPLETED_TASK:
 		case REACTIVATED_TASK:
 			refresh();
+			setCurrentTask((Task) message.getHeaders().get("task"));
 			break;
 		case PREPARE_DELETING_TASK:
 			deleteNodeForTask( (Task) message.getHeaders().get("task") );
@@ -206,8 +208,12 @@ public class TreeView implements Recipient {
 	}
 	
 	public TaskNode getNodeForEvent(MouseEvent e) {
+		TaskNode node = null;
 		TreePath path = jtree.getPathForLocation(e.getX(), e.getY());
-		return getNodeForPath(path);
+		if(path != null) {
+			node = getNodeForPath(path);
+		}
+		return node;
 	}
 
 	private void addChild(TaskNode parent, TaskNode child) {
@@ -267,8 +273,10 @@ public class TreeView implements Recipient {
 		public void mouseClicked(MouseEvent e) {
 			if(SwingUtilities.isRightMouseButton(e)) {
 				TaskNode tn = tv.getNodeForEvent(e);
-				tp.setClickedNode(tn);
-				tp.show(e.getComponent(), e.getX(), e.getY());
+				if(tn != null) {					
+					tp.setClickedNode(tn);
+					tp.show(e.getComponent(), e.getX(), e.getY());
+				}
 			}
 		}
 		

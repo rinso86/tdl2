@@ -16,7 +16,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 import tdl.model.MutableTask;
-import tdl2.model.Task;
 
 public class Savior {
 
@@ -41,9 +40,7 @@ public class Savior {
 		}
 		InputStream buffer = new BufferedInputStream(file);
 		ObjectInput input = new ObjectInputStream(buffer);
-		tree = (MutableTask) input.readObject();			
-//			Task oldTree = (Task) input.readObject();
-//			tree = translateOldTreeToNew(oldTree);
+		tree = (MutableTask) input.readObject();
 		input.close();
 		checkIntegrity(tree);
 		return tree;
@@ -66,26 +63,5 @@ public class Savior {
 		}
 	}
 	
-	private MutableTask translateOldTreeToNew(Task oldTree) {
-		MutableTask tree = new MutableTask();
-		
-		passFieldsToNewTask(tree, oldTree);
-		
-		for(Task oldChild : oldTree.getChildren()) {
-			MutableTask subTree = translateOldTreeToNew(oldChild);
-			tree.addChild(subTree);
-		}
-		
-		return tree;
-	}
 
-	private void passFieldsToNewTask(MutableTask tree, Task oldTree) {
-		tree.setAttachments(oldTree.getAttachments());
-		tree.setDeadline(oldTree.getDeadline());
-		if(oldTree.isCompleted()) {
-			tree.setCompleted(oldTree.getDeadline());			
-		}
-		tree.setDescription(oldTree.getDescription());
-		tree.setTitle(oldTree.getTitle());
-	}
 }

@@ -123,10 +123,14 @@ public class Controller implements Recipient{
 		case MOVE_TASK_REQUEST:
 			moveTask(message);
 			break;
+		case SAVE_TASK_REQUEST:
+			// TODO;
+			break;
 		default:
 			break;
 		}
 	}
+
 
 	private void moveTask(Message message) {
 		Task task = (Task) message.getHeaders().get("task");
@@ -239,6 +243,10 @@ public class Controller implements Recipient{
 		response.addHeader("task", (Task) task);
 		System.out.println("Controller completed task " +task.getTitle());
 		broadcast(response);
+		
+		Message internalMessage = new Message(MessageType.NEW_TASK_ACTIVE_REQUEST);
+		internalMessage.addHeader("task", (Task) task.getParent());
+		changeCurrentTask(internalMessage);
 	}
 
 	private void addSubtask(Message message) {
@@ -254,10 +262,20 @@ public class Controller implements Recipient{
 		response.addHeader("parent", parent);
 		System.out.println("Controller added child " +child.getTitle()+ " to parent " + parent.getTitle());
 		broadcast(response);
+		
+		Message internalMessage = new Message(MessageType.NEW_TASK_ACTIVE_REQUEST);
+		internalMessage.addHeader("task", (Task) child);
+		changeCurrentTask(internalMessage);
 	}
 
 	private void changeCurrentTask(Message message) {
 		MutableTask newCurrentTask = fetchMutableTask((Task) message.getHeaders().get("task"));
+		
+		if(newCurrentTask == currentTask) {
+			System.out.println("Controller does not change active task, because current and new active tasks are the same");
+			return; 
+		}
+		
 		System.out.println("Controller changing active task from " + currentTask.getTitle() + " to " + newCurrentTask.getTitle());
 		
 		Date currentTime = new Date();
