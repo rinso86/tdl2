@@ -2,6 +2,7 @@ package tdl.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
@@ -27,6 +28,8 @@ public class Controller implements Recipient{
 
 	
 	private static final String SAVEFILE = "mytree.bin";
+	private static final String LOGFILE = "sessionLog.txt";
+	private PrintStream logFile;
 	
 	// Model
 	private MutableTask baseTask;
@@ -49,6 +52,8 @@ public class Controller implements Recipient{
 	
 	
 	public Controller() throws ClassNotFoundException, IOException {
+		logFile = new PrintStream(LOGFILE);
+		System.setOut(logFile);
 		
 		// Model and utils
 		resourceManager = new ResourceManager();
@@ -174,6 +179,8 @@ public class Controller implements Recipient{
 		Date newDeadline = (Date) message.getHeaders().get("deadline");
 		mt.setDeadline(newDeadline);
 		
+		saveDetailsToTask();
+		
 		Message response = new Message(MessageType.UPDATED_TASK);
 		response.addHeader("task", (Task) mt);
 		broadcast(response);
@@ -204,28 +211,27 @@ public class Controller implements Recipient{
 		
 		MutableTask taskToDelete = (MutableTask) message.getHeaders().get("task");
 		MutableTask parent = fetchMutableTask(taskToDelete.getParent());
-		Message internalMessage = new Message(MessageType.NEW_TASK_ACTIVE_REQUEST);
-		internalMessage.addHeader("task", (Task) parent);
-		changeCurrentTask(internalMessage);
-		
-		System.out.println("Tree before delete");
-		System.out.println(baseTask.printTree());
 
+		// Give everyone a change to prepare
 		Message response1 = new Message(MessageType.PREPARE_DELETING_TASK);
 		response1.addHeader("task", (Task) taskToDelete);
 		broadcast(response1);
 		
+		// Set parent active instead of soon-to-be deleted node
+		Message response2 = new Message(MessageType.NEW_TASK_ACTIVE_REQUEST);
+		response2.addHeader("task", (Task) parent);
+		changeCurrentTask(response2);
+		
+		// Delete node
 		UUID id = taskToDelete.getId();
 		String title = taskToDelete.getTitle();
 		parent.deleteChild(taskToDelete);
-		
-		System.out.println("Tree after delete");
-		System.out.println(baseTask.printTree());
-		
-		Message response2 = new Message(MessageType.DELETED_TASK);
-		response2.addHeader("taskId", id);
+
+		// Tell everyone that node was deleted
+		Message response3 = new Message(MessageType.DELETED_TASK);
+		response3.addHeader("taskId", id);
 		System.out.println("Controller deleted task " + title);
-		broadcast(response2);
+		broadcast(response3);
 	}
 
 	private void completeTask(Message message) {
@@ -237,6 +243,7 @@ public class Controller implements Recipient{
 		task.incrementSecondsActive(currentTaskActivePeriod);
 		task.setCompletedRecursive(new Date());
 		
+		saveDetailsToTask();
 		analyst.calculateModelParameters(baseTask);
 		
 		Message response = new Message(MessageType.COMPLETED_TASK);
@@ -272,7 +279,7 @@ public class Controller implements Recipient{
 		MutableTask newCurrentTask = fetchMutableTask((Task) message.getHeaders().get("task"));
 		
 		if(newCurrentTask == currentTask) {
-			System.out.println("Controller does not change active task, because current and new active tasks are the same");
+			System.out.println("Controller does not change active task, because current and new active tasks are the same: " + currentTask.getTitle());
 			return; 
 		}
 		
@@ -326,7 +333,8 @@ public class Controller implements Recipient{
 	}
 
 	private MutableTask fetchMutableTask(Task t) {
-		return baseTask.searchChildrenUnique(testedTask -> testedTask.getId() == t.getId());
+		Task foundTask = baseTask.searchChildrenUnique(testedTask -> testedTask.getId() == t.getId());
+		return (MutableTask) foundTask;
 	}
 	
 	
@@ -334,6 +342,7 @@ public class Controller implements Recipient{
 		System.out.println("Controller is saving data before shutdown.");
 		saveDetailsToTask();
 		saveModelToFile();
+		logFile.close();
 	}
 
 	private void saveModelToFile() {

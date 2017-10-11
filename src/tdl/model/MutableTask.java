@@ -229,13 +229,14 @@ public class MutableTask implements Serializable, Task {
 		}
 		return secs;
 	}
-	public ArrayList<MutableTask> searchChildren(Predicate<MutableTask> pred) {
-		ArrayList<MutableTask> foundTasks = new ArrayList<MutableTask>();
+	
+	public ArrayList<Task> searchChildren(Predicate<Task> pred) {
+		ArrayList<Task> foundTasks = new ArrayList<Task>();
 		if(pred.test(this)) {
 			foundTasks.add(this);
 		}else {
-			for(MutableTask child : getMutableChildren()) {
-				ArrayList<MutableTask> subResults = child.searchChildren(pred);
+			for(Task child : getChildren()) {
+				ArrayList<Task> subResults = child.searchChildren(pred);
 				if(subResults.size() > 0) {
 					foundTasks.addAll(subResults);
 				}
@@ -244,13 +245,13 @@ public class MutableTask implements Serializable, Task {
 		return foundTasks;
 	}
 	
-	public MutableTask searchChildrenUnique(Predicate<MutableTask> pred) {
-		MutableTask foundTask = null;
+	public Task searchChildrenUnique(Predicate<Task> pred) {
+		Task foundTask = null;
 		if(pred.test(this)) {
 			return this;
 		}else {
-			for(MutableTask child : getMutableChildren()) {
-				MutableTask subResult = child.searchChildrenUnique(pred);
+			for(Task child : getChildren()) {
+				Task subResult = child.searchChildrenUnique(pred);
 				if(subResult != null) {
 					foundTask = subResult;
 					break;

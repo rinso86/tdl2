@@ -180,14 +180,9 @@ public class TreeView implements Recipient {
 	}
 
 	private void refresh() {
-//		Task baseTask = controller.getBaseTask();
-//		Task currentTask = controller.getCurrentTask();
-//		TaskNode baseTaskNode = new TaskNode(baseTask);
-//		TaskNode currentTaskNode = baseTaskNode.search(currentTask);
-		
 		DefaultTreeModel model = (DefaultTreeModel) jtree.getModel();
 		model.reload();
-//		jtree.setSelectionPath(new TreePath(currentTaskNode));
+		setCurrentTask(controller.getCurrentTask());
 	}
 
 	private void setCurrentTask(Task currentTask) {
@@ -326,7 +321,30 @@ public class TreeView implements Recipient {
 		}
 
 		private boolean isDropAllowed(TreePath sourcePath, TreePath targetPath, DefaultMutableTreeNode selectedNode) {
-			return true; // TODO
+			Task sourceNode = getNodeForPath(sourcePath).getTask();
+			Task targetNode = getNodeForPath(targetPath).getTask();
+			Task movingNode = ((TaskNode)selectedNode).getTask();
+			
+			// Don't allow if target = movingNode
+			if(targetNode.getId() == movingNode.getId()) {
+				System.out.println("Not allowed to move node into itself");
+				return false;
+			}
+			
+//			// Don't allow if target = source <-- yes, do allow! makes for reordering
+//			if(targetNode.getId() == sourceNode.getId()) {
+//				System.out.println("Not allowed to move node into itself");
+//				return false;
+//			}
+			
+			// Don't allow if target under source
+			Task foundAgain = movingNode.searchChildrenUnique(testedTask -> testedTask.getId() == targetNode.getId());
+			if(foundAgain != null) {
+				System.out.println("Not allowed to move node into its own subtree");
+				return false;
+			}
+			
+			return true; 
 		}
 	}
 	

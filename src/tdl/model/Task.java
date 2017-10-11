@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public interface Task {
 
@@ -31,5 +32,7 @@ public interface Task {
 
 	public String printTree();
 	
+	public ArrayList<Task> searchChildren(Predicate<Task> pred);
 	
+	public Task searchChildrenUnique(Predicate<Task> pred);
 }
