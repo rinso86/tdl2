@@ -41,9 +41,8 @@ public class UpcomingView implements Recipient {
         bigFieldConstraints.gridx = 0;
         bigFieldConstraints.gridy = 1;
         bigFieldConstraints.gridwidth = 2;
-        GridBagConstraints extraConstraints = new GridBagConstraints();
-        extraConstraints.gridx = 1; 
-        extraConstraints.gridy = 0;
+        bigFieldConstraints.weightx = bigFieldConstraints.weighty = 1.0;
+        bigFieldConstraints.fill = GridBagConstraints.BOTH;
 		
 		listlabel = new JLabel("Upcoming");
 		jp.add(listlabel, labelConstraints);
@@ -55,7 +54,6 @@ public class UpcomingView implements Recipient {
 		jlist.addMouseListener(new UpcomingPopupListener(up, this));
 		
 		listscrollpane = new JScrollPane(jlist);
-		listscrollpane.setPreferredSize(new Dimension(400, 400));
 		jp.add(listscrollpane, bigFieldConstraints);
 	}
 

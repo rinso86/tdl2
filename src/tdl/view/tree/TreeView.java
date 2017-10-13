@@ -72,7 +72,7 @@ public class TreeView implements Recipient {
 		
 		// Layout
 		treescrollpane = new JScrollPane(jtree);
-		treescrollpane.setPreferredSize(new Dimension(300, 400));
+		//treescrollpane.setPreferredSize(new Dimension(300, 400));
 		
 		this.jp = new JPanel(new GridBagLayout());
 		GridBagConstraints labelConstraints = new GridBagConstraints();
@@ -83,6 +83,8 @@ public class TreeView implements Recipient {
         bigFieldConstraints.gridx = 0;
         bigFieldConstraints.gridy = 1;
         bigFieldConstraints.gridwidth = 2;
+        bigFieldConstraints.weightx = bigFieldConstraints.weighty = 1.0;
+        bigFieldConstraints.fill = GridBagConstraints.BOTH;
         GridBagConstraints extraConstraints = new GridBagConstraints();
         extraConstraints.gridx = 1; 
         extraConstraints.gridy = 0;

@@ -50,7 +50,7 @@ public class DetailView implements Recipient {
 		descrTextfield.setLineWrap(true);
 		descrTextfield.setWrapStyleWord(true);
 		descrscollpane = new JScrollPane(descrTextfield);
-		descrscollpane.setPreferredSize(new Dimension(400, 400));
+		//descrscollpane.setPreferredSize(new Dimension(400, 400));
 		
 		deadlinePicker = new JXDatePicker();
 		deadlinePicker.addActionListener(new DatePickerListener());
@@ -69,10 +69,14 @@ public class DetailView implements Recipient {
         bigFieldConstraints.gridx = 0;
         bigFieldConstraints.gridy = 1;
         bigFieldConstraints.gridwidth = 2;
+        bigFieldConstraints.weightx = bigFieldConstraints.weighty = 1.0;
+        bigFieldConstraints.fill = GridBagConstraints.BOTH;
         GridBagConstraints secondBigFieldConstraints = new GridBagConstraints();
         secondBigFieldConstraints.gridx = 2;
         secondBigFieldConstraints.gridy = 1;
         secondBigFieldConstraints.gridwidth = 1;
+        secondBigFieldConstraints.weightx = secondBigFieldConstraints.weighty = 1.0;
+        secondBigFieldConstraints.fill = GridBagConstraints.BOTH;
         GridBagConstraints extraConstraints = new GridBagConstraints();
         extraConstraints.gridx = 1; 
         extraConstraints.gridy = 0;

@@ -23,8 +23,8 @@ public class TaskListModel extends AbstractListModel<Task> {
 	private Task[] getDateSortedTasks(Task baseTask) {
 		ArrayList<Task> tasksList = treeToArray(baseTask);
 		ArrayList<Task> tasksSorted = sort(tasksList);
-		ArrayList<Task> tasksSortedFiltered = filter(tasksSorted);
-		Task[] tasksSortedArray = tasksSortedFiltered.toArray(new Task[tasksSortedFiltered.size()]);
+		//ArrayList<Task> tasksSortedFiltered = filter(tasksSorted);
+		Task[] tasksSortedArray = tasksSorted.toArray(new Task[tasksSorted.size()]);
 		return tasksSortedArray;
 	}
 	
@@ -44,12 +44,25 @@ public class TaskListModel extends AbstractListModel<Task> {
 		tasksList.sort(new Comparator<Task>() {
 			@Override
 			public int compare(Task t1, Task t2) {
-				Date deadline1 = t1.getDeadline();
-				Date deadline2 = t2.getDeadline();
-				if(deadline1 != null && deadline2 == null) return 1;
-				if(deadline1 == null && deadline2 != null) return -1;
-				if(deadline1 == null && deadline2 == null) return 0;
-				else return t1.getDeadline().compareTo(t2.getDeadline());
+				Date date1 = null;
+				Date date2 = null;
+				
+				if(t1.isCompleted()) {
+					date1 = t1.getCompleted();
+				}else {
+					date1 = t1.getDeadline();
+				}
+				
+				if(t2.isCompleted()) {
+					date2 = t2.getCompleted();
+				}else {
+					date2 = t2.getDeadline();
+				}
+				
+				if(date1 != null && date2 == null) return 1;
+				if(date1 == null && date2 != null) return -1;
+				if(date1 == null && date2 == null) return 0;
+				else return date1.compareTo(date2);
 			}
 		});
 		return tasksList;

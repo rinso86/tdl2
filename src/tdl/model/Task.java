@@ -19,6 +19,8 @@ public interface Task {
 	public String getDescription();
 
 	public boolean isCompleted();
+	
+	public Date getCompleted();
 
 	public Date getDeadline();
 

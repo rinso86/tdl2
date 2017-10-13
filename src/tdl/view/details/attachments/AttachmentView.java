@@ -38,7 +38,7 @@ public class AttachmentView implements Recipient {
 		attachmentList = new JList<File>(new AttachmentListModel(getCurrentAttachmentList()));
 		attachmentList.setCellRenderer(new AttachmentListCellRenderer(this));
 		attchscrollpane = new JScrollPane(attachmentList);
-		attchscrollpane.setPreferredSize(new Dimension(300, 400));
+		//attchscrollpane.setPreferredSize(new Dimension(300, 400));
 		
 		ap = new AttachmentPopup(this);
 		attachmentList.addMouseListener(new AttachmentPopupListener(ap, this));

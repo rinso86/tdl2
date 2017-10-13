@@ -48,11 +48,11 @@ public class TaskNodeRenderer extends DefaultTreeCellRenderer {
 					long diff = deadline.getTime() - now.getTime();
 					float diffDays =  diff / (24* 1000 * 60 * 60);
 					if (diff <= 0) {
-						component.setForeground(Color.red);
+						component.setForeground(new Color(128, 0, 0));
 					} else if (diffDays <= 1) {
-						component.setForeground(Color.orange);
+						component.setForeground(new Color(255, 51, 0));
 					} else if (diffDays <= 3) {
-						component.setForeground(Color.yellow);
+						component.setForeground(new Color(255, 153, 51));
 					}					
 				}
 			}

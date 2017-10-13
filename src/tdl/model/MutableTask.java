@@ -59,6 +59,10 @@ public class MutableTask implements Serializable, Task {
 		return (completed != null);
 	}
 
+	public Date getCompleted() {
+		return completed;
+	}
+	
 	public void setCompleted(Date completed) {
 		this.completed = completed;
 	}

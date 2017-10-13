@@ -1,23 +1,45 @@
 Depth | Data
 ------|------------------------
-1     |  
-2     |  
+1     |  24  152  238  198  73  11  1126  103  4049  316  805  860  14  139  16  121  20  1992  9  32  9872  167  463  546  1143  444  111  430  6  15  15  245  57  562  914  4  31  4  3  9  4  1  6  2  13  1131  10  475  7  743  324  915  56  1860  729  2  1  5  60  13  167  13  11  52  1051  472  86  923  65  89  1555  31  2  1  2  16  1164  693  1178  574  217  2151  136  801  3782  1957  2620  84  1192  300  580  25  223  20  950  3  1  6  19  205  25  1  1  549  519  587  183  306  106  321  2105  186  76  250  151  14  1176  802  1  3  1  1  1  31  11  7  7  6  709  190  86  332  24  16  39  517  1223  894  1055  135  322  505  528  3905  69  309  188  319  43  35  576  235  13  1438  405  810  25  665  63  78  127  145  70  26  8  262  1110  309  355  2  5  1  
+2     |  847  4662  207  258  5751  645  106  21  1  4397  6880  594  5  18  1311  2399  5936  1085  2  303  1373  397  581  289  1696  1748  1687  200  186  1474  4710  965  1028  1881  425  2804  4541  
+3     |  1891  1287  1960  54  7436  14985  1104  22  2156  1288  1863  1862  7314  1467  2748  7157  6301  8  
+4     |  4426  2411  14973  18022  958  2724  1305  4293  1930  3266  7251  
+5     |  11441  12  6504  4412  2201  3986  17  
+6     |  12583  7679  5802  
+7     |  26867  15629  
+8     |  41545  
+9     |  
+10     |  
+11     |  
+12     |  
+UpcomingView now messaging NEW_TASK_ACTIVE_REQUEST for task Artikel brauchen kein Parent group!
 Controller received NEW_TASK_ACTIVE_REQUEST
-Controller changing active task from Base task to a
+Controller changing active task from Base task to Artikel brauchen kein Parent group!
 Controller fetches and saves details to task Base task: 
 Controller now broadcasting NEW_TASK_ACTIVE
 TreeView now receiving NEW_TASK_ACTIVE
-UpcomingView now receiving NEW_TASK_ACTIVE
-DetailView now receiving NEW_TASK_ACTIVE
-Attachment view now receiving message NEW_TASK_ACTIVE
 Controller received NEW_TASK_ACTIVE_REQUEST
-Controller changing active task from a to Base task
-Controller fetches and saves details to task a: 
-Controller now broadcasting NEW_TASK_ACTIVE
-TreeView now receiving NEW_TASK_ACTIVE
+Controller does not change active task, because current and new active tasks are the same: Artikel brauchen kein Parent group!
 UpcomingView now receiving NEW_TASK_ACTIVE
 DetailView now receiving NEW_TASK_ACTIVE
 Attachment view now receiving message NEW_TASK_ACTIVE
+Controller received TASK_CHANGE_DEADLINE_REQUEST
+Controller fetches and saves details to task Artikel brauchen kein Parent group!: Global: Niemand darf artikel erstellen
+Group: Niemand darf artikel erzeugen - nicht mal admins
+
+Dann: warum konnte michael Artikel sehen?!
+Controller now broadcasting UPDATED_TASK
+TreeView now receiving UPDATED_TASK
+Controller received NEW_TASK_ACTIVE_REQUEST
+Controller does not change active task, because current and new active tasks are the same: Artikel brauchen kein Parent group!
+Controller received NEW_TASK_ACTIVE_REQUEST
+Controller does not change active task, because current and new active tasks are the same: Artikel brauchen kein Parent group!
+UpcomingView now receiving UPDATED_TASK
+DetailView now receiving UPDATED_TASK
+Attachment view now receiving message UPDATED_TASK
 Controller received PREPARE_WINDOW_CLOSING
 Controller is saving data before shutdown.
-Controller fetches and saves details to task Base task: 
+Controller fetches and saves details to task Artikel brauchen kein Parent group!: Global: Niemand darf artikel erstellen
+Group: Niemand darf artikel erzeugen - nicht mal admins
+
+Dann: warum konnte michael Artikel sehen?!
