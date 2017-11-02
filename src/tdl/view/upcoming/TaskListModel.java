@@ -91,6 +91,19 @@ public class TaskListModel extends AbstractListModel<Task> {
 		this.tasks = getDateSortedTasks(baseTask);
 		fireContentsChanged(this, 0, tasks.length);
 	}
+	
+	public void filterTasksByText(String text) {
+		ArrayList<Task> newTasks = new ArrayList<Task>();
+		for(Task task : this.tasks) {
+			String title = task.getTitle();
+			String body = task.getDescription();
+			if(title.contains(text) || body.contains(text)) {
+				newTasks.add(task);
+			}
+		}
+		Task[] tasks = newTasks.toArray(new Task[0]);
+		this.tasks = tasks;
+	}
 
 	public void refreshView() {
 		fireContentsChanged(this, 0, tasks.length);

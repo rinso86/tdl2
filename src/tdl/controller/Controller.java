@@ -11,9 +11,11 @@ import javax.swing.JFrame;
 
 import tdl.model.MutableTask;
 import tdl.model.Task;
-import tdl.utils.Analysis;
 import tdl.utils.ResourceManager;
 import tdl.utils.Savior;
+import tdl.utils.statmod.Buvs;
+import tdl.utils.statmod.StatMod;
+import tdl.utils.statmod.Tdss;
 import tdl.messages.Message;
 import tdl.messages.MessageType;
 import tdl.messages.Recipient;
@@ -39,7 +41,8 @@ public class Controller implements Recipient{
 	// Utils
 	private ResourceManager resourceManager;
 	private Savior savior;
-	private Analysis analyst;
+	private StatMod tdss;
+	private StatMod buvs;
 	
 	// Views
 	private TreeView treeView;
@@ -53,15 +56,17 @@ public class Controller implements Recipient{
 	
 	public Controller() throws ClassNotFoundException, IOException {
 		logFile = new PrintStream(LOGFILE);
-		System.setOut(logFile);
+		//System.setOut(logFile);
 		
 		// Model and utils
 		resourceManager = new ResourceManager();
 		savior = new Savior();
 		baseTask = savior.loadTree(SAVEFILE);
 		currentTask = baseTask;
-		analyst = new Analysis();
-		analyst.calculateModelParameters(baseTask);
+		tdss = new Tdss();
+		tdss.calculateModelParameters(baseTask);
+		buvs = new Buvs();
+		buvs.calculateModelParameters(baseTask);
 		currentTaskActiveSince = new Date();
 		
 		// Views
@@ -86,9 +91,11 @@ public class Controller implements Recipient{
 		return (Task) currentTask;
 	}
 	
-	public int estimateTimeToComplete(Task t) {
-		double estimate = analyst.estimateTimeToComplete(t);
-		return (int)estimate;
+	public HashMap<String, Double> estimateTimeToComplete(Task t) {
+		HashMap<String, Double> estimate = new HashMap<String, Double>();
+		estimate.put("tdss", tdss.estimateTimeToComplete(t));
+		estimate.put("buvs", buvs.estimateTimeToComplete(t));
+		return estimate;
 	}
 
 	@Override
@@ -152,7 +159,7 @@ public class Controller implements Recipient{
 		moldParent.deleteChild(mtask);
 		mnewParent.addChild(mtask);
 
-		analyst.calculateModelParameters(baseTask);
+		tdss.calculateModelParameters(baseTask);
 		
 		Message response = new Message(MessageType.MOVED_TASK);
 		response.addHeader("task", (Task) mtask);
@@ -244,7 +251,7 @@ public class Controller implements Recipient{
 		task.setCompletedRecursive(new Date());
 		
 		saveDetailsToTask();
-		analyst.calculateModelParameters(baseTask);
+		tdss.calculateModelParameters(baseTask);
 		
 		Message response = new Message(MessageType.COMPLETED_TASK);
 		response.addHeader("task", (Task) task);
@@ -262,7 +269,8 @@ public class Controller implements Recipient{
 		MutableTask parent = fetchMutableTask((Task) message.getHeaders().get("task"));
 		MutableTask child = new MutableTask(parent, "new task");
 
-		analyst.calculateModelParameters(baseTask);
+		tdss.calculateModelParameters(baseTask);
+		buvs.calculateModelParameters(baseTask);
 		
 		Message response = new Message(MessageType.ADDED_SUBTASK);
 		response.addHeader("child", child);

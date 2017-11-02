@@ -4,12 +4,16 @@ package tdl.view.upcoming;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 import tdl.controller.Controller;
 import tdl.messages.Message;
@@ -25,6 +29,7 @@ public class UpcomingView implements Recipient {
 	private Controller controller;
 	private JPanel jp;
 	private JLabel listlabel;
+	private JTextField filterTextField;
 	private JList<Task> jlist;
 	private JScrollPane listscrollpane;
 	
@@ -37,15 +42,24 @@ public class UpcomingView implements Recipient {
         labelConstraints.gridx = 0;
         labelConstraints.gridy = 0;
         labelConstraints.anchor = GridBagConstraints.NORTHEAST;
+        GridBagConstraints filterFieldConstraints = new GridBagConstraints();
+        filterFieldConstraints.gridx = 0;
+        filterFieldConstraints.gridy = 1;
+        filterFieldConstraints.gridwidth = 2;
+        filterFieldConstraints.fill = GridBagConstraints.HORIZONTAL;
         GridBagConstraints bigFieldConstraints = new GridBagConstraints();
         bigFieldConstraints.gridx = 0;
-        bigFieldConstraints.gridy = 1;
+        bigFieldConstraints.gridy = 2;
         bigFieldConstraints.gridwidth = 2;
         bigFieldConstraints.weightx = bigFieldConstraints.weighty = 1.0;
         bigFieldConstraints.fill = GridBagConstraints.BOTH;
 		
 		listlabel = new JLabel("Upcoming");
 		jp.add(listlabel, labelConstraints);
+		
+		filterTextField = new JTextField();
+		filterTextField.addKeyListener(new FilterListener());
+		jp.add(filterTextField, filterFieldConstraints);
 		
 		jlist = new JList<Task>(new TaskListModel(controller.getBaseTask()));
 		jlist.setCellRenderer(new TaskListRenderer());
@@ -92,6 +106,12 @@ public class UpcomingView implements Recipient {
 		refreshView();
 	}
 	
+	private void filterView(String filterText) {
+		TaskListModel model = (TaskListModel) jlist.getModel();
+		model.filterTasksByText(filterText);
+		refreshView();
+	}
+	
 	private void refreshView() {
 		TaskListModel model = (TaskListModel) jlist.getModel();
 		model.refreshView();
@@ -107,5 +127,22 @@ public class UpcomingView implements Recipient {
 	public Task getTaskForEvent(MouseEvent e) {
 		return jlist.getModel().getElementAt(jlist.locationToIndex(e.getPoint()));
 	}
+	
+	private class FilterListener extends KeyAdapter {
+		
+		public FilterListener() {}
+		
+@		Override
+		public void keyPressed(KeyEvent e) {
+			if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+				String filterText = filterTextField.getText();
+				System.out.println("Now filtering tasks for the text: " + filterText);
+				filterView(filterText);
+				refreshView();
+			}
+		}
+		
+	}
+
 
 }

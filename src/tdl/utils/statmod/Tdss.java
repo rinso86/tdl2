@@ -1,4 +1,4 @@
-package tdl.utils;
+package tdl.utils.statmod;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,6 +8,8 @@ import tdl.model.Task;
 
 
 /**
+ * 
+ * Top-Down Static Structure Model
  * 
  * We model the time it takes to complete a task as such: 
  * 
@@ -28,13 +30,13 @@ import tdl.model.Task;
 	
  *
  */
-public class Analysis {
+public class Tdss implements StatMod {
 
 	
 	private HashMap<Integer, Double> meansNetto;
 	
 	
-	public Analysis() {}
+	public Tdss() {}
 	
 	public void calculateModelParameters(Task root) {
 		HashMap<Integer, ArrayList<Long>> data = extractData(root); 

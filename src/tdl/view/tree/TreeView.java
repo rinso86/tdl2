@@ -12,6 +12,7 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.HashMap;
 
 import javax.swing.DropMode;
 import javax.swing.JLabel;
@@ -391,10 +392,15 @@ public class TreeView implements Recipient {
 			String readable = secondsToHumanReadable(node.getTask().getSecondsActiveRecursive());
 			text += "<html>Task completed in "+ readable +".</html>";
 		} else {
-			String readable = secondsToHumanReadable(node.getTask().getSecondsActiveRecursive());
-			String readable2 = secondsToHumanReadable(controller.estimateTimeToComplete(node.getTask()));
-			text += "<html>Task active since brutto " + readable + ". </br>"
-					+ "Estimated brutto time to complete: " + readable2 + ".<html>";
+			HashMap<String, Double> estimates = controller.estimateTimeToComplete(node.getTask());
+			long tdest = estimates.get("tdss").longValue();
+			long buest = estimates.get("buvs").longValue();
+			String timeActiveReadable = secondsToHumanReadable(node.getTask().getSecondsActiveRecursive());
+			String estTdReadable = secondsToHumanReadable(tdest);
+			String estBuReadable = secondsToHumanReadable(buest);
+			text += "<html>Task active since brutto " + timeActiveReadable + ". </br>"
+					+ "Estimated brutto time to complete (tdss): " + estTdReadable + ". </br>"
+					+ "Estimated brutto time to complete (buvs): " + estBuReadable + ".<html>";
 		}
 		return text;
 	}
