@@ -1,5 +1,6 @@
 package tdl.utils.statmod;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import tdl.model.Task;
@@ -12,13 +13,91 @@ import tdl.model.Task;
  */
 public class Buvs implements StatMod {
 	
+	double globalMeanNetTime;
+	double globalMeanChildCount;
 	HashMap<Integer, Double> meanNetTimes = new HashMap<Integer, Double>();
 	HashMap<Integer, Double> meanChildCounts = new HashMap<Integer, Double>();
 
 	@Override
 	public void calculateModelParameters(Task root) {
-		// TODO Auto-generated method stub
-		
+		HashMap<Integer, ArrayList<Double>> netTimes = new HashMap<Integer, ArrayList<Double>>();
+		HashMap<Integer, ArrayList<Integer>> childCounts = new HashMap<Integer, ArrayList<Integer>>();
+		fillNetTimes(root, netTimes);
+		fillChildCouns(root, childCounts);
+		calcNetMeanTimes(netTimes);
+		calcMeanChildCounts(childCounts);
+		globalMeanNetTime = averageMeanNetTime();
+		globalMeanChildCount = averageMeanChildCount();
+	}
+
+	private double averageMeanChildCount() {
+		double sum = 0;
+		for(double c : meanChildCounts.values()) {
+			sum += c;
+		}
+		double average = sum / meanChildCounts.size();
+		return average;
+	}
+
+	private double averageMeanNetTime() {
+		double sum = 0;
+		for(double t : meanNetTimes.values()) {
+			sum += t;
+		}
+		double average = sum / meanNetTimes.size();
+		return average;
+	}
+
+	private void calcMeanChildCounts(HashMap<Integer, ArrayList<Integer>> childCounts) {
+		for(Integer d : childCounts.keySet()) {
+			double sum = 0;
+			for(double c : childCounts.get(d)) {
+				sum += c;
+			}
+			double meanCount = sum / childCounts.get(d).size();
+			meanChildCounts.put(d, meanCount);
+		}
+	}
+
+	private void calcNetMeanTimes(HashMap<Integer, ArrayList<Double>> netTimes) {
+		for(Integer d : netTimes.keySet()) {
+			double sum = 0;
+			for(double t : netTimes.get(d)) {
+				sum += t;
+			}
+			double meanTime = sum / netTimes.get(d).size();
+			meanNetTimes.put(d, meanTime);
+		}
+	}
+
+	private void fillChildCouns(Task root, HashMap<Integer, ArrayList<Integer>> childCounts) {
+		int depth = getDepth(root);
+		int chCount = root.getChildren().size();
+		if(childCounts.get(depth) != null) {
+			childCounts.get(depth).add(chCount);			
+		}else {
+			childCounts.put(depth, new ArrayList<Integer>());
+			childCounts.get(depth).add(chCount);
+		}
+		for(Task child : root.getChildren()) {
+			fillChildCouns(child, childCounts);
+		}
+	}
+
+	private void fillNetTimes(Task root, HashMap<Integer, ArrayList<Double>> netTimes) {
+		int depth = getDepth(root);
+		if(root.isCompleted()) {
+			double netTime = root.getSecondsActive();
+			if(netTimes.get(depth) != null) {
+				netTimes.get(depth).add(netTime);			
+			}else {
+				netTimes.put(depth, new ArrayList<Double>());
+				netTimes.get(depth).add(netTime);
+			}			
+		}
+		for(Task child : root.getChildren()) {
+			fillNetTimes(child, netTimes);
+		}
 	}
 
 	@Override
@@ -27,7 +106,7 @@ public class Buvs implements StatMod {
 		
 		// factor 1: net time of base
 		int depth = getDepth(tree);
-		expctTime += meanNetTimes.get(depth);
+		expctTime += getEstimateMeanNetTime(depth);
 		
 		// factor 2: estimated gross time of children
 		for(Task child : tree.getChildren()) {
@@ -45,6 +124,22 @@ public class Buvs implements StatMod {
 	}
 
 
+	private double getEstimateMeanNetTime(int depth) {
+		double est;
+		
+		// Ideally: use mean net time
+		if(meanNetTimes.get(depth) != null) {
+			est = meanNetTimes.get(depth);
+		} 
+		// Otherwise: use global mean
+		else {
+			est = globalMeanNetTime;
+		}
+		
+		return est;
+	}
+	
+
 	/**
 	 * Returns the distance from the tree root
 	 * 
@@ -52,8 +147,13 @@ public class Buvs implements StatMod {
 	 * @return
 	 */
 	private int getDepth(Task tree) {
-		// TODO Auto-generated method stub
-		return 0;
+		int depth = 0;
+		Task parent = tree.getParent();
+		while(parent != null) {
+			depth++;
+			parent = parent.getParent();
+		}
+		return depth;
 	}
 
 	
@@ -96,10 +196,10 @@ public class Buvs implements StatMod {
 	private double expTimeNewChild(int depth) {
 		double expTime = 0;
 		int maxDepth = meanNetTimes.size();
-		expTime += meanNetTimes.get(depth);
+		expTime +=  getEstimateMeanNetTime(depth);
 		double chCount = 1;
 		for(int d = depth; d < maxDepth; d++) {
-			expTime += chCount * meanNetTimes.get(d);
+			expTime += chCount * getEstimateMeanNetTime(d);
 			chCount *= meanChildCounts.get(d);
 		}
 		return expTime;
