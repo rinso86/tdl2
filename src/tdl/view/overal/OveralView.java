@@ -21,31 +21,33 @@ public class OveralView {
 	
 	public OveralView (String title, TreeView treeView, DetailView detailView, UpcomingView upcomingView) {
 		
-//		jp = new JPanel(new GridBagLayout());
-//		GridBagConstraints tasktreeConstraints = new GridBagConstraints();
-//		tasktreeConstraints.gridx = 0;
-//		tasktreeConstraints.gridy = 0;
-//		tasktreeConstraints.weightx = tasktreeConstraints.weighty = 1.0;
-//		tasktreeConstraints.fill = GridBagConstraints.BOTH;
-//        GridBagConstraints detailsConstraints = new GridBagConstraints();
-//        detailsConstraints.gridx = 1;
-//        detailsConstraints.gridy = 0;
-//        detailsConstraints.weightx = detailsConstraints.weighty = 1.0;
-//        detailsConstraints.fill = GridBagConstraints.BOTH;
-//        GridBagConstraints upcomingConstraints = new GridBagConstraints();
-//        upcomingConstraints.gridx = 2; 
-//        upcomingConstraints.gridy = 0;
-//        upcomingConstraints.weightx = upcomingConstraints.weighty = 1.0;
-//        upcomingConstraints.fill = GridBagConstraints.BOTH;
-//		
-//        jp.add(treeView.getPanel(), tasktreeConstraints);
-//        jp.add(detailView.getPanel(), detailsConstraints);
-//		jp.add(upcomingView.getPanel(), upcomingConstraints);
+		jp = new JPanel(new GridBagLayout());
+		GridBagConstraints tasktreeConstraints = new GridBagConstraints();
+		tasktreeConstraints.gridx = 0;
+		tasktreeConstraints.gridy = 0;
+		tasktreeConstraints.weightx = tasktreeConstraints.weighty = 1.5;
+		tasktreeConstraints.fill = GridBagConstraints.BOTH;
+        GridBagConstraints detailsConstraints = new GridBagConstraints();
+        detailsConstraints.gridwidth = 3;
+        detailsConstraints.gridx = 1;
+        detailsConstraints.gridy = 0;
+        detailsConstraints.weightx = detailsConstraints.weighty = 3.0;
+        detailsConstraints.fill = GridBagConstraints.BOTH;
+        GridBagConstraints upcomingConstraints = new GridBagConstraints();
+        upcomingConstraints.gridwidth = 1;
+        upcomingConstraints.gridx = 4; 
+        upcomingConstraints.gridy = 0;
+        upcomingConstraints.weightx = upcomingConstraints.weighty = 1.0;
+        upcomingConstraints.fill = GridBagConstraints.BOTH;
 		
-		jp = new JPanel(new GridLayout(1,3));
-        jp.add(treeView.getPanel());
-        jp.add(detailView.getPanel());
-		jp.add(upcomingView.getPanel());
+        jp.add(treeView.getPanel(), tasktreeConstraints);
+        jp.add(detailView.getPanel(), detailsConstraints);
+		jp.add(upcomingView.getPanel(), upcomingConstraints);
+		
+//		jp = new JPanel(new GridBagLayout(1,3));
+//      jp.add(treeView.getPanel());
+//      jp.add(detailView.getPanel());
+//		jp.add(upcomingView.getPanel());
 		
 		jf = new JFrame(title);
 		jf.setSize(800, 600);
