@@ -14,8 +14,10 @@ import tdl.model.Task;
 public class Buvs implements StatMod {
 	
 	double globalMeanNetTime;
+	double globalDevNetTime;
 	double globalMeanChildCount;
 	HashMap<Integer, Double> meanNetTimes = new HashMap<Integer, Double>();
+	HashMap<Integer, Double> devNetTimes = new HashMap<Integer, Double>();
 	HashMap<Integer, Double> meanChildCounts = new HashMap<Integer, Double>();
 
 	@Override
@@ -25,9 +27,11 @@ public class Buvs implements StatMod {
 		fillNetTimes(root, netTimes);
 		fillChildCouns(root, childCounts);
 		calcNetMeanTimes(netTimes);
+		calcDevNetTimes(netTimes);
 		calcMeanChildCounts(childCounts);
 		globalMeanNetTime = averageMeanNetTime();
 		globalMeanChildCount = averageMeanChildCount();
+		globalDevNetTime = averageDevNetTime();
 	}
 
 	private double averageMeanChildCount() {
@@ -110,7 +114,8 @@ public class Buvs implements StatMod {
 		
 		// factor 1: net time of base
 		int depth = getDepth(tree);
-		expctTime += getEstimateMeanNetTime(depth);
+		long secsActive = tree.getSecondsActive();
+		expctTime += getEstimateMeanNetTime(depth, secsActive);
 		
 		// factor 2: estimated gross time of children
 		for(Task child : tree.getChildren()) {
@@ -128,8 +133,10 @@ public class Buvs implements StatMod {
 	}
 
 
-	private double getEstimateMeanNetTime(int depth) {
+	private double getEstimateMeanNetTime(int depth, long secsActive) {
 		double est;
+		
+		// TODO: E(t|t0) = E(t) - intgr_t0^oo t P(t) dt / (1 - P(<t0) )
 		
 		// Ideally: use mean net time
 		if(meanNetTimes.get(depth) != null) {
