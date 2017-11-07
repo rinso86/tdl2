@@ -3,6 +3,8 @@ package tdl.utils.statmod;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.commons.math3.special.Gamma;
+
 import tdl.model.Task;
 
 
@@ -32,6 +34,16 @@ public class Buvs implements StatMod {
 		globalMeanNetTime = averageMeanNetTime();
 		globalMeanChildCount = averageMeanChildCount();
 		globalDevNetTime = averageDevNetTime();
+	}
+
+	private double averageDevNetTime() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	private void calcDevNetTimes(HashMap<Integer, ArrayList<Double>> netTimes) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	private double averageMeanChildCount() {
@@ -137,6 +149,7 @@ public class Buvs implements StatMod {
 		double est;
 		
 		// TODO: E(t|t0) = E(t) - intgr_t0^oo t P(t) dt / (1 - P(<t0) )
+		// double g = Gamma.gamma(2.1);
 		
 		// Ideally: use mean net time
 		if(meanNetTimes.get(depth) != null) {
@@ -207,10 +220,10 @@ public class Buvs implements StatMod {
 	private double expTimeNewChild(int depth) {
 		double expTime = 0;
 		int maxDepth = meanNetTimes.size();
-		expTime +=  getEstimateMeanNetTime(depth);
+		expTime +=  getEstimateMeanNetTime(depth, 0);
 		double chCount = 1;
 		for(int d = depth; d < maxDepth; d++) {
-			expTime += chCount * getEstimateMeanNetTime(d);
+			expTime += chCount * getEstimateMeanNetTime(d, 0);
 			chCount *= meanChildCounts.get(d);
 		}
 		return expTime;

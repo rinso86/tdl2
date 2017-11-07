@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.langbein.michael</groupId>
 	<artifactId>tdl</artifactId>
-	<version>0.1.8</version>
+	<version>0.1.9</version>
 
 
 	<build>
@@ -68,7 +68,12 @@
 			<artifactId>swingx</artifactId>
 			<version>1.6.1</version>
 		</dependency>
-
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math3</artifactId>
+			<version>3.2</version>
+		</dependency>
 	</dependencies>
 
 </project>
