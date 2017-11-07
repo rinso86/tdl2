@@ -104,6 +104,10 @@ public class Buvs implements StatMod {
 	public double estimateTimeToComplete(Task tree) {
 		double expctTime = 0;
 		
+		if(tree.isCompleted()) {
+			return tree.getSecondsActiveRecursive();
+		}
+		
 		// factor 1: net time of base
 		int depth = getDepth(tree);
 		expctTime += getEstimateMeanNetTime(depth);
