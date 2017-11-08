@@ -265,4 +265,40 @@ public class MutableTask implements Serializable, Task {
 		return foundTask;
 	}
 
+	
+	/**
+	 * Returns the distance from the tree root
+	 * 
+	 * @param tree
+	 * @return
+	 */
+	public int getDepth(Task tree) {
+		int depth = 0;
+		Task parent = tree.getParent();
+		while(parent != null) {
+			depth++;
+			parent = parent.getParent();
+		}
+		return depth;
+	}
+
+
+	/**
+	 * Returns the distance to the furthest leaf
+	 * 
+	 * @param root
+	 * @return
+	 */
+	public int getHeight(Task root) {
+		int height = 1;
+		int maxChHeight = 0;
+		for(Task child : root.getChildren()) {
+			int chHeight = getHeight(child);
+			if(chHeight > maxChHeight) {
+				maxChHeight = chHeight;
+			}
+		}
+		height += maxChHeight;
+		return height;
+	}
 }

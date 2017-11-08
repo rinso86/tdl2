@@ -3,6 +3,8 @@ package tdl.utils.statmod;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.commons.math3.distribution.GammaDistribution;
+import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.apache.commons.math3.special.Gamma;
 
 import tdl.model.Task;
@@ -15,33 +17,78 @@ import tdl.model.Task;
  */
 public class Buvs implements StatMod {
 	
-	double globalMeanNetTime;
-	double globalDevNetTime;
-	double globalMeanChildCount;
+	int treedepth;
 	HashMap<Integer, Double> meanNetTimes = new HashMap<Integer, Double>();
-	HashMap<Integer, Double> devNetTimes = new HashMap<Integer, Double>();
+	HashMap<Integer, Double> varNetTimes = new HashMap<Integer, Double>();
 	HashMap<Integer, Double> meanChildCounts = new HashMap<Integer, Double>();
+	double globalMeanNetTime;
+	double globalVarNetTime;
+	double globalMeanChildCount;
+	HashMap<Integer, PoissonDistribution> poisDs = new HashMap<Integer, PoissonDistribution>();
+	HashMap<Integer, GammaDistribution> gamDs = new HashMap<Integer, GammaDistribution>();
 
 	@Override
 	public void calculateModelParameters(Task root) {
+		treedepth = getHeight(root);
 		HashMap<Integer, ArrayList<Double>> netTimes = new HashMap<Integer, ArrayList<Double>>();
 		HashMap<Integer, ArrayList<Integer>> childCounts = new HashMap<Integer, ArrayList<Integer>>();
 		fillNetTimes(root, netTimes);
 		fillChildCouns(root, childCounts);
 		calcNetMeanTimes(netTimes);
-		calcDevNetTimes(netTimes);
+		calcVarNetTimes(netTimes);
 		calcMeanChildCounts(childCounts);
 		globalMeanNetTime = averageMeanNetTime();
 		globalMeanChildCount = averageMeanChildCount();
-		globalDevNetTime = averageDevNetTime();
+		globalVarNetTime = averageVarNetTime();
+		calcPoisDistrs();
+		calcGammaDistrs();
 	}
 
-	private double averageDevNetTime() {
-		// TODO Auto-generated method stub
-		return 0;
+
+
+	private Double getMeanNetTime(int depth) {
+		Double mnt = meanNetTimes.get(depth);
+		if(mnt == null) {
+			mnt = globalMeanNetTime;
+		}
+		return mnt;
 	}
 
-	private void calcDevNetTimes(HashMap<Integer, ArrayList<Double>> netTimes) {
+
+	private Double getVarNetTime(int depth) {
+		Double vnt = varNetTimes.get(depth);
+		if(vnt == null) {
+			vnt = globalVarNetTime;
+		}
+		return vnt;
+	}
+
+
+	private Double getMeanChildCount(int depth) {
+		Double mcc = meanChildCounts.get(depth);
+		if(mcc == null) {
+			mcc = globalMeanChildCount;
+		}
+		return mcc;
+	}
+
+
+	private void calcGammaDistrs() {
+		for(int d = 0; d < treedepth; d++) {
+			Double mean = getMeanNetTime(d);
+			Double var = varNetTimes.get(d);
+			if(var == null) var = globalVarNetTime;
+			double alpha = mean * mean / var;
+			double beta = mean / var;
+			double scale = 1 / beta;
+			GammaDistribution gam = new GammaDistribution(alpha, scale);  
+			gamDs.put(d, gam);
+		}
+	}
+
+
+
+	private void calcPoisDistrs() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -64,6 +111,17 @@ public class Buvs implements StatMod {
 		return average;
 	}
 
+
+	private double averageVarNetTime() {
+		double sum = 0;
+		for(double v : varNetTimes.values()) {
+			sum += v;
+		}
+		double average = sum / varNetTimes.size();
+		return average;
+	}
+	
+	
 	private void calcMeanChildCounts(HashMap<Integer, ArrayList<Integer>> childCounts) {
 		for(Integer d : childCounts.keySet()) {
 			double sum = 0;
@@ -86,6 +144,20 @@ public class Buvs implements StatMod {
 		}
 	}
 
+	
+
+	private void calcVarNetTimes(HashMap<Integer, ArrayList<Double>> netTimes) {
+		for(Integer d : netTimes.keySet()) {
+			double mean = meanNetTimes.get(d);
+			double sum = 0;
+			for(double t : netTimes.get(d)) {
+				sum += (mean - t)*(mean - t);
+			}
+			double varTime = sum / netTimes.get(d).size();
+			varNetTimes.put(d, varTime);
+		}
+	}
+	
 	private void fillChildCouns(Task root, HashMap<Integer, ArrayList<Integer>> childCounts) {
 		int depth = getDepth(root);
 		int chCount = root.getChildren().size();
@@ -145,24 +217,6 @@ public class Buvs implements StatMod {
 	}
 
 
-	private double getEstimateMeanNetTime(int depth, long secsActive) {
-		double est;
-		
-		// TODO: E(t|t0) = E(t) - intgr_t0^oo t P(t) dt / (1 - P(<t0) )
-		// double g = Gamma.gamma(2.1);
-		
-		// Ideally: use mean net time
-		if(meanNetTimes.get(depth) != null) {
-			est = meanNetTimes.get(depth);
-		} 
-		// Otherwise: use global mean
-		else {
-			est = globalMeanNetTime;
-		}
-		
-		return est;
-	}
-	
 
 	/**
 	 * Returns the distance from the tree root
@@ -180,6 +234,25 @@ public class Buvs implements StatMod {
 		return depth;
 	}
 
+
+	/**
+	 * Returns the distance to the furthest leaf
+	 * 
+	 * @param root
+	 * @return
+	 */
+	private int getHeight(Task root) {
+		int height = 1;
+		int maxChHeight = 0;
+		for(Task child : root.getChildren()) {
+			int chHeight = getHeight(child);
+			if(chHeight > maxChHeight) {
+				maxChHeight = chHeight;
+			}
+		}
+		height += maxChHeight;
+		return height;
+	}
 	
 	private double factorial(int k) {
 		double out = 1;
@@ -228,4 +301,22 @@ public class Buvs implements StatMod {
 		}
 		return expTime;
 	}
+	
+
+	private double getEstimateMeanNetTime(int depth, long secsActive) {
+		
+		GammaDistribution gam = gamDs.get(depth);
+		
+		double alpha = gam.getAlpha();
+		double gt0 = gam.probability(secsActive);
+		double a = gt0 * secsActive * secsActive;
+		double b = alpha + 1;
+		double fac = a / b;
+		
+		double expct = gam.getNumericalMean();
+		double prbCuml = gam.cumulativeProbability(secsActive);
+		
+		return (expct - fac) / (1 - prbCuml);
+	}
+	
 }
