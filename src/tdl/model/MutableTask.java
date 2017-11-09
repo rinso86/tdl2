@@ -107,7 +107,7 @@ public class MutableTask implements Serializable, Task {
 	public void setDeadline(Date deadline) {
 		this.deadline = deadline;
 		adjustDeadlineToParent();
-		setDeadlineRecursive(deadline);
+		// setDeadlineRecursive(deadline);
 	}
 	
 	public void setDeadlineRecursive(Date deadline) {
