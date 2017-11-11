@@ -81,6 +81,8 @@ public class Buvs implements StatMod {
 			double alpha = mean * mean / var;
 			double beta = mean / var;
 			double scale = 1 / beta;
+			alpha = Math.max(alpha, 0.00001);
+			scale = Math.max(scale, 0.00001);
 			GammaDistribution gam = new GammaDistribution(alpha, scale);  
 			gamDs.put(d, gam);
 		}
