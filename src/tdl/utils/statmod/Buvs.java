@@ -217,8 +217,8 @@ public class Buvs implements StatMod {
 		// factor 3: expected number of additional children
 		int k0 = tree.getChildren().size();
 		double lambda = meanChildCounts.get(depth);
-		double additChildren = expChldCond(lambda, k0) - k0;
-		double expTimeNewChild = expTimeNewChild(depth);
+		double additChildren = expectedChlidcountCond(lambda, k0) - k0;
+		double expTimeNewChild = expectedTimeNewChild(depth);
 		expctTime += additChildren * expTimeNewChild;
 		
 		return expctTime;
@@ -279,7 +279,7 @@ public class Buvs implements StatMod {
 	 * @param k0
 	 * @return
 	 */
-	private double expChldCond(double lambda, int k0) {
+	private double expectedChlidcountCond(double lambda, int k0) {
 		double sum1 = 0;
 		double sum2 = 0;
 		for(int i = 0; i < k0 -1; i++) {
@@ -298,7 +298,7 @@ public class Buvs implements StatMod {
 	 * @param depth
 	 * @return
 	 */
-	private double expTimeNewChild(int depth) {
+	private double expectedTimeNewChild(int depth) {
 		double expTime = 0;
 		int maxDepth = meanNetTimes.size();
 		expTime +=  getEstimateMeanNetTime(depth, 0);
@@ -329,6 +329,8 @@ public class Buvs implements StatMod {
 		
 		if(estimate.isNaN()) {
 			estimate = getMeanNetTime(depth);
+		}else if(estimate.isInfinite()) {
+			estimate = 100 * getMeanNetTime(depth);
 		}
 		
 		return estimate;

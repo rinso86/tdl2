@@ -45,7 +45,6 @@ public class Controller implements Recipient{
 	// Utils
 	private ResourceManager resourceManager;
 	private Savior savior;
-	private StatMod tdss;
 	private StatMod buvs;
 	private Scheduler scheduler;
 	
@@ -69,8 +68,6 @@ public class Controller implements Recipient{
 		savior = new Savior();
 		baseTask = savior.loadTree(SAVEFILE);
 		currentTask = baseTask;
-		tdss = new Tdss();
-		tdss.calculateModelParameters(baseTask);
 		buvs = new Buvs();
 		buvs.calculateModelParameters(baseTask);
 		scheduler = new Scheduler(buvs);
@@ -101,7 +98,6 @@ public class Controller implements Recipient{
 	
 	public HashMap<String, Double> estimateTimeToComplete(Task t) {
 		HashMap<String, Double> estimate = new HashMap<String, Double>();
-		estimate.put("tdss", tdss.estimateTimeToComplete(t));
 		estimate.put("buvs", buvs.estimateTimeToComplete(t));
 		return estimate;
 	}
@@ -172,7 +168,7 @@ public class Controller implements Recipient{
 		moldParent.deleteChild(mtask);
 		mnewParent.addChild(mtask);
 
-		tdss.calculateModelParameters(baseTask);
+		buvs.calculateModelParameters(baseTask);
 		
 		Message response = new Message(MessageType.MOVED_TASK);
 		response.addHeader("task", (Task) mtask);
@@ -264,7 +260,7 @@ public class Controller implements Recipient{
 		task.setCompletedRecursive(new Date());
 		
 		saveDetailsToTask();
-		tdss.calculateModelParameters(baseTask);
+		buvs.calculateModelParameters(baseTask);
 		
 		Message response = new Message(MessageType.COMPLETED_TASK);
 		response.addHeader("task", (Task) task);
@@ -282,7 +278,6 @@ public class Controller implements Recipient{
 		MutableTask parent = fetchMutableTask((Task) message.getHeaders().get("task"));
 		MutableTask child = new MutableTask(parent, "new task");
 
-		tdss.calculateModelParameters(baseTask);
 		buvs.calculateModelParameters(baseTask);
 		
 		Message response = new Message(MessageType.ADDED_SUBTASK);

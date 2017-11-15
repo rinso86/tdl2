@@ -393,13 +393,10 @@ public class TreeView implements Recipient {
 			text += "<html>Task completed in "+ readable +".</html>";
 		} else {
 			HashMap<String, Double> estimates = controller.estimateTimeToComplete(node.getTask());
-			long tdest = estimates.get("tdss").longValue();
 			long buest = estimates.get("buvs").longValue();
 			String timeActiveReadable = secondsToHumanReadable(node.getTask().getSecondsActiveRecursive());
-			String estTdReadable = secondsToHumanReadable(tdest);
 			String estBuReadable = secondsToHumanReadable(buest);
 			text += "<html>Task active since brutto " + timeActiveReadable + ". </br>"
-					+ "Estimated brutto time to complete (tdss): " + estTdReadable + ". </br>"
 					+ "Estimated brutto time to complete (buvs): " + estBuReadable + ".<html>";
 		}
 		return text;
