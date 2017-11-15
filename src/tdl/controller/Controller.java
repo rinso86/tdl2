@@ -3,6 +3,7 @@ package tdl.controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
@@ -13,6 +14,8 @@ import tdl.model.MutableTask;
 import tdl.model.Task;
 import tdl.utils.ResourceManager;
 import tdl.utils.Savior;
+import tdl.utils.scheduler.ScheduleItem;
+import tdl.utils.scheduler.Scheduler;
 import tdl.utils.statmod.Buvs;
 import tdl.utils.statmod.StatMod;
 import tdl.utils.statmod.Tdss;
@@ -44,6 +47,7 @@ public class Controller implements Recipient{
 	private Savior savior;
 	private StatMod tdss;
 	private StatMod buvs;
+	private Scheduler scheduler;
 	
 	// Views
 	private TreeView treeView;
@@ -69,6 +73,7 @@ public class Controller implements Recipient{
 		tdss.calculateModelParameters(baseTask);
 		buvs = new Buvs();
 		buvs.calculateModelParameters(baseTask);
+		scheduler = new Scheduler(buvs);
 		currentTaskActiveSince = new Date();
 		
 		// Views
@@ -100,6 +105,11 @@ public class Controller implements Recipient{
 		estimate.put("buvs", buvs.estimateTimeToComplete(t));
 		return estimate;
 	}
+	
+	public ArrayList<ScheduleItem> getSchedule() {
+		return scheduler.makeSchedule(baseTask);
+	}
+	
 
 	@Override
 	public void receiveMessage(Message message) {
@@ -341,6 +351,7 @@ public class Controller implements Recipient{
 		upcomingView.receiveMessage(message);
 		detailView.receiveMessage(message);
 		wiseCrackView.receiveMessage(message);
+		calendarView.receiveMessage(message);
 	}
 
 	private MutableTask fetchMutableTask(Task t) {
