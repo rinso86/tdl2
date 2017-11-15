@@ -109,7 +109,10 @@ public class Buvs implements StatMod {
 		for(double t : meanNetTimes.values()) {
 			sum += t;
 		}
-		double average = sum / meanNetTimes.size();
+		Double average = sum / meanNetTimes.size();
+		if(average.isNaN()) {
+			average = 0.0;
+		}
 		return average;
 	}
 
@@ -119,7 +122,10 @@ public class Buvs implements StatMod {
 		for(double v : varNetTimes.values()) {
 			sum += v;
 		}
-		double average = sum / varNetTimes.size();
+		Double average = sum / varNetTimes.size();
+		if(average.isNaN()) {
+			average = 0.0;
+		}
 		return average;
 	}
 	
@@ -309,6 +315,7 @@ public class Buvs implements StatMod {
 		
 		GammaDistribution gam = gamDs.get(depth);
 		
+		@SuppressWarnings("deprecation")
 		double alpha = gam.getAlpha();
 		double gt0 = gam.probability(secsActive);
 		double a = gt0 * secsActive * secsActive;
@@ -318,7 +325,13 @@ public class Buvs implements StatMod {
 		double expct = gam.getNumericalMean();
 		double prbCuml = gam.cumulativeProbability(secsActive);
 		
-		return (expct - fac) / (1 - prbCuml);
+		Double estimate = (expct - fac) / (1 - prbCuml);
+		
+		if(estimate.isNaN()) {
+			estimate = getMeanNetTime(depth);
+		}
+		
+		return estimate;
 	}
 	
 }

@@ -136,11 +136,70 @@ public class Scheduler {
 	}
 
 	private Date addSecondsToDate(double estimate, Date date) {
-		// TODO: make sure that seconds WITHIN WORKDAY are counted, not at night. 
+		Date outDate = new Date();
+		Date beginWorkDay = getBeginWorkday(date);
+		Date endWorkDay = getEndWorkday(date);
+		long secondsLeftToday = endWorkDay.getTime() - date.getTime();
+		if(secondsLeftToday < 0) { // Working after closing hours again ...
+			double remainder = estimate;
+			Date nextDay = getNextWorkDayMorning(date);
+			outDate = addSecondsToDate(remainder, nextDay);
+		} else if(estimate < secondsLeftToday) { // Can still finish this today!
+			outDate = addSecondsToDateSimple(estimate, date);
+		} else { // Screw it. We'll do it tomorrow.
+			double remainder = estimate - secondsLeftToday;
+			Date nextDay = getNextWorkDayMorning(date);
+			outDate = addSecondsToDate(remainder, nextDay);
+		}
+		return outDate;
+	}
+
+
+	private Date addSecondsToDateSimple(double estimate, Date date) {
 		calendar.setTime(date);
 		calendar.add(Calendar.SECOND, (int)estimate);
 		Date newDate = calendar.getTime();
 		return newDate;
 	}
 	
+	
+	private Date getNextWorkDayMorning(Date date) {
+		calendar.setTime(date);
+		int dow = calendar.get(Calendar.DAY_OF_WEEK);
+		switch(dow) {
+		case 0: // Sun
+		case 1: // Mo
+		case 2: // Tue
+		case 3: // Wed
+		case 4: // Thu
+			calendar.add(Calendar.DAY_OF_MONTH, 1);
+			break;
+		case 5: // Fr
+			calendar.add(Calendar.DAY_OF_MONTH, 3);
+			break;
+		case 6: // Sat
+			calendar.add(Calendar.DAY_OF_MONTH, 2);
+			break;
+		}
+		calendar.set(Calendar.HOUR_OF_DAY, 8);
+		calendar.set(Calendar.MINUTE, 0);
+		Date outDate = calendar.getTime();
+		return outDate;
+	}
+	
+	private Date getBeginWorkday(Date date) {
+		calendar.setTime(date);
+		calendar.set(Calendar.HOUR_OF_DAY, 8);
+		calendar.set(Calendar.MINUTE, 0);
+		Date outDate = calendar.getTime();
+		return outDate;
+	}
+	
+	private Date getEndWorkday(Date date) {
+		calendar.setTime(date);
+		calendar.set(Calendar.HOUR_OF_DAY, 17);
+		calendar.set(Calendar.MINUTE, 0);
+		Date outDate = calendar.getTime();
+		return outDate;
+	}
 }
