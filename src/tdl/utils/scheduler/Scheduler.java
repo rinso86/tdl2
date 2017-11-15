@@ -2,6 +2,8 @@ package tdl.utils.scheduler;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -29,44 +31,70 @@ public class Scheduler {
 		
 		ArrayList<ScheduleItem> schedule = new ArrayList<ScheduleItem>();
 		ArrayList<Task> tasks = makeList(tree);
+		ArrayList<Task> tasksF = filterByDeadline(tasks);
+		ArrayList<Task> tasksFS = sortByDeadline(tasksF);
 		
 		// 0th iteration
-		Task mostUrgentTask = popMostUrgent(tasks);
 		Date startDate = new Date();
 		Date endDate = null;
 		
-		while(mostUrgentTask != null) {
+		for(Task t : tasksFS) {
 			
-			double estimate = statMod.estimateTimeToComplete(mostUrgentTask);
+			double estimate = statMod.estimateTimeToComplete(t);
+			// TODO: from estimate, substract all estimates of any children of t
 			endDate = addSecondsToDate(estimate, startDate);
-			
-			ScheduleItem si = new ScheduleItem(startDate, endDate, mostUrgentTask);
+			ScheduleItem si = new ScheduleItem(startDate, endDate, t);
 			schedule.add(si);
-			
-			mostUrgentTask = popMostUrgent(tasks);
 			startDate = endDate;
+			
+//			Date deadline = t.getDeadline();
+//			if(endDate.after(deadline)) {
+//				throw new Exception("This deadline can not be met!");
+//			}
+			
 		}
 		
 		return schedule;
 	}
 
 
-	private Task popMostUrgent(ArrayList<Task> tasks) {
-		int indx = whereIsMostUrgent(tasks);
-		Task mut = tasks.remove(indx);
-		return mut;
-	}
-
-	private int whereIsMostUrgent(ArrayList<Task> tasks) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 	private ArrayList<Task> makeList(Task tree) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Task> list = new ArrayList<Task>();
+		fillListRecursively(tree, list);
+		return list;
 	}
 	
+	private void fillListRecursively(Task task, ArrayList<Task> list) {
+		list.add(task);
+		for(Task child : task.getChildren()) {
+			fillListRecursively(child, list);
+		}
+	}
+
+	private ArrayList<Task> filterByDeadline(ArrayList<Task> tasks) {
+		ArrayList<Task> tasksF = new ArrayList<Task>();
+		for(Task t : tasks) {
+			if(! t.isCompleted() ) {
+				if(t.getDeadline() != null) {
+					tasksF.add(t);
+				}
+			}
+		}
+		return tasksF;
+	}
+	
+	private ArrayList<Task> sortByDeadline(ArrayList<Task> tasksF) {
+		Collections.sort(tasksF, new Comparator<Task>() {
+			public int compare(Task t1, Task t2) {
+				Date dl1 = t1.getDeadline();
+				Date dl2 = t2.getDeadline();
+				return dl2.compareTo(dl1);
+			}
+		});
+		return tasksF;
+	}
+
 	private Date addSecondsToDate(double estimate, Date date) {
 		calendar.setTime(date);
 		calendar.add(Calendar.SECOND, (int)estimate);

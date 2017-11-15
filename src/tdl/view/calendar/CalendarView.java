@@ -64,7 +64,11 @@ public class CalendarView implements Recipient {
 
 	private String formatSchedule(ArrayList<ScheduleItem> schedule) {
 		String formatted = "";
-		// TODO
+		for(ScheduleItem si : schedule) {
+			formatted += si.getFrom() + " - ";
+			formatted += si.getTo() + " : ";
+			formatted += si.getTask().getTitle() + " <br/>";
+		}
 		return formatted;
 	}
 }
