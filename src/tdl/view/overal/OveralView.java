@@ -9,19 +9,23 @@ import java.awt.event.WindowListener;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
+import tdl.view.calendar.CalendarView;
 import tdl.view.details.DetailView;
 import tdl.view.tree.TreeView;
 import tdl.view.upcoming.UpcomingView;
 
 public class OveralView {
 	
-	private JPanel jp;
+	private JPanel jpTree;
+	private JPanel jpCal;
+	private JTabbedPane tp;
 	private JFrame jf;
 	
-	public OveralView (String title, TreeView treeView, DetailView detailView, UpcomingView upcomingView) {
+	public OveralView (String title, TreeView treeView, DetailView detailView, UpcomingView upcomingView, CalendarView calendarView) {
 		
-		jp = new JPanel(new GridBagLayout());
+		jpTree = new JPanel(new GridBagLayout());
 		GridBagConstraints tasktreeConstraints = new GridBagConstraints();
 		tasktreeConstraints.gridx = 0;
 		tasktreeConstraints.gridy = 0;
@@ -40,19 +44,22 @@ public class OveralView {
         upcomingConstraints.weightx = upcomingConstraints.weighty = 1.0;
         upcomingConstraints.fill = GridBagConstraints.BOTH;
 		
-        jp.add(treeView.getPanel(), tasktreeConstraints);
-        jp.add(detailView.getPanel(), detailsConstraints);
-		jp.add(upcomingView.getPanel(), upcomingConstraints);
+        jpTree.add(treeView.getPanel(), tasktreeConstraints);
+        jpTree.add(detailView.getPanel(), detailsConstraints);
+		jpTree.add(upcomingView.getPanel(), upcomingConstraints);
 		
-//		jp = new JPanel(new GridBagLayout(1,3));
-//      jp.add(treeView.getPanel());
-//      jp.add(detailView.getPanel());
-//		jp.add(upcomingView.getPanel());
+
+		jpCal = new JPanel();
+		jpCal.add(calendarView.getPanel());
+		
+		tp = new JTabbedPane();
+		tp.addTab("TreeView", jpTree);
+		tp.addTab("CalView", jpCal);
 		
 		jf = new JFrame(title);
 		jf.setSize(800, 600);
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		jf.add(jp);
+		jf.add(tp);
 		jf.pack();
 	}
 

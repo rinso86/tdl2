@@ -20,6 +20,7 @@ import tdl.messages.Message;
 import tdl.messages.MessageType;
 import tdl.messages.Recipient;
 import tdl.view.overal.OveralView;
+import tdl.view.calendar.CalendarView;
 import tdl.view.details.DetailView;
 import tdl.view.tree.TreeView;
 import tdl.view.upcoming.UpcomingView;
@@ -47,6 +48,7 @@ public class Controller implements Recipient{
 	// Views
 	private TreeView treeView;
 	private UpcomingView upcomingView;
+	private CalendarView calendarView;
 	private DetailView detailView;
 	private WiseCrackerView wiseCrackView;
 	private OveralView overalView;
@@ -72,8 +74,9 @@ public class Controller implements Recipient{
 		// Views
 		treeView = new TreeView(this);
 		upcomingView = new UpcomingView(this);
+		calendarView = new CalendarView(this);
 		detailView = new DetailView(this);
-		overalView = new OveralView("My Todo-List", treeView, detailView, upcomingView);
+		overalView = new OveralView("My Todo-List", treeView, detailView, upcomingView, calendarView);
 		overalView.setOnCloseListener(new OnCloseListener(this));
 		wiseCrackView = new WiseCrackerView(overalView.getJFrame());
 	}
