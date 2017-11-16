@@ -139,7 +139,7 @@ public class Scheduler {
 		Date outDate = new Date();
 		Date beginWorkDay = getBeginWorkday(date);
 		Date endWorkDay = getEndWorkday(date);
-		long secondsLeftToday = endWorkDay.getTime() - date.getTime();
+		long secondsLeftToday = ( endWorkDay.getTime() - date.getTime() ) / 1000;
 		if(secondsLeftToday < 0) { // Working after closing hours again ...
 			double remainder = estimate;
 			Date nextDay = getNextWorkDayMorning(date);
@@ -167,17 +167,17 @@ public class Scheduler {
 		calendar.setTime(date);
 		int dow = calendar.get(Calendar.DAY_OF_WEEK);
 		switch(dow) {
-		case 0: // Sun
-		case 1: // Mo
-		case 2: // Tue
-		case 3: // Wed
-		case 4: // Thu
+		case Calendar.SUNDAY:
+		case Calendar.MONDAY:
+		case Calendar.TUESDAY:
+		case Calendar.WEDNESDAY:
+		case Calendar.THURSDAY:
 			calendar.add(Calendar.DAY_OF_MONTH, 1);
 			break;
-		case 5: // Fr
+		case Calendar.FRIDAY:
 			calendar.add(Calendar.DAY_OF_MONTH, 3);
 			break;
-		case 6: // Sat
+		case Calendar.SATURDAY:
 			calendar.add(Calendar.DAY_OF_MONTH, 2);
 			break;
 		}
