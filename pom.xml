@@ -80,6 +80,13 @@
 			<artifactId>miglayout-swing</artifactId>
 			<version>5.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jfree/jfreechart -->
+		<dependency>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.14</version>
+		</dependency>
+
 	</dependencies>
 
 </project>

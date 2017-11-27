@@ -13,6 +13,7 @@ import javax.swing.JTabbedPane;
 
 import tdl.view.calendar.CalendarView;
 import tdl.view.details.DetailView;
+import tdl.view.stats.StatsView;
 import tdl.view.tree.TreeView;
 import tdl.view.upcoming.UpcomingView;
 
@@ -20,10 +21,11 @@ public class OveralView {
 	
 	private JPanel jpTree;
 	private JPanel jpCal;
+	private JPanel statsPanel;
 	private JTabbedPane tp;
 	private JFrame jf;
 	
-	public OveralView (String title, TreeView treeView, DetailView detailView, UpcomingView upcomingView, CalendarView calendarView) {
+	public OveralView (String title, TreeView treeView, DetailView detailView, UpcomingView upcomingView, CalendarView calendarView, StatsView statsView) {
 		
 		jpTree = new JPanel(new GridBagLayout());
 		GridBagConstraints tasktreeConstraints = new GridBagConstraints();
@@ -48,13 +50,16 @@ public class OveralView {
         jpTree.add(detailView.getPanel(), detailsConstraints);
 		jpTree.add(upcomingView.getPanel(), upcomingConstraints);
 		
-
 		jpCal = new JPanel();
 		jpCal.add(calendarView.getPanel());
+		
+		statsPanel = new JPanel();
+		statsPanel.add(statsView.getPanel());
 		
 		tp = new JTabbedPane();
 		tp.addTab("TreeView", jpTree);
 		tp.addTab("CalView", jpCal);
+		tp.addTab("StatsView", statsPanel);
 		
 		jf = new JFrame(title);
 		jf.setSize(800, 600);

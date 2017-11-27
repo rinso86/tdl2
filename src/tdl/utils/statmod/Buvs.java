@@ -2,6 +2,7 @@ package tdl.utils.statmod;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.math3.distribution.GammaDistribution;
 import org.apache.commons.math3.distribution.PoissonDistribution;
@@ -17,15 +18,15 @@ import tdl.model.Task;
  */
 public class Buvs implements StatMod {
 	
-	int treedepth;
-	HashMap<Integer, Double> meanNetTimes = new HashMap<Integer, Double>();
-	HashMap<Integer, Double> varNetTimes = new HashMap<Integer, Double>();
-	HashMap<Integer, Double> meanChildCounts = new HashMap<Integer, Double>();
-	double globalMeanNetTime;
-	double globalVarNetTime;
-	double globalMeanChildCount;
-	HashMap<Integer, PoissonDistribution> poisDs = new HashMap<Integer, PoissonDistribution>();
-	HashMap<Integer, GammaDistribution> gamDs = new HashMap<Integer, GammaDistribution>();
+	private int treedepth;
+	private HashMap<Integer, Double> meanNetTimes = new HashMap<Integer, Double>();
+	private HashMap<Integer, Double> varNetTimes = new HashMap<Integer, Double>();
+	private HashMap<Integer, Double> meanChildCounts = new HashMap<Integer, Double>();
+	private double globalMeanNetTime;
+	private double globalVarNetTime;
+	private double globalMeanChildCount;
+	private HashMap<Integer, PoissonDistribution> poisDs = new HashMap<Integer, PoissonDistribution>();
+	private HashMap<Integer, GammaDistribution> gamDs = new HashMap<Integer, GammaDistribution>();
 
 	@Override
 	public void calculateModelParameters(Task root) {
@@ -339,5 +340,6 @@ public class Buvs implements StatMod {
 		
 		return estimate;
 	}
+
 	
 }

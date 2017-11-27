@@ -19,10 +19,13 @@ import tdl.utils.scheduler.Scheduler;
 import tdl.utils.statmod.Buvs;
 import tdl.utils.statmod.StatMod;
 import tdl.utils.statmod.Tdss;
+import tdl.utils.statmod.renderers.BuvsRenderer;
+import tdl.utils.statmod.renderers.ModRenderer;
 import tdl.messages.Message;
 import tdl.messages.MessageType;
 import tdl.messages.Recipient;
 import tdl.view.overal.OveralView;
+import tdl.view.stats.StatsView;
 import tdl.view.calendar.CalendarView;
 import tdl.view.details.DetailView;
 import tdl.view.tree.TreeView;
@@ -45,7 +48,8 @@ public class Controller implements Recipient{
 	// Utils
 	private ResourceManager resourceManager;
 	private Savior savior;
-	private StatMod buvs;
+	private Buvs buvs;
+	private ModRenderer buvsRenderer;
 	private Scheduler scheduler;
 	
 	// Views
@@ -55,7 +59,7 @@ public class Controller implements Recipient{
 	private DetailView detailView;
 	private WiseCrackerView wiseCrackView;
 	private OveralView overalView;
-
+	private StatsView statsView;
 
 	
 	
@@ -70,6 +74,7 @@ public class Controller implements Recipient{
 		currentTask = baseTask;
 		buvs = new Buvs();
 		buvs.calculateModelParameters(baseTask);
+		buvsRenderer = new BuvsRenderer(buvs);
 		scheduler = new Scheduler(buvs);
 		currentTaskActiveSince = new Date();
 		
@@ -78,7 +83,8 @@ public class Controller implements Recipient{
 		upcomingView = new UpcomingView(this);
 		calendarView = new CalendarView(this);
 		detailView = new DetailView(this);
-		overalView = new OveralView("My Todo-List", treeView, detailView, upcomingView, calendarView);
+		statsView = new StatsView(this, buvsRenderer);
+		overalView = new OveralView("My Todo-List", treeView, detailView, upcomingView, calendarView, statsView);
 		overalView.setOnCloseListener(new OnCloseListener(this));
 		wiseCrackView = new WiseCrackerView(overalView.getJFrame());
 	}
@@ -321,6 +327,8 @@ public class Controller implements Recipient{
 	}
 
 	private void addFileToTask(Message message) {
+		saveDetailsToTask();
+		
 		HashMap<String, Object> headers = message.getHeaders();
 		File f = (File) headers.get("file");
 		Task t = (Task) headers.get("task");
@@ -347,6 +355,7 @@ public class Controller implements Recipient{
 		detailView.receiveMessage(message);
 		wiseCrackView.receiveMessage(message);
 		calendarView.receiveMessage(message);
+		statsView.receiveMessage(message);
 	}
 
 	private MutableTask fetchMutableTask(Task t) {
