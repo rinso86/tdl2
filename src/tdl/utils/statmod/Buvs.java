@@ -100,7 +100,10 @@ public class Buvs implements StatMod {
 		for(double c : meanChildCounts.values()) {
 			sum += c;
 		}
-		double average = sum / meanChildCounts.size();
+		Double average = sum / meanChildCounts.size();
+		if(average.isNaN()) {
+			average = 0.0;
+		}
 		return average;
 	}
 
@@ -327,6 +330,7 @@ public class Buvs implements StatMod {
 		
 		Double estimate = (expct - fac) / (1 - prbCuml);
 		
+		// TODO: diese beiden fälle sollten schon an ihrer ursache behandelt werden ...
 		if(estimate.isNaN()) {
 			estimate = getMeanNetTime(depth);
 		}else if(estimate.isInfinite()) {

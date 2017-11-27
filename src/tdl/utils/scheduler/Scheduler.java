@@ -140,17 +140,23 @@ public class Scheduler {
 		Date beginWorkDay = getBeginWorkday(date);
 		Date endWorkDay = getEndWorkday(date);
 		long secondsLeftToday = ( endWorkDay.getTime() - date.getTime() ) / 1000;
+		
 		if(secondsLeftToday < 0) { // Working after closing hours again ...
 			double remainder = estimate;
 			Date nextDay = getNextWorkDayMorning(date);
 			outDate = addSecondsToDate(remainder, nextDay);
-		} else if(estimate < secondsLeftToday) { // Can still finish this today!
+		} 
+		
+		else if(estimate < secondsLeftToday) { // Can still finish this today!
 			outDate = addSecondsToDateSimple(estimate, date);
-		} else { // Screw it. We'll do it tomorrow.
+		} 
+		
+		else { // Screw it. We'll do it tomorrow.
 			double remainder = estimate - secondsLeftToday;
 			Date nextDay = getNextWorkDayMorning(date);
 			outDate = addSecondsToDate(remainder, nextDay);
 		}
+		
 		return outDate;
 	}
 
