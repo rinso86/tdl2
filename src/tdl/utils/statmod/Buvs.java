@@ -19,6 +19,8 @@ import tdl.model.Task;
 public class Buvs implements StatMod {
 	
 	private int treedepth;
+	private HashMap<Integer, ArrayList<Double>> netTimes = new HashMap<Integer, ArrayList<Double>>();
+	private HashMap<Integer, ArrayList<Integer>> childCounts = new HashMap<Integer, ArrayList<Integer>>();
 	private HashMap<Integer, Double> meanNetTimes = new HashMap<Integer, Double>();
 	private HashMap<Integer, Double> varNetTimes = new HashMap<Integer, Double>();
 	private HashMap<Integer, Double> meanChildCounts = new HashMap<Integer, Double>();
@@ -31,8 +33,6 @@ public class Buvs implements StatMod {
 	@Override
 	public void calculateModelParameters(Task root) {
 		treedepth = getHeight(root);
-		HashMap<Integer, ArrayList<Double>> netTimes = new HashMap<Integer, ArrayList<Double>>();
-		HashMap<Integer, ArrayList<Integer>> childCounts = new HashMap<Integer, ArrayList<Integer>>();
 		fillNetTimes(root, netTimes);
 		fillChildCouns(root, childCounts);
 		calcNetMeanTimes(netTimes);
@@ -341,5 +341,35 @@ public class Buvs implements StatMod {
 		return estimate;
 	}
 
+
+
+	public int getTreeDepth() {
+		return treedepth;
+	}
+
+
+	public HashMap<Integer, ArrayList<Double>> getNetTimes() {
+		return this.netTimes;
+	}
+
+
+
+	public HashMap<Integer, ArrayList<Integer>> getChildCounts() {
+		return this.childCounts;
+	}
+
+
+	public HashMap<Integer, PoissonDistribution> getPoisDs() {
+		return this.poisDs;
+	}
+
+
+
+	public HashMap<Integer, GammaDistribution> getGamDs() {
+		return this.gamDs;
+	}
+
+	
+	
 	
 }
