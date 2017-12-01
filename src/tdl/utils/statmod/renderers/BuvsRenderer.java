@@ -1,5 +1,6 @@
 package tdl.utils.statmod.renderers;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.ArrayList;
@@ -80,13 +81,13 @@ public class BuvsRenderer implements ModRenderer {
 		// Pdf
 		XYSeries xyseries = new XYSeries("pdf");
 		if(gd != null) {			
-			int steps = 30;
+			int steps = 20;
 			double maxT = Collections.max(netTimes) + Math.sqrt(gd.getNumericalVariance());
 			double delta = maxT / steps;
 			for(int i = 1; i < steps; i++) { // strikt positiv; darf nicht bei 0 beginnen
 				double t = delta * i;
 				double pt = gd.density(t);
-				xyseries.add(t/60, pt);
+				xyseries.add(t/60, pt * 100);
 			}
 		}
 		XYSeriesCollection dataset2 = new XYSeriesCollection();
@@ -104,11 +105,14 @@ public class BuvsRenderer implements ModRenderer {
 		plt.setRenderer(1, pdfRenderer);
 		plt.setDatasetRenderingOrder( DatasetRenderingOrder.FORWARD );
 		
-//		// Adding line
-//		ValueMarker marker = new ValueMarker(5);  // position is the value on the axis
-//		marker.setPaint(Color.black);
-//		marker.setLabel("here");
-//		plt.addDomainMarker(marker);
+		// Adding mean
+		if(gd != null) {
+			ValueMarker marker = new ValueMarker(gd.getNumericalMean());  // position is the value on the axis
+			marker.setPaint(Color.black);
+			marker.setLabel("mean");
+			plt.addDomainMarker(marker);
+		}
+			
 		
 		// Getting frame
 		ChartFrame cf = new ChartFrame(heading, barChart);
@@ -131,11 +135,8 @@ public class BuvsRenderer implements ModRenderer {
 		// Dataset 2
 		XYSeries xyseries = new XYSeries("pdf");
 		if(pd != null) {
-			int steps = 30;
-			double maxC = Collections.max(childCounts) + 1;
-			int delta = (int) (maxC / steps);
-			for(int i = 0; i < steps; i++) {
-				int t = delta * i;
+			int steps = Collections.max(childCounts) + 1;
+			for(int t = 0; t < steps; t++) {
 				double pt = pd.probability(t);
 				xyseries.add(t, pt);
 			}			
@@ -155,11 +156,13 @@ public class BuvsRenderer implements ModRenderer {
 		plt.setRenderer(1, pdfRenderer);
 		plt.setDatasetRenderingOrder( DatasetRenderingOrder.FORWARD );
 		
-//		// Adding line
-//		ValueMarker marker = new ValueMarker(5);  // position is the value on the axis
-//		marker.setPaint(Color.black);
-//		marker.setLabel("here");
-//		plt.addDomainMarker(marker);
+		// Adding mean
+		if(pd != null) {			
+			ValueMarker marker = new ValueMarker(pd.getNumericalMean());  // position is the value on the axis
+			marker.setPaint(Color.black);
+			marker.setLabel("mean");
+			plt.addDomainMarker(marker);
+		}
 		
 		// Getting frame
 		ChartFrame cf = new ChartFrame(heading, barChart);
