@@ -1,12 +1,13 @@
 package tdl.utils.statmod.renderers;
 
-import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.function.Function;
 
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import org.apache.commons.math3.distribution.GammaDistribution;
 import org.apache.commons.math3.distribution.PoissonDistribution;
@@ -28,15 +29,13 @@ import org.jfree.data.xy.XYSeriesCollection;
 import tdl.utils.statmod.Buvs;
 
 
-/**
- * https://stackoverflow.com/questions/12344465/how-to-overlay-fitted-distribution-and-histogram-using-jfreechart
- * https://github.com/ngadde/playground/blob/master/com.iis.sample1/src/main/java/demo/PriceVolumeDemo1.java
- * @author Langbein_M
- *
- */
 
 public class BuvsRenderer implements ModRenderer {
 	
+	private static int nrGroupsTime = 7;
+	private static int nrGroupsChildren = 7;
+	private static int imgWidth = 300;
+	private static int imgHeight = 200;
 	private Buvs model;
 
 	public BuvsRenderer(Buvs buvs) {
@@ -53,13 +52,14 @@ public class BuvsRenderer implements ModRenderer {
 		HashMap<Integer, ArrayList<Double>> netTimes = model.getNetTimes();
 		HashMap<Integer, PoissonDistribution> poisDs = model.getPoisDs();
 		HashMap<Integer, GammaDistribution> gamDs = model.getGamDs();
-
 		
 		for(int i = 1; i < treeDepth; i++) { // starting at 1: root will never be finished. 
 			String childHeading = "Children on level " + i;
 			String timeHeading = "Time on level " + i;
 			ChartPanel childPanel = createChildGraph(childHeading, childCounts.get(i), poisDs.get(i));
 			ChartPanel timePanel = createTimeGraph(timeHeading, netTimes.get(i), gamDs.get(i));
+			childPanel.setPreferredSize(new Dimension(imgWidth,  imgHeight));
+			timePanel.setPreferredSize(new Dimension(imgWidth,  imgHeight));
 			jp.add(childPanel);
 			jp.add(timePanel);
 		}
@@ -68,24 +68,25 @@ public class BuvsRenderer implements ModRenderer {
 	}
 
 	private ChartPanel createTimeGraph(String heading, ArrayList<Double> netTimes, GammaDistribution gd) {
-		if(netTimes == null) return new ChartPanel(null);
+		if(netTimes == null || netTimes.size() <= 1) return new ChartPanel(null);
 		
 		// Histogram
 		double[] data = toPrimitiveDouble(netTimes);
+		data = mapOnDouble(data, a -> a/60);
 		HistogramDataset dataset = new HistogramDataset();
-		dataset.setType(HistogramType.FREQUENCY);
-		dataset.addSeries("Times", data, 20);
+		dataset.setType(HistogramType.SCALE_AREA_TO_1);
+		dataset.addSeries("Times", data, nrGroupsTime);
 
 		// Pdf
 		XYSeries xyseries = new XYSeries("pdf");
 		if(gd != null) {			
-			int steps = 100;
-			double maxT = gd.getNumericalMean() * 20;
+			int steps = 30;
+			double maxT = Collections.max(netTimes) + Math.sqrt(gd.getNumericalVariance());
 			double delta = maxT / steps;
-			for(int i = 0; i < steps; i++) {
+			for(int i = 1; i < steps; i++) { // strikt positiv; darf nicht bei 0 beginnen
 				double t = delta * i;
 				double pt = gd.density(t);
-				xyseries.add(t, pt);
+				xyseries.add(t/60, pt);
 			}
 		}
 		XYSeriesCollection dataset2 = new XYSeriesCollection();
@@ -93,7 +94,7 @@ public class BuvsRenderer implements ModRenderer {
 		XYItemRenderer pdfRenderer = new DefaultXYItemRenderer();
 		
 		// Creating chart with dataset 1
-		JFreeChart barChart = ChartFactory.createHistogram(heading, "X Axis", "Y Axis", dataset, PlotOrientation.VERTICAL, true, false, false);
+		JFreeChart barChart = ChartFactory.createHistogram(heading, "minutes", "prob/count", dataset, PlotOrientation.VERTICAL, true, false, false);
 		
 		// Getting plot 
 		XYPlot plt = (XYPlot) barChart.getPlot();
@@ -103,11 +104,11 @@ public class BuvsRenderer implements ModRenderer {
 		plt.setRenderer(1, pdfRenderer);
 		plt.setDatasetRenderingOrder( DatasetRenderingOrder.FORWARD );
 		
-		// Adding line
-		ValueMarker marker = new ValueMarker(5);  // position is the value on the axis
-		marker.setPaint(Color.black);
-		marker.setLabel("here");
-		plt.addDomainMarker(marker);
+//		// Adding line
+//		ValueMarker marker = new ValueMarker(5);  // position is the value on the axis
+//		marker.setPaint(Color.black);
+//		marker.setLabel("here");
+//		plt.addDomainMarker(marker);
 		
 		// Getting frame
 		ChartFrame cf = new ChartFrame(heading, barChart);
@@ -117,21 +118,22 @@ public class BuvsRenderer implements ModRenderer {
 	}
 
 
+
 	private ChartPanel createChildGraph(String heading, ArrayList<Integer> childCounts, PoissonDistribution pd) {
-		if(childCounts == null) return new ChartPanel(null);
+		if(childCounts == null || childCounts.size() <= 1) return new ChartPanel(null);
 		
 		// Histogram
 		double[] data = toPrimitiveInt(childCounts);
 		HistogramDataset dataset = new HistogramDataset();
-		dataset.setType(HistogramType.FREQUENCY);
-		dataset.addSeries("Hist", data, 5);
+		dataset.setType(HistogramType.SCALE_AREA_TO_1);
+		dataset.addSeries("hist", data, nrGroupsChildren);
 
 		// Dataset 2
 		XYSeries xyseries = new XYSeries("pdf");
 		if(pd != null) {
-			int steps = 100;
-			double maxT = pd.getNumericalMean() * 20;
-			int delta = (int) (maxT / steps);
+			int steps = 30;
+			double maxC = Collections.max(childCounts) + 1;
+			int delta = (int) (maxC / steps);
 			for(int i = 0; i < steps; i++) {
 				int t = delta * i;
 				double pt = pd.probability(t);
@@ -143,7 +145,7 @@ public class BuvsRenderer implements ModRenderer {
 		XYItemRenderer pdfRenderer = new DefaultXYItemRenderer();
 		
 		// Creating chart with dataset 1
-		JFreeChart barChart = ChartFactory.createHistogram(heading, "X Axis", "Y Axis", dataset, PlotOrientation.VERTICAL, true, false, false);
+		JFreeChart barChart = ChartFactory.createHistogram(heading, "children", "count/prob", dataset, PlotOrientation.VERTICAL, true, false, false);
 		
 		// Getting plot 
 		XYPlot plt = (XYPlot) barChart.getPlot();
@@ -153,11 +155,11 @@ public class BuvsRenderer implements ModRenderer {
 		plt.setRenderer(1, pdfRenderer);
 		plt.setDatasetRenderingOrder( DatasetRenderingOrder.FORWARD );
 		
-		// Adding line
-		ValueMarker marker = new ValueMarker(5);  // position is the value on the axis
-		marker.setPaint(Color.black);
-		marker.setLabel("here");
-		plt.addDomainMarker(marker);
+//		// Adding line
+//		ValueMarker marker = new ValueMarker(5);  // position is the value on the axis
+//		marker.setPaint(Color.black);
+//		marker.setLabel("here");
+//		plt.addDomainMarker(marker);
 		
 		// Getting frame
 		ChartFrame cf = new ChartFrame(heading, barChart);
@@ -187,4 +189,13 @@ public class BuvsRenderer implements ModRenderer {
 		return rawData;
 	}
 
+
+	private double[] mapOnDouble(double[] data, Function<Double, Double> f) {
+		int size = data.length;
+		double[] out = new double[size];
+		for(int i = 0; i < size; i++) {
+			out[i] = f.apply(data[i]);
+		}
+		return out;
+	}
 }

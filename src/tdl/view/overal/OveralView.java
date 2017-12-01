@@ -9,6 +9,7 @@ import java.awt.event.WindowListener;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 import tdl.view.calendar.CalendarView;
@@ -55,11 +56,12 @@ public class OveralView {
 		
 		statsPanel = new JPanel();
 		statsPanel.add(statsView.getPanel());
+		JScrollPane scrolableStatsPanel = new JScrollPane(statsPanel);
 		
 		tp = new JTabbedPane();
 		tp.addTab("TreeView", jpTree);
 		tp.addTab("CalView", jpCal);
-		tp.addTab("StatsView", statsPanel);
+		tp.addTab("StatsView", scrolableStatsPanel);
 		
 		jf = new JFrame(title);
 		jf.setSize(800, 600);

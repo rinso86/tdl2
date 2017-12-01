@@ -1,5 +1,8 @@
 package tdl.view.stats;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -13,17 +16,12 @@ public class StatsView  implements Recipient {
 	
 	private Controller controller;
 	private ModRenderer renderer;
-	private JPanel jpInner;
-	private JScrollPane scroller;
 	private JPanel jp;
 	
 	public StatsView(Controller controller, ModRenderer renderer) {
 		this.controller = controller;
 		this.renderer = renderer;
-		this.jp = new JPanel();
-		this.jpInner = renderer.render();
-		this.scroller = new JScrollPane(this.jpInner);
-		this.jp.add(scroller);
+		this.jp = renderer.render();
 	}
 
 	@Override
@@ -39,7 +37,7 @@ public class StatsView  implements Recipient {
 	}
 	
 	private void update() {
-		this.jpInner = renderer.render();
+		this.jp = renderer.render();
 	}
 
 	public JPanel getPanel() {

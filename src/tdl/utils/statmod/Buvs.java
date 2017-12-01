@@ -19,16 +19,18 @@ import tdl.model.Task;
 public class Buvs implements StatMod {
 	
 	private int treedepth;
+	
 	private HashMap<Integer, ArrayList<Double>> netTimes = new HashMap<Integer, ArrayList<Double>>();
-	private HashMap<Integer, ArrayList<Integer>> childCounts = new HashMap<Integer, ArrayList<Integer>>();
 	private HashMap<Integer, Double> meanNetTimes = new HashMap<Integer, Double>();
-	private HashMap<Integer, Double> varNetTimes = new HashMap<Integer, Double>();
-	private HashMap<Integer, Double> meanChildCounts = new HashMap<Integer, Double>();
+	private HashMap<Integer, Double> varNetTimes = new HashMap<Integer, Double>();	
 	private double globalMeanNetTime;
 	private double globalVarNetTime;
-	private double globalMeanChildCount;
-	private HashMap<Integer, PoissonDistribution> poisDs = new HashMap<Integer, PoissonDistribution>();
 	private HashMap<Integer, GammaDistribution> gamDs = new HashMap<Integer, GammaDistribution>();
+
+	private HashMap<Integer, ArrayList<Integer>> childCounts = new HashMap<Integer, ArrayList<Integer>>();
+	private HashMap<Integer, Double> meanChildCounts = new HashMap<Integer, Double>();
+	private double globalMeanChildCount;	
+	private HashMap<Integer, PoissonDistribution> poisDs = new HashMap<Integer, PoissonDistribution>();
 
 	@Override
 	public void calculateModelParameters(Task root) {
@@ -92,8 +94,13 @@ public class Buvs implements StatMod {
 
 
 	private void calcPoisDistrs() {
-		// TODO Auto-generated method stub
-		
+		for(int d = 0; d < treedepth; d++) {
+			Double mean = getMeanChildCount(d);
+			if(mean > 0) {
+				PoissonDistribution pd = new PoissonDistribution(mean);
+				poisDs.put(d, pd);				
+			}
+		}
 	}
 
 	private double averageMeanChildCount() {
@@ -188,12 +195,14 @@ public class Buvs implements StatMod {
 		int depth = getDepth(root);
 		if(root.isCompleted()) {
 			double netTime = root.getSecondsActive();
-			if(netTimes.get(depth) != null) {
-				netTimes.get(depth).add(netTime);			
-			}else {
-				netTimes.put(depth, new ArrayList<Double>());
-				netTimes.get(depth).add(netTime);
-			}			
+			if(netTime > 30) {
+				if(netTimes.get(depth) != null) {
+					netTimes.get(depth).add(netTime);			
+				}else {
+					netTimes.put(depth, new ArrayList<Double>());
+					netTimes.get(depth).add(netTime);
+				}				
+			}
 		}
 		for(Task child : root.getChildren()) {
 			fillNetTimes(child, netTimes);
@@ -221,7 +230,7 @@ public class Buvs implements StatMod {
 		// factor 3: expected number of additional children
 		int k0 = tree.getChildren().size();
 		double lambda = meanChildCounts.get(depth);
-		double additChildren = expectedChlidcountCond(lambda, k0) - k0;
+		double additChildren = expectedChildCountCond(lambda, k0) - k0;
 		double expTimeNewChild = expectedTimeNewChild(depth);
 		expctTime += additChildren * expTimeNewChild;
 		
@@ -283,7 +292,7 @@ public class Buvs implements StatMod {
 	 * @param k0
 	 * @return
 	 */
-	private double expectedChlidcountCond(double lambda, int k0) {
+	private double expectedChildCountCond(double lambda, int k0) {
 		double sum1 = 0;
 		double sum2 = 0;
 		for(int i = 0; i < k0 -1; i++) {
