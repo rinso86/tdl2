@@ -220,7 +220,7 @@ public class Buvs implements StatMod {
 		// factor 1: net time of base
 		int depth = getDepth(tree);
 		long secsActive = tree.getSecondsActive();
-		expctTime += getEstimateMeanNetTime(depth, secsActive);
+		expctTime += getEstimateMeanNetTimeCond(depth, secsActive);
 		
 		// factor 2: estimated gross time of children
 		for(Task child : tree.getChildren()) {
@@ -230,7 +230,7 @@ public class Buvs implements StatMod {
 		// factor 3: expected number of additional children
 		int k0 = tree.getChildren().size();
 		double lambda = meanChildCounts.get(depth);
-		double additChildren = expectedChildCountCond(lambda, k0) - k0;
+		double additChildren = getExpectedChildCountCond(lambda, k0) - k0;
 		double expTimeNewChild = expectedTimeNewChild(depth);
 		expctTime += additChildren * expTimeNewChild;
 		
@@ -292,7 +292,7 @@ public class Buvs implements StatMod {
 	 * @param k0
 	 * @return
 	 */
-	private double expectedChildCountCond(double lambda, int k0) {
+	public double getExpectedChildCountCond(double lambda, int k0) {
 		double sum1 = 0;
 		double sum2 = 0;
 		for(int i = 0; i < k0 -1; i++) {
@@ -314,17 +314,17 @@ public class Buvs implements StatMod {
 	private double expectedTimeNewChild(int depth) {
 		double expTime = 0;
 		int maxDepth = meanNetTimes.size();
-		expTime +=  getEstimateMeanNetTime(depth, 0);
+		expTime +=  getEstimateMeanNetTimeCond(depth, 0);
 		double chCount = 1;
 		for(int d = depth; d < maxDepth; d++) {
-			expTime += chCount * getEstimateMeanNetTime(d, 0);
+			expTime += chCount * getEstimateMeanNetTimeCond(d, 0);
 			chCount *= meanChildCounts.get(d);
 		}
 		return expTime;
 	}
 	
 
-	private double getEstimateMeanNetTime(int depth, long secsActive) {
+	public double getEstimateMeanNetTimeCond(int depth, long secsActive) {
 		
 		GammaDistribution gam = gamDs.get(depth);
 		

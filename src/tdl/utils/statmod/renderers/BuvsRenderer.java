@@ -22,8 +22,11 @@ import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.DefaultXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.data.statistics.DefaultMultiValueCategoryDataset;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
+import org.jfree.data.time.TimeSeries;
+import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -47,7 +50,7 @@ public class BuvsRenderer implements ModRenderer {
 	public JPanel render() {
 		
 		int treeDepth = model.getTreeDepth();
-		JPanel jp = new JPanel(new GridLayout(treeDepth - 1, 2));
+		JPanel jp = new JPanel(new GridLayout(treeDepth - 1, 4));
 		
 		HashMap<Integer, ArrayList<Integer>> childCounts = model.getChildCounts();
 		HashMap<Integer, ArrayList<Double>> netTimes = model.getNetTimes();
@@ -55,20 +58,90 @@ public class BuvsRenderer implements ModRenderer {
 		HashMap<Integer, GammaDistribution> gamDs = model.getGamDs();
 		
 		for(int i = 1; i < treeDepth; i++) { // starting at 1: root will never be finished. 
-			String childHeading = "Children on level " + i;
-			String timeHeading = "Time on level " + i;
-			ChartPanel childPanel = createChildGraph(childHeading, childCounts.get(i), poisDs.get(i));
-			ChartPanel timePanel = createTimeGraph(timeHeading, netTimes.get(i), gamDs.get(i));
+			
+			ChartPanel childPanel = createChildGraph(i, childCounts.get(i), poisDs.get(i));
+			ChartPanel timePanel = createTimeGraph(i, netTimes.get(i), gamDs.get(i));
+			ChartPanel childConditional = createChildCondExGraph(i, childCounts.get(i), poisDs.get(i));
+			ChartPanel timeConditional = createTimeCondExGraph(i, netTimes.get(i), gamDs.get(i));
+			
 			childPanel.setPreferredSize(new Dimension(imgWidth,  imgHeight));
 			timePanel.setPreferredSize(new Dimension(imgWidth,  imgHeight));
+			timeConditional.setPreferredSize(new Dimension(imgWidth,  imgHeight));
+			childConditional.setPreferredSize(new Dimension(imgWidth,  imgHeight));
+			
 			jp.add(childPanel);
+			jp.add(childConditional);
 			jp.add(timePanel);
+			jp.add(timeConditional);
 		}
 		
 		return jp;
 	}
 
-	private ChartPanel createTimeGraph(String heading, ArrayList<Double> netTimes, GammaDistribution gd) {
+	private ChartPanel createTimeCondExGraph(int depth, ArrayList<Double> netTimes, GammaDistribution gd) {
+		if(netTimes == null || gd == null) return new ChartPanel(null);
+		
+		
+		XYSeriesCollection dataset = new XYSeriesCollection();
+		
+		XYSeries t0Series = new XYSeries("t0");
+		XYSeries e0Series = new XYSeries("E[t]");
+		XYSeries eCondSeries = new XYSeries("E[t|t>t0]");
+		double t0Max = Collections.max(netTimes);
+		int steps = 20;
+		double delta = t0Max / steps;
+		for(int s = 0; s < steps; s++) {
+			double t0 = delta * s;
+			t0Series.add(t0, t0);
+			e0Series.add(t0, gd.getNumericalMean());
+			eCondSeries.add(t0, model.getEstimateMeanNetTimeCond(depth, (long) t0));
+		}
+		
+		dataset.addSeries(t0Series);
+		dataset.addSeries(e0Series);
+		dataset.addSeries(eCondSeries);
+		
+		JFreeChart chart = ChartFactory.createXYLineChart("expected time on " + depth, "t0", "E[t|t>c0]", dataset, PlotOrientation.VERTICAL, true, false, false);
+		XYPlot plot = (XYPlot) chart.getPlot();
+
+		// Getting frame
+		ChartFrame cf = new ChartFrame("E on " + depth, chart);
+		ChartPanel cp = cf.getChartPanel();
+		
+		return cp;
+	}
+
+	private ChartPanel createChildCondExGraph(int depth, ArrayList<Integer> childCounts, PoissonDistribution pd) {
+		if(pd == null) return new ChartPanel(null);
+		
+		
+		XYSeriesCollection dataset = new XYSeriesCollection();
+		
+		XYSeries c0Series = new XYSeries("c0");
+		XYSeries e0Series = new XYSeries("E[c]");
+		XYSeries eCondSeries = new XYSeries("E[c|c>c0]");
+		int c0Max = 10;
+		for(int c0 = 0; c0 < c0Max; c0++) {
+			c0Series.add(c0, c0);
+			e0Series.add(c0, pd.getNumericalMean());
+			eCondSeries.add(c0, model.getExpectedChildCountCond(pd.getNumericalMean(), c0));
+		}
+		
+		dataset.addSeries(c0Series);
+		dataset.addSeries(e0Series);
+		dataset.addSeries(eCondSeries);
+		
+		JFreeChart chart = ChartFactory.createXYLineChart("expected children on " + depth, "c0", "E[c|c>c0]", dataset, PlotOrientation.VERTICAL, true, false, false);
+		XYPlot plot = (XYPlot) chart.getPlot();
+
+		// Getting frame
+		ChartFrame cf = new ChartFrame("E on " + depth, chart);
+		ChartPanel cp = cf.getChartPanel();
+		
+		return cp;
+	}
+
+	private ChartPanel createTimeGraph(int depth, ArrayList<Double> netTimes, GammaDistribution gd) {
 		if(netTimes == null || netTimes.size() <= 1) return new ChartPanel(null);
 		
 		// Histogram
@@ -95,7 +168,7 @@ public class BuvsRenderer implements ModRenderer {
 		XYItemRenderer pdfRenderer = new DefaultXYItemRenderer();
 		
 		// Creating chart with dataset 1
-		JFreeChart barChart = ChartFactory.createHistogram(heading, "minutes", "prob/count", dataset, PlotOrientation.VERTICAL, true, false, false);
+		JFreeChart barChart = ChartFactory.createHistogram("times on " + depth, "minutes", "prob/count", dataset, PlotOrientation.VERTICAL, true, false, false);
 		
 		// Getting plot 
 		XYPlot plt = (XYPlot) barChart.getPlot();
@@ -115,7 +188,7 @@ public class BuvsRenderer implements ModRenderer {
 			
 		
 		// Getting frame
-		ChartFrame cf = new ChartFrame(heading, barChart);
+		ChartFrame cf = new ChartFrame("times on " + depth, barChart);
 		ChartPanel cp = cf.getChartPanel();
 		
 		return cp;
@@ -123,7 +196,7 @@ public class BuvsRenderer implements ModRenderer {
 
 
 
-	private ChartPanel createChildGraph(String heading, ArrayList<Integer> childCounts, PoissonDistribution pd) {
+	private ChartPanel createChildGraph(int depth, ArrayList<Integer> childCounts, PoissonDistribution pd) {
 		if(childCounts == null || childCounts.size() <= 1) return new ChartPanel(null);
 		
 		// Histogram
@@ -146,7 +219,7 @@ public class BuvsRenderer implements ModRenderer {
 		XYItemRenderer pdfRenderer = new DefaultXYItemRenderer();
 		
 		// Creating chart with dataset 1
-		JFreeChart barChart = ChartFactory.createHistogram(heading, "children", "count/prob", dataset, PlotOrientation.VERTICAL, true, false, false);
+		JFreeChart barChart = ChartFactory.createHistogram("children on " + depth, "children", "count/prob", dataset, PlotOrientation.VERTICAL, true, false, false);
 		
 		// Getting plot 
 		XYPlot plt = (XYPlot) barChart.getPlot();
@@ -165,7 +238,7 @@ public class BuvsRenderer implements ModRenderer {
 		}
 		
 		// Getting frame
-		ChartFrame cf = new ChartFrame(heading, barChart);
+		ChartFrame cf = new ChartFrame("children on " + depth, barChart);
 		ChartPanel cp = cf.getChartPanel();
 		
 		return cp;
