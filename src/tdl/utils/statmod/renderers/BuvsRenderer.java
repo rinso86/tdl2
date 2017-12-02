@@ -94,7 +94,7 @@ public class BuvsRenderer implements ModRenderer {
 			double t0 = delta * s;
 			t0Series.add(t0, t0);
 			e0Series.add(t0, gd.getNumericalMean());
-			eCondSeries.add(t0, model.getEstimateMeanNetTimeCond(depth, (long) t0));
+			eCondSeries.add(t0, model.getExpectedNetTimeCond(depth, (long) t0));
 		}
 		
 		dataset.addSeries(t0Series);
@@ -180,7 +180,7 @@ public class BuvsRenderer implements ModRenderer {
 		
 		// Adding mean
 		if(gd != null) {
-			ValueMarker marker = new ValueMarker(gd.getNumericalMean());  // position is the value on the axis
+			ValueMarker marker = new ValueMarker(gd.getNumericalMean() / 60);  // position is the value on the axis
 			marker.setPaint(Color.black);
 			marker.setLabel("mean");
 			plt.addDomainMarker(marker);

@@ -3,6 +3,7 @@ package tdl.utils.statmod;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Function;
 
 import org.apache.commons.math3.distribution.GammaDistribution;
 import org.apache.commons.math3.distribution.PoissonDistribution;
@@ -220,7 +221,7 @@ public class Buvs implements StatMod {
 		// factor 1: net time of base
 		int depth = getDepth(tree);
 		long secsActive = tree.getSecondsActive();
-		expctTime += getEstimateMeanNetTimeCond(depth, secsActive);
+		expctTime += getExpectedNetTimeCond(depth, secsActive);
 		
 		// factor 2: estimated gross time of children
 		for(Task child : tree.getChildren()) {
@@ -295,7 +296,7 @@ public class Buvs implements StatMod {
 	public double getExpectedChildCountCond(double lambda, int k0) {
 		double sum1 = 0;
 		double sum2 = 0;
-		for(int i = 0; i < k0 -1; i++) {
+		for(int i = 0; i < k0; i++) {
 			sum1 += i * Math.pow(lambda, i) / factorial(i);
 			sum2 += Math.pow(lambda, i) / factorial(i);
 		}
@@ -314,17 +315,17 @@ public class Buvs implements StatMod {
 	private double expectedTimeNewChild(int depth) {
 		double expTime = 0;
 		int maxDepth = meanNetTimes.size();
-		expTime +=  getEstimateMeanNetTimeCond(depth, 0);
+		expTime +=  getExpectedNetTimeCond(depth, 0);
 		double chCount = 1;
 		for(int d = depth; d < maxDepth; d++) {
-			expTime += chCount * getEstimateMeanNetTimeCond(d, 0);
+			expTime += chCount * getExpectedNetTimeCond(d, 0);
 			chCount *= meanChildCounts.get(d);
 		}
 		return expTime;
 	}
 	
 
-	public double getEstimateMeanNetTimeCond(int depth, long secsActive) {
+	public double getExpectedNetTimeCond(int depth, long secsActive) {
 		GammaDistribution gam = gamDs.get(depth);
 		return gammaExpctConditional(gam, secsActive);
 	}
@@ -337,15 +338,34 @@ public class Buvs implements StatMod {
 		return gam.cumulativeProbability(time);
 	}
 	
+	private double gammaProbCond(GammaDistribution gam, long time, long time0) {
+		if(time < time0) {
+			return 0;
+		}
+		return gammaProb(gam, time) / ( 1 - gammaProbCuml(gam, time0));
+	}
+	
 	private double gammaExpct(GammaDistribution gam) {
 		return gam.getNumericalMean();
 	}
 	
 	private double gammaExpctConditional(GammaDistribution gam, long t0) {
-		double exp = gammaExpct(gam);
-		double mom = gammaCumlMomentNum(gam, t0);
-		double cml = gammaProbCuml(gam, t0);
-		return (exp - mom) / (1 - cml);
+//		double exp = gammaExpct(gam);
+//		double mom = gammaCumlMomentNum(gam, t0);
+//		double cml = gammaProbCuml(gam, t0);
+//		return (exp - mom) / (1 - cml);
+		
+		double var = gam.getNumericalVariance();
+		double range = t0 + 2*var;
+		int steps = 30;
+		double delta = range/steps;
+		double sum = 0;
+		for(int step = 0; step < steps; step++) {
+			double t = t0 + delta*step;
+			double a = t * delta * gammaProbCond(gam, (long) t, t0);
+			sum += a;
+		}
+		return sum;
 	}
 
 	private double gammaCumlMomentNum(GammaDistribution gam, long t0) {
@@ -389,6 +409,14 @@ public class Buvs implements StatMod {
 		return this.gamDs;
 	}
 
+	private HashMap<Integer, Double> mapOnDouble(HashMap<Integer, Double> data, Function<Double, Double> f) {
+		int size = data.size();
+		HashMap<Integer, Double> out = new HashMap<Integer, Double>();
+		for(int i = 0; i < size; i++) {
+			out.put(i, f.apply(data.get(i)));
+		}
+		return out;
+	}
 	
 	
 	
