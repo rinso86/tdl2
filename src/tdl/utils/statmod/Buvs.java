@@ -325,29 +325,40 @@ public class Buvs implements StatMod {
 	
 
 	public double getEstimateMeanNetTimeCond(int depth, long secsActive) {
-		
 		GammaDistribution gam = gamDs.get(depth);
-		
-		@SuppressWarnings("deprecation")
-		double alpha = gam.getAlpha();
-		double gt0 = gam.probability(secsActive);
-		double a = gt0 * secsActive * secsActive;
-		double b = alpha + 1;
-		double fac = a / b;
-		
-		double expct = gam.getNumericalMean();
-		double prbCuml = gam.cumulativeProbability(secsActive);
-		
-		Double estimate = (expct - fac) / (1 - prbCuml);
-		
-		// TODO: diese beiden fälle sollten schon an ihrer ursache behandelt werden ...
-		if(estimate.isNaN()) {
-			estimate = getMeanNetTime(depth);
-		}else if(estimate.isInfinite()) {
-			estimate = 100 * getMeanNetTime(depth);
+		return gammaExpctConditional(gam, secsActive);
+	}
+	
+	private double gammaProb(GammaDistribution gam, long time) {
+		return gam.probability(time);
+	}
+	
+	private double gammaProbCuml(GammaDistribution gam, long time) {
+		return gam.cumulativeProbability(time);
+	}
+	
+	private double gammaExpct(GammaDistribution gam) {
+		return gam.getNumericalMean();
+	}
+	
+	private double gammaExpctConditional(GammaDistribution gam, long t0) {
+		double exp = gammaExpct(gam);
+		double mom = gammaCumlMomentNum(gam, t0);
+		double cml = gammaProbCuml(gam, t0);
+		return (exp - mom) / (1 - cml);
+	}
+
+	private double gammaCumlMomentNum(GammaDistribution gam, long t0) {
+		// @TODO: this is a numerical solution - isn't there an analytical one?
+		int steps = 100;
+		double delta = t0 / steps;
+		double sum = 0;
+		for(int s = 0; s < steps; s++) {
+			double t = s * delta;
+			double a = delta * t * gammaProb(gam, (long) t);
+			sum += a;
 		}
-		
-		return estimate;
+		return sum;
 	}
 
 
