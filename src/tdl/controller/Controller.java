@@ -65,7 +65,7 @@ public class Controller implements Recipient{
 	
 	public Controller() throws ClassNotFoundException, IOException {
 		logFile = new PrintStream(LOGFILE);
-		System.setOut(logFile);
+		//System.setOut(logFile);
 		
 		// Model and utils
 		resourceManager = new ResourceManager();

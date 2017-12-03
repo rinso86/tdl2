@@ -62,7 +62,7 @@ public class Buvs implements StatMod {
 
 	private Double getVarNetTime(int depth) {
 		Double vnt = varNetTimes.get(depth);
-		if(vnt == null) {
+		if(vnt == null || vnt == 0) {
 			vnt = globalVarNetTime;
 		}
 		return vnt;
@@ -81,7 +81,7 @@ public class Buvs implements StatMod {
 	private void calcGammaDistrs() {
 		for(int d = 0; d < treedepth; d++) {
 			Double mean = getMeanNetTime(d);
-			Double var = varNetTimes.get(d);
+			Double var = getVarNetTime(d);
 			if(var == null) var = globalVarNetTime;
 			double alpha = mean * mean / var;
 			double beta = mean / var;
