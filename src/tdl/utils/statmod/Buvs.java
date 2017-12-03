@@ -352,12 +352,12 @@ public class Buvs implements StatMod {
 	
 	private double gammaExpctConditional(GammaDistribution gam, long t0) {
 		double exp = gammaExpct(gam);
-		double mom = gammaCumlMoment(gam, t0);
+		double mom = gammaPartialMoment(gam, t0);
 		double cml = gammaProbCuml(gam, t0);
 		return (exp - mom) / (1 - cml);
 	}
 
-	private double gammaCumlMoment(GammaDistribution gam, long t0) {
+	private double gammaPartialMoment(GammaDistribution gam, long t0) {
 		double lambda = 1.0 / gam.getScale();
 		double k = gam.getShape();
 		double pi = gammaPartialIntegration(t0, lambda, k);
@@ -366,8 +366,7 @@ public class Buvs implements StatMod {
 	}
 
 	private double gammaPartialIntegration(long t0, double lambda, double k) {
-		double corr = 0;
-		if(t0 > 0) corr = gammaPartialIntegration(0, lambda, k);
+		double corr = factorial((int) k) / Math.pow(lambda, k+1);
 		double ex = - Math.exp(-lambda * t0);
 		double sum = 0;
 		for(int i = 0; i<k; i++) {
@@ -375,7 +374,7 @@ public class Buvs implements StatMod {
 			double b = factorial((int) k) / factorial((int) (k-i));
 			sum += a*b;
 		}
-		return ex * sum - corr;
+		return ex * sum + corr;
 	}
 
 	public int getTreeDepth() {

@@ -15,16 +15,14 @@ def partIntNum(x0, lambd, k):
     return sm
 
 def partInt(x0, lambd, k):
-    corr = 0
-    if x0 > 0:
-        corr = partInt(0, lambd, k)
+    corr = m.factorial(k) / (lambd**(k+1))
     ex = - m.exp(-lambd*x0)
     sm = 0
     for i in range(k+1):
         a = ( x0**(k-i) ) / ( lambd**(i+1) )
         b = m.factorial(k) / m.factorial(k-i)
         sm += a*b
-    return ex * sm - corr
+    return ex * sm + corr
 
 def erlang(x, lambd, k):
     a = lambd**k
