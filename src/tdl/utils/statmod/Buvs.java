@@ -8,6 +8,7 @@ import java.util.function.Function;
 import org.apache.commons.math3.distribution.GammaDistribution;
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.apache.commons.math3.special.Gamma;
+import org.apache.commons.math3.util.MathUtils;
 
 import tdl.model.Task;
 
@@ -350,38 +351,32 @@ public class Buvs implements StatMod {
 	}
 	
 	private double gammaExpctConditional(GammaDistribution gam, long t0) {
-//		double exp = gammaExpct(gam);
-//		double mom = gammaCumlMomentNum(gam, t0);
-//		double cml = gammaProbCuml(gam, t0);
-//		return (exp - mom) / (1 - cml);
-		
-		double var = gam.getNumericalVariance();
-		double range = t0 + 2*var;
-		int steps = 30;
-		double delta = range/steps;
-		double sum = 0;
-		for(int step = 0; step < steps; step++) {
-			double t = t0 + delta*step;
-			double a = t * delta * gammaProbCond(gam, (long) t, t0);
-			sum += a;
-		}
-		return sum;
+		double exp = gammaExpct(gam);
+		double mom = gammaCumlMoment(gam, t0);
+		double cml = gammaProbCuml(gam, t0);
+		return (exp - mom) / (1 - cml);
 	}
 
-	private double gammaCumlMomentNum(GammaDistribution gam, long t0) {
-		// @TODO: this is a numerical solution - isn't there an analytical one?
-		int steps = 100;
-		double delta = t0 / steps;
-		double sum = 0;
-		for(int s = 0; s < steps; s++) {
-			double t = s * delta;
-			double a = delta * t * gammaProb(gam, (long) t);
-			sum += a;
-		}
-		return sum;
+	private double gammaCumlMoment(GammaDistribution gam, long t0) {
+		double lambda = 1.0 / gam.getScale();
+		double k = gam.getShape();
+		double pi = gammaPartialIntegration(t0, lambda, k);
+		double a = Math.pow(lambda, k) / factorial((int) (k-1));
+		return a * pi;
 	}
 
-
+	private double gammaPartialIntegration(long t0, double lambda, double k) {
+		double corr = 0;
+		if(t0 > 0) corr = gammaPartialIntegration(0, lambda, k);
+		double ex = - Math.exp(-lambda * t0);
+		double sum = 0;
+		for(int i = 0; i<k; i++) {
+			double a = ( Math.pow(t0, k-i) ) / ( Math.pow(lambda, i+1) );
+			double b = factorial((int) k) / factorial((int) (k-i));
+			sum += a*b;
+		}
+		return ex * sum - corr;
+	}
 
 	public int getTreeDepth() {
 		return treedepth;
