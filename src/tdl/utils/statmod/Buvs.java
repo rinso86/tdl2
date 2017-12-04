@@ -2,13 +2,10 @@ package tdl.utils.statmod;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.function.Function;
 
-import org.apache.commons.math3.distribution.GammaDistribution;
+import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.distribution.PoissonDistribution;
-import org.apache.commons.math3.special.Gamma;
-import org.apache.commons.math3.util.MathUtils;
 
 import tdl.model.Task;
 
@@ -27,7 +24,7 @@ public class Buvs implements StatMod {
 	private HashMap<Integer, Double> varNetTimes = new HashMap<Integer, Double>();	
 	private double globalMeanNetTime;
 	private double globalVarNetTime;
-	private HashMap<Integer, GammaDistribution> gamDs = new HashMap<Integer, GammaDistribution>();
+	private HashMap<Integer, ExponentialDistribution> expDs = new HashMap<Integer, ExponentialDistribution>();
 
 	private HashMap<Integer, ArrayList<Integer>> childCounts = new HashMap<Integer, ArrayList<Integer>>();
 	private HashMap<Integer, Double> meanChildCounts = new HashMap<Integer, Double>();
@@ -46,7 +43,7 @@ public class Buvs implements StatMod {
 		globalMeanChildCount = averageMeanChildCount();
 		globalVarNetTime = averageVarNetTime();
 		calcPoisDistrs();
-		calcGammaDistrs();
+		calcExpDistrs();
 	}
 
 
@@ -78,18 +75,11 @@ public class Buvs implements StatMod {
 	}
 
 
-	private void calcGammaDistrs() {
+	private void calcExpDistrs() {
 		for(int d = 0; d < treedepth; d++) {
 			Double mean = getMeanNetTime(d);
-			Double var = getVarNetTime(d);
-			if(var == null) var = globalVarNetTime;
-			double alpha = mean * mean / var;
-			double beta = mean / var;
-			double scale = 1 / beta;
-			alpha = Math.max(alpha, 0.00001);
-			scale = Math.max(scale, 0.00001);
-			GammaDistribution gam = new GammaDistribution(alpha, scale);  
-			gamDs.put(d, gam);
+			ExponentialDistribution gam = new ExponentialDistribution(mean);  
+			expDs.put(d, gam);
 		}
 	}
 
@@ -327,55 +317,11 @@ public class Buvs implements StatMod {
 	
 
 	public double getExpectedNetTimeCond(int depth, long secsActive) {
-		GammaDistribution gam = gamDs.get(depth);
-		return gammaExpctConditional(gam, secsActive);
-	}
-	
-	private double gammaProb(GammaDistribution gam, long time) {
-		return gam.probability(time);
-	}
-	
-	private double gammaProbCuml(GammaDistribution gam, long time) {
-		return gam.cumulativeProbability(time);
-	}
-	
-	private double gammaProbCond(GammaDistribution gam, long time, long time0) {
-		if(time < time0) {
-			return 0;
-		}
-		return gammaProb(gam, time) / ( 1 - gammaProbCuml(gam, time0));
-	}
-	
-	private double gammaExpct(GammaDistribution gam) {
-		return gam.getNumericalMean();
-	}
-	
-	private double gammaExpctConditional(GammaDistribution gam, long t0) {
-		double exp = gammaExpct(gam);
-		double mom = gammaPartialMoment(gam, t0);
-		double cml = gammaProbCuml(gam, t0);
-		return (exp - mom) / (1 - cml);
+		ExponentialDistribution exDis = expDs.get(depth);
+		double ex = secsActive + exDis.getMean();
+		return ex;
 	}
 
-	private double gammaPartialMoment(GammaDistribution gam, long t0) {
-		double lambda = 1.0 / gam.getScale();
-		double k = gam.getShape();
-		double pi = gammaPartialIntegration(t0, lambda, k);
-		double a = Math.pow(lambda, k) / factorial((int) (k-1));
-		return a * pi;
-	}
-
-	private double gammaPartialIntegration(long t0, double lambda, double k) {
-		double corr = factorial((int) k) / Math.pow(lambda, k+1);
-		double ex = - Math.exp(-lambda * t0);
-		double sum = 0;
-		for(int i = 0; i<k; i++) {
-			double a = ( Math.pow(t0, k-i) ) / ( Math.pow(lambda, i+1) );
-			double b = factorial((int) k) / factorial((int) (k-i));
-			sum += a*b;
-		}
-		return ex * sum + corr;
-	}
 
 	public int getTreeDepth() {
 		return treedepth;
@@ -399,8 +345,8 @@ public class Buvs implements StatMod {
 
 
 
-	public HashMap<Integer, GammaDistribution> getGamDs() {
-		return this.gamDs;
+	public HashMap<Integer, ExponentialDistribution> getExpDs() {
+		return this.expDs;
 	}
 
 	private HashMap<Integer, Double> mapOnDouble(HashMap<Integer, Double> data, Function<Double, Double> f) {
