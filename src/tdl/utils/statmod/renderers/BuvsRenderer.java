@@ -98,7 +98,7 @@ public class BuvsRenderer implements ModRenderer {
 		dataset.addSeries(e0Series);
 		dataset.addSeries(eCondSeries);
 		
-		JFreeChart chart = ChartFactory.createXYLineChart("", "t0", "E[t|t>c0]", dataset, PlotOrientation.VERTICAL, true, false, false);
+		JFreeChart chart = ChartFactory.createXYLineChart("", "t0", "E[t|t>c0]", dataset, PlotOrientation.VERTICAL, false, false, false);
 		XYPlot plot = (XYPlot) chart.getPlot();
 
 		// Getting frame
@@ -128,7 +128,7 @@ public class BuvsRenderer implements ModRenderer {
 		dataset.addSeries(e0Series);
 		dataset.addSeries(eCondSeries);
 		
-		JFreeChart chart = ChartFactory.createXYLineChart("", "c0", "E[c|c>c0]", dataset, PlotOrientation.VERTICAL, true, false, false);
+		JFreeChart chart = ChartFactory.createXYLineChart("", "c0", "E[c|c>c0]", dataset, PlotOrientation.VERTICAL, false, false, false);
 		XYPlot plot = (XYPlot) chart.getPlot();
 
 		// Getting frame
@@ -165,7 +165,7 @@ public class BuvsRenderer implements ModRenderer {
 		XYItemRenderer pdfRenderer = new DefaultXYItemRenderer();
 		
 		// Creating chart with dataset 1
-		JFreeChart barChart = ChartFactory.createHistogram("", "minutes", "prob/count", dataset, PlotOrientation.VERTICAL, true, false, false);
+		JFreeChart barChart = ChartFactory.createHistogram("", "minutes", "prob/count", dataset, PlotOrientation.VERTICAL, false, false, false);
 		
 		// Getting plot 
 		XYPlot plt = (XYPlot) barChart.getPlot();
@@ -216,7 +216,7 @@ public class BuvsRenderer implements ModRenderer {
 		XYItemRenderer pdfRenderer = new DefaultXYItemRenderer();
 		
 		// Creating chart with dataset 1
-		JFreeChart barChart = ChartFactory.createHistogram("", "children", "count/prob", dataset, PlotOrientation.VERTICAL, true, false, false);
+		JFreeChart barChart = ChartFactory.createHistogram("", "children", "count/prob", dataset, PlotOrientation.VERTICAL, false, false, false);
 		
 		// Getting plot 
 		XYPlot plt = (XYPlot) barChart.getPlot();

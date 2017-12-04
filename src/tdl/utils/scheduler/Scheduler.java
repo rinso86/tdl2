@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.function.Predicate;
 
+import tdl.controller.Controller;
 import tdl.model.Task;
 import tdl.utils.statmod.StatMod;
 
@@ -15,8 +16,10 @@ public class Scheduler {
 	
 	private StatMod statMod;
 	private Calendar calendar;
+	private Controller controller;
 
-	public Scheduler(StatMod statMod) {
+	public Scheduler(StatMod statMod, Controller controller) {
+		this.controller = controller;
 		this.statMod = statMod;
 		this.calendar = Calendar.getInstance();
 	}
@@ -34,6 +37,7 @@ public class Scheduler {
 		ArrayList<Task> tasks = makeList(tree);
 		ArrayList<Task> tasksF = filterByDeadline(tasks);
 		ArrayList<Task> tasksFS = sortByDeadline(tasksF);
+		tasksFS = currentTaskFirst(controller.getCurrentTask(), tasksFS);
 		
 		Date startDate = new Date();
 		Date endDate = null;
@@ -55,7 +59,7 @@ public class Scheduler {
 		return schedule;
 	}
 
-	
+
 	private double getNetEstimate(Task task, ArrayList<Task> tasks) {
 		double estimate = statMod.estimateTimeToComplete(task);
 		ArrayList<Task> tasksC = filterByAncestor(tasks, task);
@@ -109,6 +113,19 @@ public class Scheduler {
 			}
 		}
 		return tasksF;
+	}
+	
+	
+	private ArrayList<Task> currentTaskFirst(Task currentTask, ArrayList<Task> tasksFS) {
+		int index = tasksFS.indexOf(currentTask);
+		if(index != -1) {
+			tasksFS.remove(index);
+		}
+		if(!currentTask.getTitle().equals("Base task")) {
+			System.out.println("Putting '" + currentTask.getTitle() + "' at the start front of the schedule.");
+			tasksFS.add(0, currentTask);						
+		}
+		return tasksFS;
 	}
 	
 	private boolean hasAncestor(Task task, Task ancestor) {

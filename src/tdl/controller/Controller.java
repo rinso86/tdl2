@@ -75,7 +75,7 @@ public class Controller implements Recipient{
 		buvs = new Buvs();
 		buvs.calculateModelParameters(baseTask);
 		buvsRenderer = new BuvsRenderer(buvs);
-		scheduler = new Scheduler(buvs);
+		scheduler = new Scheduler(buvs, this);
 		currentTaskActiveSince = new Date();
 		
 		// Views
