@@ -16,8 +16,10 @@ public class WiseCracker {
 		wiseStuff.add("Bad: 'Im glad its over!'. Good: 'Oh, so sad its over!'");
 		wiseStuff.add("Having a technical job doesn't mean that you don't need any social skills.");
 		wiseStuff.add("Explore and discover");
-        wiseStuff.add("Nach oben hin ist Platz.");
-        wiseStuff.add("Resistance against a task takes up tons of energy. Instead of resisting, focus on the aspects of a task that you like.");
+    wiseStuff.add("Nach oben hin ist Platz.");
+    wiseStuff.add("Resistance against a task takes up tons of energy. Instead of resisting, focus on the aspects of a task that you like.");
+    wiseStuff.add("Sure I can do this for you! While you're there, could you do .... ");
+    wiseStuff.add("Eleminieren, automatisieren, delegieren");
 	}
 	
 	public String getWiseStuff(int i) {
