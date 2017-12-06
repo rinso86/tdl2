@@ -26,6 +26,7 @@ import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.RectangleInsets;
 
 import tdl.utils.statmod.Buvs;
 
@@ -177,9 +178,11 @@ public class BuvsRenderer implements ModRenderer {
 		
 		// Adding mean
 		if(exponentialDistribution != null) {
-			ValueMarker marker = new ValueMarker(exponentialDistribution.getNumericalMean() / 60);  // position is the value on the axis
+			double m = exponentialDistribution.getNumericalMean() / 60;
+			ValueMarker marker = new ValueMarker(m);  // position is the value on the axis
 			marker.setPaint(Color.black);
-			marker.setLabel("mean");
+			marker.setLabel("mean: " + m);
+			marker.setLabelOffset(new RectangleInsets(15, -60, 0, 0));
 			plt.addDomainMarker(marker);
 		}
 			
@@ -227,10 +230,12 @@ public class BuvsRenderer implements ModRenderer {
 		plt.setDatasetRenderingOrder( DatasetRenderingOrder.FORWARD );
 		
 		// Adding mean
-		if(pd != null) {			
-			ValueMarker marker = new ValueMarker(pd.getNumericalMean());  // position is the value on the axis
+		if(pd != null) {
+			double m = pd.getNumericalMean();
+			ValueMarker marker = new ValueMarker(m);  // position is the value on the axis
 			marker.setPaint(Color.black);
-			marker.setLabel("mean");
+			marker.setLabel("mean: " + m);
+			marker.setLabelOffset(new RectangleInsets(15, -60, 0, 0));
 			plt.addDomainMarker(marker);
 		}
 		
