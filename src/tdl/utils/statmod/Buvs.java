@@ -1,11 +1,13 @@
 package tdl.utils.statmod;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.function.Function;
 
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.distribution.PoissonDistribution;
+import org.jfree.util.ArrayUtilities;
 
 import tdl.model.Task;
 
@@ -30,20 +32,29 @@ public class Buvs implements StatMod {
 	private HashMap<Integer, Double> meanChildCounts = new HashMap<Integer, Double>();
 	private double globalMeanChildCount;	
 	private HashMap<Integer, PoissonDistribution> poisDs = new HashMap<Integer, PoissonDistribution>();
+	
+	private ArrayList<Double> mixings;
+	private double mixingFactor;
 
 	@Override
 	public void calculateModelParameters(Task root) {
 		treedepth = getHeight(root);
 		fillNetTimes(root, netTimes);
 		fillChildCouns(root, childCounts);
+		
 		calcNetMeanTimes(netTimes);
 		calcVarNetTimes(netTimes);
 		calcMeanChildCounts(childCounts);
+		
 		globalMeanNetTime = averageMeanNetTime();
 		globalMeanChildCount = averageMeanChildCount();
 		globalVarNetTime = averageVarNetTime();
 		calcPoisDistrs();
 		calcExpDistrs();
+		
+//		 fillMixings(root, mixings);
+//		 mixingFactor = averageMixing();
+		
 	}
 
 
@@ -133,6 +144,12 @@ public class Buvs implements StatMod {
 	}
 	
 	
+
+	private double averageMixing() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
 	private void calcMeanChildCounts(HashMap<Integer, ArrayList<Integer>> childCounts) {
 		for(Integer d : childCounts.keySet()) {
 			double sum = 0;
@@ -201,6 +218,20 @@ public class Buvs implements StatMod {
 		}
 	}
 
+
+
+	private void fillMixings(Task root, ArrayList<Double> list) {
+		if(root.isCompleted()) {
+			double grossTime = root.getSecondsActiveRecursive();
+			Date created = root.getCreated();
+			Date finished = root.getCompleted();
+			long diffMillies = finished.getTime() - finished.getTime();
+			long diffSeconds = diffMillies / 1000;
+			// TODO: of these seconds, how many are there within worktime? Export schedulers facilities in own class. 
+		}
+	}
+	
+	
 	@Override
 	public double estimateTimeToComplete(Task tree) {
 		double expctTime = 0;

@@ -20,6 +20,8 @@ public interface Task {
 
 	public boolean isCompleted();
 	
+	public Date getCreated();
+	
 	public Date getCompleted();
 
 	public Date getDeadline();

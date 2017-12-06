@@ -15,6 +15,7 @@ public class MutableTask implements Serializable, Task {
 	private UUID id;
 	private String title;
 	private String description;
+	private Date created;
 	private Date deadline;
 	private Date completed;
 	private long secondsActive;
@@ -36,6 +37,7 @@ public class MutableTask implements Serializable, Task {
 		this.completed = null;
 		this.children = new ArrayList<MutableTask>();
 		this.attachments = new ArrayList<File>();
+		this.created = new Date();
 		this.secondsActive = 0;
 		if(parent != null) {
 			parent.registerChild(this);
@@ -55,6 +57,10 @@ public class MutableTask implements Serializable, Task {
 		return children;
 	}
 
+	public Date getCreated() {
+		return created;
+	}
+	
 	public boolean isCompleted() {
 		return (completed != null);
 	}
