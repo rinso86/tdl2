@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.function.Function;
 
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.distribution.PoissonDistribution;
@@ -48,7 +49,7 @@ public class BuvsRenderer implements ModRenderer {
 	public JPanel render() {
 		
 		int treeDepth = model.getTreeDepth();
-		JPanel jp = new JPanel(new GridLayout(treeDepth - 1, 4));
+		JPanel jp = new JPanel(new GridLayout(treeDepth - 1, 5));
 		
 		HashMap<Integer, ArrayList<Integer>> childCounts = model.getChildCounts();
 		HashMap<Integer, ArrayList<Double>> netTimes = model.getNetTimes();
@@ -67,6 +68,9 @@ public class BuvsRenderer implements ModRenderer {
 			timeConditional.setPreferredSize(new Dimension(imgWidth,  imgHeight));
 			childConditional.setPreferredSize(new Dimension(imgWidth,  imgHeight));
 			
+			JTextArea stats = createStatsArea(i);
+			
+			jp.add(stats);
 			jp.add(childPanel);
 			jp.add(childConditional);
 			jp.add(timePanel);
@@ -74,6 +78,15 @@ public class BuvsRenderer implements ModRenderer {
 		}
 		
 		return jp;
+	}
+
+	private JTextArea createStatsArea(int i) {
+		JTextArea stats = new JTextArea();
+		stats.setEditable(false);
+		String text = "Depth " + i + " \n";
+		text += "Mixing factor: " + model.getMixingFactor(i);
+		stats.setText(text);
+		return stats;
 	}
 
 	private ChartPanel createTimeCondExGraph(int depth, ArrayList<Double> netTimes, ExponentialDistribution exponentialDistribution) {

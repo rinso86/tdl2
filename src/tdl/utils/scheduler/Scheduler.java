@@ -11,17 +11,18 @@ import java.util.function.Predicate;
 import tdl.controller.Controller;
 import tdl.model.Task;
 import tdl.utils.statmod.StatMod;
+import tdl.utils.statmod.WorkHours;
 
 public class Scheduler {
 	
 	private StatMod statMod;
-	private Calendar calendar;
 	private Controller controller;
+	private WorkHours wh;
 
 	public Scheduler(StatMod statMod, Controller controller) {
 		this.controller = controller;
 		this.statMod = statMod;
-		this.calendar = Calendar.getInstance();
+		this.wh = new WorkHours();
 	}
 
 
@@ -44,7 +45,7 @@ public class Scheduler {
 		for(Task t : tasksFS) {
 			
 			double estimate = getNetEstimate(t, tasksFS);
-			endDate = addSecondsToDate(estimate, startDate);
+			endDate = wh.addSecondsToDate(estimate, startDate);
 			ScheduleItem si = new ScheduleItem(startDate, endDate, t);
 			schedule.add(si);
 			startDate = endDate;
@@ -152,77 +153,5 @@ public class Scheduler {
 		return tasksF;
 	}
 
-	private Date addSecondsToDate(double estimate, Date date) {
-		Date outDate = new Date();
-		Date beginWorkDay = getBeginWorkday(date);
-		Date endWorkDay = getEndWorkday(date);
-		long secondsLeftToday = ( endWorkDay.getTime() - date.getTime() ) / 1000;
-		
-		if(secondsLeftToday < 0) { // Working after closing hours again ...
-			double remainder = estimate;
-			Date nextDay = getNextWorkDayMorning(date);
-			outDate = addSecondsToDate(remainder, nextDay);
-		} 
-		
-		else if(estimate < secondsLeftToday) { // Can still finish this today!
-			outDate = addSecondsToDateSimple(estimate, date);
-		} 
-		
-		else { // Screw it. We'll do it tomorrow.
-			double remainder = estimate - secondsLeftToday;
-			Date nextDay = getNextWorkDayMorning(date);
-			outDate = addSecondsToDate(remainder, nextDay);
-		}
-		
-		return outDate;
-	}
 
-
-	private Date addSecondsToDateSimple(double estimate, Date date) {
-		calendar.setTime(date);
-		calendar.add(Calendar.SECOND, (int)estimate);
-		Date newDate = calendar.getTime();
-		return newDate;
-	}
-	
-	
-	private Date getNextWorkDayMorning(Date date) {
-		calendar.setTime(date);
-		int dow = calendar.get(Calendar.DAY_OF_WEEK);
-		switch(dow) {
-		case Calendar.SUNDAY:
-		case Calendar.MONDAY:
-		case Calendar.TUESDAY:
-		case Calendar.WEDNESDAY:
-		case Calendar.THURSDAY:
-			calendar.add(Calendar.DAY_OF_MONTH, 1);
-			break;
-		case Calendar.FRIDAY:
-			calendar.add(Calendar.DAY_OF_MONTH, 3);
-			break;
-		case Calendar.SATURDAY:
-			calendar.add(Calendar.DAY_OF_MONTH, 2);
-			break;
-		}
-		calendar.set(Calendar.HOUR_OF_DAY, 8);
-		calendar.set(Calendar.MINUTE, 0);
-		Date outDate = calendar.getTime();
-		return outDate;
-	}
-	
-	private Date getBeginWorkday(Date date) {
-		calendar.setTime(date);
-		calendar.set(Calendar.HOUR_OF_DAY, 8);
-		calendar.set(Calendar.MINUTE, 0);
-		Date outDate = calendar.getTime();
-		return outDate;
-	}
-	
-	private Date getEndWorkday(Date date) {
-		calendar.setTime(date);
-		calendar.set(Calendar.HOUR_OF_DAY, 17);
-		calendar.set(Calendar.MINUTE, 0);
-		Date outDate = calendar.getTime();
-		return outDate;
-	}
 }

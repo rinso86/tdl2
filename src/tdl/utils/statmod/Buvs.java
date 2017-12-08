@@ -19,6 +19,8 @@ import tdl.model.Task;
  */
 public class Buvs implements StatMod {
 	
+	private WorkHours wh;
+	
 	private int treedepth;
 	
 	private HashMap<Integer, ArrayList<Double>> netTimes = new HashMap<Integer, ArrayList<Double>>();
@@ -33,8 +35,14 @@ public class Buvs implements StatMod {
 	private double globalMeanChildCount;	
 	private HashMap<Integer, PoissonDistribution> poisDs = new HashMap<Integer, PoissonDistribution>();
 	
-	private ArrayList<Double> mixings;
-	private double mixingFactor;
+	private HashMap<Integer, ArrayList<Double>> mixings = new HashMap<Integer, ArrayList<Double>>();
+	private HashMap<Integer, Double> meanMixings = new HashMap<Integer, Double>();
+	private double globalMeanMixing;
+
+	
+	public Buvs() {
+		this.wh = new WorkHours();
+	}
 
 	@Override
 	public void calculateModelParameters(Task root) {
@@ -52,11 +60,11 @@ public class Buvs implements StatMod {
 		calcPoisDistrs();
 		calcExpDistrs();
 		
-//		 fillMixings(root, mixings);
-//		 mixingFactor = averageMixing();
+		 fillMixings(root, mixings);
+		 calcMeanMixings(mixings);
+		 globalMeanMixing = averageMixing();
 		
 	}
-
 
 
 	private Double getMeanNetTime(int depth) {
@@ -146,8 +154,15 @@ public class Buvs implements StatMod {
 	
 
 	private double averageMixing() {
-		// TODO Auto-generated method stub
-		return 0;
+		double sum = 0;
+		for(double m : meanMixings.values()) {
+			sum += m;
+		}
+		Double average = sum / meanMixings.size();
+		if(average.isNaN()) {
+			average = 0.0;
+		}
+		return average;
 	}
 	
 	private void calcMeanChildCounts(HashMap<Integer, ArrayList<Integer>> childCounts) {
@@ -186,6 +201,19 @@ public class Buvs implements StatMod {
 		}
 	}
 	
+
+
+	private void calcMeanMixings(HashMap<Integer, ArrayList<Double>> mixings) {
+		for(Integer d : mixings.keySet()) {
+			double sum = 0;
+			for(double t : mixings.get(d)) {
+				sum += t;
+			}
+			double meanMix = sum / mixings.get(d).size();
+			meanMixings.put(d, meanMix);
+		}
+	}
+	
 	private void fillChildCouns(Task root, HashMap<Integer, ArrayList<Integer>> childCounts) {
 		int depth = getDepth(root);
 		int chCount = root.getChildren().size();
@@ -220,14 +248,23 @@ public class Buvs implements StatMod {
 
 
 
-	private void fillMixings(Task root, ArrayList<Double> list) {
-		if(root.isCompleted()) {
-			double grossTime = root.getSecondsActiveRecursive();
-			Date created = root.getCreated();
-			Date finished = root.getCompleted();
-			long diffMillies = finished.getTime() - finished.getTime();
-			long diffSeconds = diffMillies / 1000;
-			// TODO: of these seconds, how many are there within worktime? Export schedulers facilities in own class. 
+	private void fillMixings(Task root, HashMap<Integer, ArrayList<Double>> mixings) {
+		int depth = getDepth(root);
+		Date created = root.getCreated();
+		Date finished = root.getCompleted();
+		if(created != null && finished != null) { // Note: this also checks that a created field does even exist. This is not the case for older tasks. 
+			long grossTime = root.getSecondsActiveRecursive();
+			long diffSeconds = wh.workSecondsBetweenDates(created, finished);
+			double mix = (double) grossTime / (double) diffSeconds;
+			if(mixings.get(depth) != null) {
+				mixings.get(depth).add(mix);			
+			}else {
+				mixings.put(depth, new ArrayList<Double>());
+				mixings.get(depth).add(mix);
+			}
+		}
+		for(Task child : root.getChildren()) {
+			fillMixings(child, mixings);
 		}
 	}
 	
@@ -378,6 +415,14 @@ public class Buvs implements StatMod {
 
 	public HashMap<Integer, ExponentialDistribution> getExpDs() {
 		return this.expDs;
+	}
+	
+	public Double getMixingFactor(int depth) {
+		Double mix = meanMixings.get(depth);
+		if(mix == null) {
+			mix = globalMeanMixing;
+		}
+		return mix;
 	}
 
 	private HashMap<Integer, Double> mapOnDouble(HashMap<Integer, Double> data, Function<Double, Double> f) {
