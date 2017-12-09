@@ -72,7 +72,7 @@ public class BuvsRenderer implements ModRenderer {
 			description += "Depth: " + depth + "\n";
 			
 			int children = task.getChildCountRecursive();
-			double childrenExpected = model.getExpectedChildCountCond(depth, children);
+			double childrenExpected = model.getExpectedChildCountCondRecursive(task);
 			description += "Current children: " + children + " Expected children: " + childrenExpected + "\n <br/>";
 			
 			double mix = model.getMixingFactor(depth);

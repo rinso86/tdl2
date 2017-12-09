@@ -1,0 +1,13 @@
+Controller received NEW_TASK_ACTIVE_REQUEST
+Controller changing active task from Base task to webangebote
+Controller fetches and saves details to task Base task: 
+Controller now broadcasting NEW_TASK_ACTIVE
+TreeView now receiving NEW_TASK_ACTIVE
+UpcomingView now receiving NEW_TASK_ACTIVE
+DetailView now receiving NEW_TASK_ACTIVE
+Attachment view now receiving message NEW_TASK_ACTIVE
+CalendarView now receiving NEW_TASK_ACTIVE
+StatsView now receiving NEW_TASK_ACTIVE
+Controller received PREPARE_WINDOW_CLOSING
+Controller is saving data before shutdown.
+Controller fetches and saves details to task webangebote: 

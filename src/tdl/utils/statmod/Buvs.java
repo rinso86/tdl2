@@ -350,6 +350,17 @@ public class Buvs implements StatMod {
 		}
 		return out;
 	}
+	
+	public double getExpectedChildCountCondRecursive(Task t) {
+		int depth = t.getDepth();
+		int k0 = t.getChildCount();
+		double count = getExpectedChildCountCond(depth, k0);
+		for(Task child : t.getChildren()) {
+			double subCount =  getExpectedChildCountCondRecursive(child);
+			count += subCount;
+		}
+		return count;
+	}
 
 	/**
 	 * Estimates the number of hits in a Poisson process, given that we already have k0 hits.
@@ -453,6 +464,8 @@ public class Buvs implements StatMod {
 		}
 		return out;
 	}
+
+
 	
 	
 	
