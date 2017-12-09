@@ -387,27 +387,9 @@ public class TreeView implements Recipient {
 	
 	// wird verwendet von taskNodeRenderer
 	public String getHoverText(TaskNode node) {
-		String text = "";
-		if(node.getTask().isCompleted()) {
-			String readable = secondsToHumanReadable(node.getTask().getSecondsActiveRecursive());
-			text += "<html>Task completed in "+ readable +".</html>";
-		} else {
-			HashMap<String, Double> estimates = controller.estimateTimeToComplete(node.getTask());
-			long buest = estimates.get("buvs").longValue();
-			String timeActiveReadable = secondsToHumanReadable(node.getTask().getSecondsActiveRecursive());
-			String estBuReadable = secondsToHumanReadable(buest);
-			text += "<html>Task active since brutto " + timeActiveReadable + ". </br>"
-					+ "Estimated brutto time to complete (buvs): " + estBuReadable + ".<html>";
-		}
+		String text = controller.getTaskDescription(node.getTask());
 		return text;
 	}
 	
-	private String secondsToHumanReadable(long seconds) {
-		long numberOfDays = seconds / 28800;
-		long numberOfHours = (seconds % 28800 ) / 3600;
-		long numberOfMinutes = ((seconds % 28800 ) % 3600 ) / 60;
-		long numberOfSeconds = ((seconds % 28800 ) % 3600 ) % 60;
-		String readable = numberOfDays + "d, " + numberOfHours + "h, " + numberOfMinutes + "m, " + numberOfSeconds + "s";
-		return readable;
-	}
+
 }

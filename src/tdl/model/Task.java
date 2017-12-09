@@ -39,4 +39,12 @@ public interface Task {
 	public ArrayList<Task> searchChildren(Predicate<Task> pred);
 	
 	public Task searchChildrenUnique(Predicate<Task> pred);
+	
+	public int getChildCount();
+	
+	public int getChildCountRecursive();
+	
+	public int getHeight();
+	
+	public int getDepth();
 }

@@ -52,6 +52,16 @@ public class WorkHours {
 		
 		return secs;
 	}
+	
+	
+	public String secsToHumanReadable(long seconds) {
+		long numberOfDays = seconds / 28800;
+		long numberOfHours = (seconds % 28800 ) / 3600;
+		long numberOfMinutes = ((seconds % 28800 ) % 3600 ) / 60;
+		long numberOfSeconds = ((seconds % 28800 ) % 3600 ) % 60;
+		String readable = numberOfDays + "d, " + numberOfHours + "h, " + numberOfMinutes + "m, " + numberOfSeconds + "s";
+		return readable;
+	}
 
 
 	private Date addSecondsToDateSimple(double estimate, Date date) {
@@ -105,4 +115,6 @@ public class WorkHours {
 	private long secondsBetween(Date d1, Date d2) {
 		return (d2.getTime() - d1.getTime()) / 1000;
 	}
+
+
 }

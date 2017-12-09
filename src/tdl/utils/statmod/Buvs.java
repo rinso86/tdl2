@@ -159,8 +159,8 @@ public class Buvs implements StatMod {
 			sum += m;
 		}
 		Double average = sum / meanMixings.size();
-		if(average.isNaN()) {
-			average = 0.0;
+		if(average.isNaN() || average.isInfinite()) {
+			average = 1.0;
 		}
 		return average;
 	}
@@ -289,14 +289,21 @@ public class Buvs implements StatMod {
 		
 		// factor 3: expected number of additional children
 		int k0 = tree.getChildren().size();
-		double lambda = meanChildCounts.get(depth);
-		double additChildren = getExpectedChildCountCond(lambda, k0) - k0;
+		double additChildren = getExpectedChildCountCond(depth, k0) - k0;
 		double expTimeNewChild = expectedTimeNewChild(depth);
 		expctTime += additChildren * expTimeNewChild;
 		
 		return expctTime;
 	}
-
+	
+	
+	public double estimateTimeToCompleteInclMix(Task tree) {
+		int depth = tree.getDepth();
+		double naiveEst = estimateTimeToComplete(tree);
+		double mix = getMixingFactor(depth);
+		double realEst = naiveEst / mix;
+		return realEst;
+	}
 
 
 	/**
@@ -344,6 +351,18 @@ public class Buvs implements StatMod {
 		return out;
 	}
 
+	/**
+	 * Estimates the number of hits in a Poisson process, given that we already have k0 hits.
+	 * 
+	 * @param depth
+	 * @param k0
+	 * @return
+	 */
+	public  double getExpectedChildCountCond(int depth, int k0) {
+		double lambda = meanChildCounts.get(depth);
+		double children = getExpectedChildCountCondRaw(lambda, k0);
+		return children;
+	}
 	
 	/**
 	 * Estimates the number of hits in a Poisson process, given that we already have k0 hits.
@@ -352,7 +371,7 @@ public class Buvs implements StatMod {
 	 * @param k0
 	 * @return
 	 */
-	public double getExpectedChildCountCond(double lambda, int k0) {
+	private double getExpectedChildCountCondRaw(double lambda, int k0) {
 		double sum1 = 0;
 		double sum2 = 0;
 		for(int i = 0; i < k0; i++) {
@@ -424,6 +443,7 @@ public class Buvs implements StatMod {
 		}
 		return mix;
 	}
+	
 
 	private HashMap<Integer, Double> mapOnDouble(HashMap<Integer, Double> data, Function<Double, Double> f) {
 		int size = data.size();

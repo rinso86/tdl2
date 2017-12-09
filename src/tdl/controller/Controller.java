@@ -48,8 +48,8 @@ public class Controller implements Recipient{
 	// Utils
 	private ResourceManager resourceManager;
 	private Savior savior;
-	private Buvs buvs;
-	private ModRenderer buvsRenderer;
+	private StatMod statMod;
+	private ModRenderer statModRenderer;
 	private Scheduler scheduler;
 	
 	// Views
@@ -65,17 +65,17 @@ public class Controller implements Recipient{
 	
 	public Controller() throws ClassNotFoundException, IOException {
 		logFile = new PrintStream(LOGFILE);
-		//System.setOut(logFile);
+		System.setOut(logFile);
 		
 		// Model and utils
 		resourceManager = new ResourceManager();
 		savior = new Savior();
 		baseTask = savior.loadTree(SAVEFILE);
 		currentTask = baseTask;
-		buvs = new Buvs();
-		buvs.calculateModelParameters(baseTask);
-		buvsRenderer = new BuvsRenderer(buvs);
-		scheduler = new Scheduler(buvs, this);
+		statMod = new Buvs();
+		statMod.calculateModelParameters(baseTask);
+		statModRenderer = new BuvsRenderer((Buvs) statMod);
+		scheduler = new Scheduler(statMod, this);
 		currentTaskActiveSince = new Date();
 		
 		// Views
@@ -83,7 +83,7 @@ public class Controller implements Recipient{
 		upcomingView = new UpcomingView(this);
 		calendarView = new CalendarView(this);
 		detailView = new DetailView(this);
-		statsView = new StatsView(this, buvsRenderer);
+		statsView = new StatsView(this, statModRenderer);
 		overalView = new OveralView("My Todo-List", treeView, detailView, upcomingView, calendarView, statsView);
 		overalView.setOnCloseListener(new OnCloseListener(this));
 		wiseCrackView = new WiseCrackerView(overalView.getJFrame());
@@ -102,10 +102,8 @@ public class Controller implements Recipient{
 		return (Task) currentTask;
 	}
 	
-	public HashMap<String, Double> estimateTimeToComplete(Task t) {
-		HashMap<String, Double> estimate = new HashMap<String, Double>();
-		estimate.put("buvs", buvs.estimateTimeToComplete(t));
-		return estimate;
+	public String getTaskDescription(Task t) {
+		return statModRenderer.describeTask(t);
 	}
 	
 	public ArrayList<ScheduleItem> getSchedule() {
@@ -174,7 +172,7 @@ public class Controller implements Recipient{
 		moldParent.deleteChild(mtask);
 		mnewParent.addChild(mtask);
 
-		buvs.calculateModelParameters(baseTask);
+		statMod.calculateModelParameters(baseTask);
 		
 		Message response = new Message(MessageType.MOVED_TASK);
 		response.addHeader("task", (Task) mtask);
@@ -266,7 +264,7 @@ public class Controller implements Recipient{
 		task.setCompletedRecursive(new Date());
 		
 		saveDetailsToTask();
-		buvs.calculateModelParameters(baseTask);
+		statMod.calculateModelParameters(baseTask);
 		
 		Message response = new Message(MessageType.COMPLETED_TASK);
 		response.addHeader("task", (Task) task);
@@ -284,7 +282,7 @@ public class Controller implements Recipient{
 		MutableTask parent = fetchMutableTask((Task) message.getHeaders().get("task"));
 		MutableTask child = new MutableTask(parent, "new task");
 
-		buvs.calculateModelParameters(baseTask);
+		statMod.calculateModelParameters(baseTask);
 		
 		Message response = new Message(MessageType.ADDED_SUBTASK);
 		response.addHeader("child", child);

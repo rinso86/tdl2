@@ -57,7 +57,7 @@ public class TaskNodeRenderer extends DefaultTreeCellRenderer {
 				}
 			}
 			
-			setToolTipText(view.getHoverText(tn));
+			setToolTipText("<html>" + view.getHoverText(tn) + "</html>");
 		}
 		return component;
 	}

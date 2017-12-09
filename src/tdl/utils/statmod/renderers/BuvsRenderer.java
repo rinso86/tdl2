@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.function.Function;
 
@@ -29,7 +30,9 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleInsets;
 
+import tdl.model.Task;
 import tdl.utils.statmod.Buvs;
+import tdl.utils.statmod.WorkHours;
 
 
 
@@ -40,9 +43,47 @@ public class BuvsRenderer implements ModRenderer {
 	private static int imgWidth = 300;
 	private static int imgHeight = 200;
 	private Buvs model;
+	private WorkHours wh;
 
 	public BuvsRenderer(Buvs buvs) {
 		model = buvs;
+		wh = new WorkHours();
+	}
+	
+	@Override
+	public String describeTask(Task task) {
+		String description = "";
+		
+		if(task.isCompleted()) {
+			long complTime = task.getSecondsActiveRecursive();
+			String complTimeString = wh.secsToHumanReadable(complTime);
+			description += "Task completed in (brutto) " + complTimeString;
+		}else {
+			long activeTime = task.getSecondsActiveRecursive();
+			String activeTimeString = wh.secsToHumanReadable(activeTime);
+			description += "Task active since (brutto) " + activeTimeString + "\n <br/>";
+			
+			double expectedTime = model.estimateTimeToComplete(task);
+			String expectedTimeString = wh.secsToHumanReadable((long) expectedTime);
+			double perz = 100 * (double) activeTime / (double) expectedTime;
+			description += "Expected time to completion: " + expectedTimeString + " ("+ perz + "% finished)\n <br/>";
+			
+			int depth = task.getDepth();
+			description += "Depth: " + depth + "\n";
+			
+			int children = task.getChildCountRecursive();
+			double childrenExpected = model.getExpectedChildCountCond(depth, children);
+			description += "Current children: " + children + " Expected children: " + childrenExpected + "\n <br/>";
+			
+			double mix = model.getMixingFactor(depth);
+			description += "Mixing factor: " + mix + "\n <br/>";
+			
+			double expectedTimeMix = model.estimateTimeToCompleteInclMix(task) - activeTime;
+			Date finish = wh.addSecondsToDate(expectedTimeMix, new Date());
+			description += "expected to be done on " + finish;
+		}
+		
+		return description;
 	}
 
 	@Override
@@ -80,6 +121,7 @@ public class BuvsRenderer implements ModRenderer {
 		return jp;
 	}
 
+	
 	private JTextArea createStatsArea(int i) {
 		JTextArea stats = new JTextArea();
 		stats.setEditable(false);
@@ -135,7 +177,7 @@ public class BuvsRenderer implements ModRenderer {
 		for(int c0 = 0; c0 < c0Max; c0++) {
 			c0Series.add(c0, c0);
 			e0Series.add(c0, pd.getNumericalMean());
-			eCondSeries.add(c0, model.getExpectedChildCountCond(pd.getNumericalMean(), c0));
+			eCondSeries.add(c0, model.getExpectedChildCountCond(depth, c0));
 		}
 		
 		dataset.addSeries(c0Series);

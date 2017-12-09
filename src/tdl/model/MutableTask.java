@@ -275,12 +275,11 @@ public class MutableTask implements Serializable, Task {
 	/**
 	 * Returns the distance from the tree root
 	 * 
-	 * @param tree
 	 * @return
 	 */
-	public int getDepth(Task tree) {
+	public int getDepth() {
 		int depth = 0;
-		Task parent = tree.getParent();
+		Task parent = this.getParent();
 		while(parent != null) {
 			depth++;
 			parent = parent.getParent();
@@ -290,16 +289,15 @@ public class MutableTask implements Serializable, Task {
 
 
 	/**
-	 * Returns the distance to the furthest leaf
+	 * Returns the distance to the farthest leaf
 	 * 
-	 * @param root
 	 * @return
 	 */
-	public int getHeight(Task root) {
+	public int getHeight() {
 		int height = 1;
 		int maxChHeight = 0;
-		for(Task child : root.getChildren()) {
-			int chHeight = getHeight(child);
+		for(Task child : this.getChildren()) {
+			int chHeight = child.getHeight();
 			if(chHeight > maxChHeight) {
 				maxChHeight = chHeight;
 			}
@@ -307,4 +305,23 @@ public class MutableTask implements Serializable, Task {
 		height += maxChHeight;
 		return height;
 	}
+
+	@Override
+	public int getChildCount() {
+		ArrayList<Task> children = getChildren();
+		return children.size();
+	}
+
+	@Override
+	public int getChildCountRecursive() {
+		ArrayList<Task> children = getChildren();
+		int count = children.size();
+		for(Task child : children) {
+			int subCount = child.getChildCountRecursive();
+			count += subCount;
+		}
+		return count;
+	}
+	
+	
 }
