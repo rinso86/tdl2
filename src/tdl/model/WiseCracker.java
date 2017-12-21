@@ -20,6 +20,7 @@ public class WiseCracker {
     wiseStuff.add("Resistance against a task takes up tons of energy. Instead of resisting, focus on the aspects of a task that you like.");
     wiseStuff.add("Sure I can do this for you! While you're there, could you do .... ");
     wiseStuff.add("Eleminieren, automatisieren, delegieren");
+    wiseStuff.add("Pausen: es gibt besseres als browsen! Höre Musik und schreibe dem wise man.");
 	}
 	
 	public String getWiseStuff(int i) {
