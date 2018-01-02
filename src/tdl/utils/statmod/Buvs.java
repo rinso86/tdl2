@@ -7,8 +7,6 @@ import java.util.function.Function;
 
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.distribution.PoissonDistribution;
-import org.jfree.util.ArrayUtilities;
-
 import tdl.model.Task;
 
 
@@ -132,8 +130,8 @@ public class Buvs implements StatMod {
 			sum += t;
 		}
 		Double average = sum / meanNetTimes.size();
-		if(average.isNaN()) {
-			average = 0.0;
+		if(average.isNaN() || average == 0) {
+			average = 0.0001;
 		}
 		return average;
 	}
