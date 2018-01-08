@@ -21,6 +21,7 @@ public class WiseCracker {
     wiseStuff.add("Sure I can do this for you! While you're there, could you do .... ");
     wiseStuff.add("Eleminieren, automatisieren, delegieren");
     wiseStuff.add("Pausen: es gibt besseres als browsen! Höre Musik und schreibe dem wise man.");
+    wiseStuff.add("For people to like you, you should be a person that you like yourself.");
 	}
 	
 	public String getWiseStuff(int i) {
