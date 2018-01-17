@@ -22,6 +22,7 @@ public class WiseCracker {
     wiseStuff.add("Eleminieren, automatisieren, delegieren");
     wiseStuff.add("Pausen: es gibt besseres als browsen! Höre Musik und schreibe dem wise man.");
     wiseStuff.add("For people to like you, you should be a person that you like yourself.");
+    wiseStuff.add("Programmers that get unmotivated usually suffer from simple things: not enough water, not enough sleep, not enough exercise.");
 	}
 	
 	public String getWiseStuff(int i) {
