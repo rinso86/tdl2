@@ -67,7 +67,7 @@ public class Buvs implements StatMod {
 
 	private Double getMeanNetTime(int depth) {
 		Double mnt = meanNetTimes.get(depth);
-		if(mnt == null) {
+		if(depth == 0 || mnt == null) {
 			mnt = globalMeanNetTime;
 		}
 		return mnt;
@@ -95,8 +95,8 @@ public class Buvs implements StatMod {
 	private void calcExpDistrs() {
 		for(int d = 0; d < treedepth; d++) {
 			Double mean = getMeanNetTime(d);
-			ExponentialDistribution gam = new ExponentialDistribution(mean);  
-			expDs.put(d, gam);
+			ExponentialDistribution ed = new ExponentialDistribution(mean);  
+			expDs.put(d, ed);
 		}
 	}
 
@@ -175,13 +175,18 @@ public class Buvs implements StatMod {
 	}
 
 	private void calcNetMeanTimes(HashMap<Integer, ArrayList<Double>> netTimes) {
+		// doesn't fill in anything at those depths where we have no data (like d=0)
 		for(Integer d : netTimes.keySet()) {
 			double sum = 0;
+			double count = 0;
 			for(double t : netTimes.get(d)) {
 				sum += t;
+				count += 1;
 			}
-			double meanTime = sum / netTimes.get(d).size();
-			meanNetTimes.put(d, meanTime);
+			if(count >= 1) {
+				double meanTime = sum / count;				
+				meanNetTimes.put(d, meanTime);
+			}
 		}
 	}
 
@@ -269,7 +274,7 @@ public class Buvs implements StatMod {
 	
 	@Override
 	public double estimateTimeToComplete(Task tree) {
-		double expctTime = 0;
+		Double expctTime = 0.0;
 		
 		if(tree.isCompleted()) {
 			return tree.getSecondsActiveRecursive();
@@ -297,9 +302,9 @@ public class Buvs implements StatMod {
 	
 	public double estimateTimeToCompleteInclMix(Task tree) {
 		int depth = tree.getDepth();
-		double naiveEst = estimateTimeToComplete(tree);
+		Double naiveEst = estimateTimeToComplete(tree);
 		double mix = getMixingFactor(depth);
-		double realEst = naiveEst / mix;
+		Double realEst = naiveEst / mix;
 		return realEst;
 	}
 
@@ -389,7 +394,14 @@ public class Buvs implements StatMod {
 		}
 		double a = lambda - Math.exp(-lambda) * sum1;
 		double b = 1 - Math.exp(-lambda) * sum2;
-		return a / b;
+		
+		Double result = a / b;
+		
+		if(b <= 0 || result.isInfinite() || result.isNaN()) {
+			return k0;
+		}
+		
+		return result;
 	}
 	
 	
@@ -414,7 +426,7 @@ public class Buvs implements StatMod {
 
 	public double getExpectedNetTimeCond(int depth, long secsActive) {
 		ExponentialDistribution exDis = expDs.get(depth);
-		double ex = secsActive + exDis.getMean();
+		Double ex = secsActive + exDis.getMean();
 		return ex;
 	}
 
