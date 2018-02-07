@@ -23,6 +23,8 @@ public class WiseCracker {
     wiseStuff.add("Pausen: es gibt besseres als browsen! Höre Musik und schreibe dem wise man.");
     wiseStuff.add("For people to like you, you should be a person that you like yourself.");
     wiseStuff.add("Programmers that get unmotivated usually suffer from simple things: not enough water, not enough sleep, not enough exercise.");
+    wiseStuff.add("You know you're not the smartest man in the universe. The art is to do things with the potential that you have, however little it may be. That is not so much about brains as it is about heart.");
+		wiseStuff.add("Ich bin nicht so sehr ein Informatiker als vielmehr ein Spielzeugmacher.");
 	}
 	
 	public String getWiseStuff(int i) {
