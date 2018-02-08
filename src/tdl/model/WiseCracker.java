@@ -25,6 +25,7 @@ public class WiseCracker {
     wiseStuff.add("Programmers that get unmotivated usually suffer from simple things: not enough water, not enough sleep, not enough exercise.");
     wiseStuff.add("You know you're not the smartest man in the universe. The art is to do things with the potential that you have, however little it may be. That is not so much about brains as it is about heart.");
 		wiseStuff.add("Ich bin nicht so sehr ein Informatiker als vielmehr ein Spielzeugmacher.");
+		wiseStuff.add("If as a programmer you need more time, ask your client for details, example-data, use-cases, tests etc.");
 	}
 	
 	public String getWiseStuff(int i) {
