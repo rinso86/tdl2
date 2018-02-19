@@ -26,6 +26,7 @@ public class WiseCracker {
     wiseStuff.add("You know you're not the smartest man in the universe. The art is to do things with the potential that you have, however little it may be. That is not so much about brains as it is about heart.");
 		wiseStuff.add("Ich bin nicht so sehr ein Informatiker als vielmehr ein Spielzeugmacher.");
 		wiseStuff.add("If as a programmer you need more time, ask your client for details, example-data, use-cases, tests etc.");
+		wiseStuff.add("At work, you should'nt ask yourself: what do I need to do? You should ask yourself: What can I do to add to my achievement list?");
 	}
 	
 	public String getWiseStuff(int i) {
