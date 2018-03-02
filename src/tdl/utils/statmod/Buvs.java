@@ -12,7 +12,7 @@ import tdl.model.Task;
 
 /**
  * Bottom-Up Variable Structure Model
- * 
+ * @TODO: extract all of the tree-parsing methods into the TreeParser class
  * 
  */
 public class Buvs implements StatMod {
