@@ -39,6 +39,10 @@ public class TreeParser {
 		return tasks;
 	}
 
+	public static Double getGlobalMeanChildcountNet(Task root) {
+		// Note that we dont even have to calculate this. In a tree, the mean child count is always 1 - 1/N
+	}
+
 
 
 }
