@@ -10,16 +10,20 @@ import java.util.function.Predicate;
 public class MutableTask implements Serializable, Task {
 
 	private static final long serialVersionUID = -4314415309059598961L;
+	
 	private MutableTask parent;
 	private ArrayList<MutableTask> children;
 	private UUID id;
 	private String title;
 	private String description;
+
 	private Date created;
-	private Date deadline;
 	private Date completed;
-	private long secondsActive;
+	private Date deadline;
+	private ArrayList<TimeSpan> activity;
+	
 	private ArrayList<File> attachments;
+	
 	
 	public MutableTask() {
 		this(null, "");
@@ -38,7 +42,8 @@ public class MutableTask implements Serializable, Task {
 		this.children = new ArrayList<MutableTask>();
 		this.attachments = new ArrayList<File>();
 		this.created = new Date();
-		this.secondsActive = 0;
+		this.activity = new ArrayList<TimeSpan>();
+		this.activity.add(new TimeSpan());
 		if(parent != null) {
 			parent.registerChild(this);
 		}
@@ -56,6 +61,30 @@ public class MutableTask implements Serializable, Task {
 		}
 		return children;
 	}
+	
+	public boolean isActive() {
+		return getLastActivity().isRunning();
+	}
+	
+	public void setActive() {
+		if( getLastActivity().isComplete() ) {
+			activity.add(new TimeSpan(new Date()));
+		}
+	}
+	
+	public void setInactive() {
+		if( getLastActivity().isRunning() ) {
+			getLastActivity().complete();
+		}
+	}
+	
+	public ArrayList<TimeSpan> getActivity() {
+		return activity;
+	}
+	
+	public TimeSpan getLastActivity() {
+		return activity.get( activity.size() - 1 );
+	}
 
 	public Date getCreated() {
 		return created;
@@ -70,6 +99,7 @@ public class MutableTask implements Serializable, Task {
 	}
 	
 	public void setCompleted(Date completed) {
+		getLastActivity().complete();
 		this.completed = completed;
 	}
 	
@@ -222,14 +252,14 @@ public class MutableTask implements Serializable, Task {
 		attachments = arrayList;
 	}
 	
-	public void incrementSecondsActive(long sec) {
-		if(!isCompleted()) {
-			this.secondsActive += sec;			
-		}
-	}
-	
 	public long getSecondsActive() {
-		return this.secondsActive;
+		long secsActive = 0;
+		for(TimeSpan span : activity) {
+			if(span.isComplete()) {
+				secsActive += span.getDuration();
+			}
+		}
+		return secsActive;
 	}
 
 	public long getSecondsActiveRecursive() {

@@ -1,4 +1,4 @@
-package tdl.utils.statmod;
+package tdl.utils.statmod.Tdss;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import tdl.model.Task;
+import tdl.utils.statmod.StatMod;
 
 
 /**

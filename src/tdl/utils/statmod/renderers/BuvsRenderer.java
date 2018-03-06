@@ -31,8 +31,8 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleInsets;
 
 import tdl.model.Task;
-import tdl.utils.statmod.Buvs;
 import tdl.utils.statmod.WorkHours;
+import tdl.utils.statmod.MBuvs.Buvs;
 
 
 
