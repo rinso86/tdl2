@@ -10,7 +10,7 @@ import tdl.controller.Controller;
 import tdl.messages.Message;
 import tdl.messages.Recipient;
 import tdl.model.Task;
-import tdl.utils.statmod.renderers.ModRenderer;
+import tdl.utils.statmod.ModRenderer;
 
 public class StatsView  implements Recipient {
 	

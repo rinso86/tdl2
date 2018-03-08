@@ -67,6 +67,7 @@ public class TreeView implements Recipient {
 		// Listeners
 		jtree.addTreeSelectionListener(new FocusChangeListener() );
 		ToolTipManager.sharedInstance().registerComponent(jtree);
+		ToolTipManager.sharedInstance().setInitialDelay(2000);
 		jtree.getModel().addTreeModelListener( new NodeEditListener() );
 		TreePopup tp = new TreePopup(this);
 		jtree.addMouseListener(new TreePopupListener(tp, this));

@@ -1,9 +1,14 @@
 package tdl.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class TimeSpan {
+public class TimeSpan implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6795081371908184087L;
 	private Date start;
 	private Date end;
 	
@@ -56,6 +61,10 @@ public class TimeSpan {
 		} else {
 			return null;
 		}
+	}
+	
+	public TimeSpan clone() {
+		return new TimeSpan(start, end);
 	}
 	
 }

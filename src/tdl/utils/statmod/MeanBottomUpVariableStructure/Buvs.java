@@ -1,4 +1,4 @@
-package tdl.utils.statmod.MBuvs;
+package tdl.utils.statmod.MeanBottomUpVariableStructure;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,8 +8,8 @@ import java.util.function.Function;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import tdl.model.Task;
+import tdl.utils.WorkHours;
 import tdl.utils.statmod.StatMod;
-import tdl.utils.statmod.WorkHours;
 
 
 /**

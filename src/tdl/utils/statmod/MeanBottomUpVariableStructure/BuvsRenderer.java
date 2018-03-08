@@ -1,4 +1,4 @@
-package tdl.utils.statmod.renderers;
+package tdl.utils.statmod.MeanBottomUpVariableStructure;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -31,8 +31,8 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleInsets;
 
 import tdl.model.Task;
-import tdl.utils.statmod.WorkHours;
-import tdl.utils.statmod.MBuvs.Buvs;
+import tdl.utils.WorkHours;
+import tdl.utils.statmod.ModRenderer;
 
 
 

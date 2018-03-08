@@ -1,4 +1,4 @@
-package tdl.utils.statmod.Tdss;
+package tdl.utils.statmod.TopDownStaticStructure;
 
 import java.util.ArrayList;
 import java.util.HashMap;

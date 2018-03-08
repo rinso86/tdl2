@@ -1,4 +1,4 @@
-package tdl.utils.statmod.renderers;
+package tdl.utils.statmod;
 
 import javax.swing.JPanel;
 

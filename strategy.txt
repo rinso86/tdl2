@@ -25,6 +25,3 @@ but gives to views only Task tree.
 
 To achieve this: 
 all view-setters are private and only called from 'receiveMessage'
-
-t0 last task: 
-t0: 3319 mom: 1371.4603380413032 theta: 268.2929886842689 k: 0.11905612987

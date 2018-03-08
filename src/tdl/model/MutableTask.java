@@ -43,7 +43,6 @@ public class MutableTask implements Serializable, Task {
 		this.attachments = new ArrayList<File>();
 		this.created = new Date();
 		this.activity = new ArrayList<TimeSpan>();
-		this.activity.add(new TimeSpan());
 		if(parent != null) {
 			parent.registerChild(this);
 		}
@@ -62,29 +61,6 @@ public class MutableTask implements Serializable, Task {
 		return children;
 	}
 	
-	public boolean isActive() {
-		return getLastActivity().isRunning();
-	}
-	
-	public void setActive() {
-		if( getLastActivity().isComplete() ) {
-			activity.add(new TimeSpan(new Date()));
-		}
-	}
-	
-	public void setInactive() {
-		if( getLastActivity().isRunning() ) {
-			getLastActivity().complete();
-		}
-	}
-	
-	public ArrayList<TimeSpan> getActivity() {
-		return activity;
-	}
-	
-	public TimeSpan getLastActivity() {
-		return activity.get( activity.size() - 1 );
-	}
 
 	public Date getCreated() {
 		return created;
@@ -99,7 +75,6 @@ public class MutableTask implements Serializable, Task {
 	}
 	
 	public void setCompleted(Date completed) {
-		getLastActivity().complete();
 		this.completed = completed;
 	}
 	
@@ -142,7 +117,7 @@ public class MutableTask implements Serializable, Task {
 
 	public void setDeadline(Date deadline) {
 		this.deadline = deadline;
-		adjustDeadlineToParent();
+		// adjustDeadlineToParent();
 		// setDeadlineRecursive(deadline);
 	}
 	
@@ -160,22 +135,22 @@ public class MutableTask implements Serializable, Task {
 		}
 	}
 	
-	public void adjustDeadlineToParent() {
-		MutableTask parent = this.getParent();
-		if(parent != null) {
-			Date parentDeadline = parent.getDeadline();
-			if(parentDeadline != null) {
-				Date ownDeadline = this.getDeadline();
-				long diff = parentDeadline.getTime() - ownDeadline.getTime();
-				if (diff < 0) {
-					this.setDeadline(parentDeadline);
-				}
-				for(MutableTask subTask : this.getMutableChildren()) {
-					subTask.adjustDeadlineToParent();
-				}
-			}
-		}
-	}
+//	public void adjustDeadlineToParent() {
+//		MutableTask parent = this.getParent();
+//		if(parent != null) {
+//			Date parentDeadline = parent.getDeadline();
+//			if(parentDeadline != null) {
+//				Date ownDeadline = this.getDeadline();
+//				long diff = parentDeadline.getTime() - ownDeadline.getTime();
+//				if (diff < 0) {
+//					this.setDeadline(parentDeadline);
+//				}
+//				for(MutableTask subTask : this.getMutableChildren()) {
+//					subTask.adjustDeadlineToParent();
+//				}
+//			}
+//		}
+//	}
 
 	public UUID getId() {
 		return id;
@@ -255,15 +230,13 @@ public class MutableTask implements Serializable, Task {
 	public long getSecondsActive() {
 		long secsActive = 0;
 		for(TimeSpan span : activity) {
-			if(span.isComplete()) {
-				secsActive += span.getDuration();
-			}
+			secsActive += span.getDuration();
 		}
 		return secsActive;
 	}
 
 	public long getSecondsActiveRecursive() {
-		long secs = this.secondsActive;
+		long secs = getSecondsActive();
 		for(Task child : getChildren()) {
 			secs += child.getSecondsActiveRecursive();
 		}
@@ -351,6 +324,13 @@ public class MutableTask implements Serializable, Task {
 			count += subCount;
 		}
 		return count;
+	}
+
+	public void appendActivity(TimeSpan newTimeSpan) throws Exception {
+		if(!newTimeSpan.isComplete()) {
+			throw new Exception("Tasks only accept completed timespans.");
+		}
+		activity.add(newTimeSpan.clone()); 
 	}
 	
 	

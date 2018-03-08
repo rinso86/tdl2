@@ -10,8 +10,8 @@ import java.util.function.Predicate;
 
 import tdl.controller.Controller;
 import tdl.model.Task;
+import tdl.utils.WorkHours;
 import tdl.utils.statmod.StatMod;
-import tdl.utils.statmod.WorkHours;
 
 public class Scheduler {
 	

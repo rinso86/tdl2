@@ -12,15 +12,15 @@ import javax.swing.JFrame;
 
 import tdl.model.MutableTask;
 import tdl.model.Task;
+import tdl.model.TimeSpan;
 import tdl.utils.ResourceManager;
 import tdl.utils.Savior;
 import tdl.utils.scheduler.ScheduleItem;
 import tdl.utils.scheduler.Scheduler;
+import tdl.utils.statmod.ModRenderer;
 import tdl.utils.statmod.StatMod;
-import tdl.utils.statmod.MBuvs.Buvs;
-import tdl.utils.statmod.Tdss.Tdss;
-import tdl.utils.statmod.renderers.BuvsRenderer;
-import tdl.utils.statmod.renderers.ModRenderer;
+import tdl.utils.statmod.WeightedBottomUpVariableStructure.WBuvs;
+import tdl.utils.statmod.WeightedBottomUpVariableStructure.WBuvsRenderer;
 import tdl.messages.Message;
 import tdl.messages.MessageType;
 import tdl.messages.Recipient;
@@ -42,8 +42,9 @@ public class Controller implements Recipient{
 	
 	// Model
 	private MutableTask baseTask;
+	// Model - State
 	private MutableTask currentTask;
-	private Date currentTaskActiveSince;
+	private TimeSpan currentTimeSpan;
 	
 	// Utils
 	private ResourceManager resourceManager;
@@ -72,11 +73,11 @@ public class Controller implements Recipient{
 		savior = new Savior();
 		baseTask = savior.loadTree(SAVEFILE);
 		currentTask = baseTask;
-		statMod = new Buvs();
+		statMod = new WBuvs();
 		statMod.calculateModelParameters(baseTask);
-		statModRenderer = new BuvsRenderer((Buvs) statMod);
+		statModRenderer = new WBuvsRenderer((WBuvs) statMod);
 		scheduler = new Scheduler(statMod, this);
-		currentTaskActiveSince = new Date();
+		currentTimeSpan = new TimeSpan(new Date());
 		
 		// Views
 		treeView = new TreeView(this);
@@ -107,6 +108,7 @@ public class Controller implements Recipient{
 	}
 	
 	public ArrayList<ScheduleItem> getSchedule() {
+		System.out.println("Controller now calling scheduler");
 		return scheduler.makeSchedule(baseTask);
 	}
 	
@@ -258,10 +260,14 @@ public class Controller implements Recipient{
 		saveDetailsToTask();
 		
 		MutableTask task = fetchMutableTask((Task) message.getHeaders().get("task"));
-		Date currentTime = new Date();
-		int currentTaskActivePeriod = (int) Math.floor((currentTime.getTime() - currentTaskActiveSince.getTime())/1000);
-		task.incrementSecondsActive(currentTaskActivePeriod);
+		currentTimeSpan.complete();
+		try {
+			task.appendActivity(currentTimeSpan);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		task.setCompletedRecursive(new Date());
+		currentTimeSpan = new TimeSpan(new Date());
 		
 		saveDetailsToTask();
 		statMod.calculateModelParameters(baseTask);
@@ -305,13 +311,16 @@ public class Controller implements Recipient{
 		
 		System.out.println("Controller changing active task from " + currentTask.getTitle() + " to " + newCurrentTask.getTitle());
 		
-		Date currentTime = new Date();
-		int currentTaskActivePeriod = (int) Math.floor((currentTime.getTime() - currentTaskActiveSince.getTime())/1000);
-		currentTask.incrementSecondsActive(currentTaskActivePeriod);
+		currentTimeSpan.complete();
+		try {
+			currentTask.appendActivity(currentTimeSpan);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		currentTimeSpan = new TimeSpan(new Date());
 		
 		saveDetailsToTask();
 		currentTask = newCurrentTask;
-		currentTaskActiveSince = currentTime;
 		
 		Message response = new Message(MessageType.NEW_TASK_ACTIVE);
 		response.addHeader("task", (Task) newCurrentTask);
@@ -364,6 +373,12 @@ public class Controller implements Recipient{
 	
 	private void prepareWindowClosing(Message message) {
 		System.out.println("Controller is saving data before shutdown.");
+		currentTimeSpan.complete();
+		try {
+			currentTask.appendActivity(currentTimeSpan);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		saveDetailsToTask();
 		saveModelToFile();
 		logFile.close();
