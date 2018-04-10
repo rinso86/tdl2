@@ -27,9 +27,11 @@ public class CalendarView implements Recipient {
 	private JTextPane reportTextPane;
 	private JButton updateReportButton;
 	private JPanel jp;
+	private Calendar cal;
 
 	public CalendarView(Controller controller) {
 		this.controller = controller; 
+		this.cal = new GregorianCalendar();
 		this.jp = new JPanel(new GridBagLayout());
 		
 		scheduleTextPane = new JTextPane();
@@ -92,7 +94,6 @@ public class CalendarView implements Recipient {
 		String t = formatSchedule(schedule);
 		scheduleTextPane.setText(t);
 		
-		Calendar cal = new GregorianCalendar();
 		cal.add(Calendar.DAY_OF_MONTH, -7);
 		Date sevenDaysAgo = cal.getTime();
 		cal.add(Calendar.DAY_OF_MONTH, 7);
