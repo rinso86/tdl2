@@ -113,10 +113,6 @@ public class Controller implements Recipient{
 	}
 	
 	
-	public Task getReport(Date from, Date to) {
-		return scheduler.makeReport(baseTask, from, to);
-	}
-	
 
 	@Override
 	public void receiveMessage(Message message) {

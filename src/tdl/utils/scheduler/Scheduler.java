@@ -156,33 +156,4 @@ public class Scheduler {
 	}
 
 
-	public MutableTask makeReport(MutableTask baseTask, Date from, Date to) {
-		MutableTask report;
-		if(baseTask.wasActiveDuring(from, to)) {
-			report = copyTask(baseTask);
-		}
-		for(MutableTask child : baseTask.getMutableChildren()) {
-			report.addChild(makeReport(child, from, to));
-		}
-		return report;
-	}
-
-
-	private MutableTask copyTask(Task task) {
-		MutableTask copy = new MutableTask();
-		copy.setTitle(task.getTitle());
-		copy.setCompleted(task.getCompleted());
-		copy.setDescription(task.getDescription());
-		copy.setDeadline(task.getDeadline());
-		for(TimeSpan act : task.getActivity()) {
-			try {
-				copy.appendActivity(act);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}			
-		}
-		return copy;
-	}
-
-
 }

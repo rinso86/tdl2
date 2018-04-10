@@ -98,25 +98,28 @@ public class CalendarView implements Recipient {
 		Date sevenDaysAgo = cal.getTime();
 		cal.add(Calendar.DAY_OF_MONTH, 7);
 		Date inSevenDays = cal.getTime();
-		Task report = getReport(sevenDaysAgo, inSevenDays);
-		String r = formatReport(report);
+		Task baseTask = controller.getBaseTask();
+		String r = formatReport(baseTask, sevenDaysAgo, inSevenDays);
 		reportTextPane.setText(r);
 	}
 	
-	private String formatReport(Task report) {
-		String title = report.getTitle();
-		double hoursActive = report.getSecondsActive() / (60.0 * 60.0);
-		boolean completed = report.isCompleted();
-		String r = title + "    Active for: " + hoursActive + " hours    Completed: " + completed + "\n"; 
-		for(Task child : report.getChildren()) {
-			r += "    " + formatReport(child);
+	private String formatReport(Task task, Date from, Date to) {
+		String r = "";
+		
+		if(task.wasActiveDuring(from, to)) {
+			String title = task.getTitle();
+			double hoursActive = task.getSecondsActive() / (60.0 * 60.0);
+			boolean completed = task.isCompleted();
+			r += title + "    Active for: " + hoursActive + " hours    Completed: " + completed + "\n"; 			
 		}
+		
+		for(Task child : task.getChildren()) {
+			r += "    " + formatReport(child, from, to);
+		}
+		
 		return r;
 	}
 
-	private Task getReport(Date from, Date to) {
-		return controller.getReport(from, to);
-	}
 
 	private ArrayList<ScheduleItem> getSchedule() {
 		return controller.getSchedule();
