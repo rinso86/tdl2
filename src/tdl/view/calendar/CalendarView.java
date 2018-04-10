@@ -78,7 +78,7 @@ public class CalendarView implements Recipient {
 		switch(message.getMessageType()) {
 		case UPDATED_TASK:
 		case ADDED_SUBTASK:
-			//updateDisplay(); This now happens only on refresh click
+			updateDisplay(); //This now happens only on refresh click
 			break;
 		default:
 			break;
@@ -99,7 +99,7 @@ public class CalendarView implements Recipient {
 		cal.add(Calendar.DAY_OF_MONTH, 7);
 		Date inSevenDays = cal.getTime();
 		Task baseTask = controller.getBaseTask();
-		String r = formatReport(baseTask, sevenDaysAgo, inSevenDays);
+		String r = "Report:\n" + formatReport(baseTask, sevenDaysAgo, inSevenDays);
 		reportTextPane.setText(r);
 	}
 	
@@ -116,7 +116,6 @@ public class CalendarView implements Recipient {
 		for(Task child : task.getChildren()) {
 			r += "    " + formatReport(child, from, to);
 		}
-		
 		return r;
 	}
 

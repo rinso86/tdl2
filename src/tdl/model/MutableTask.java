@@ -336,7 +336,9 @@ public class MutableTask implements Serializable, Task {
 	public boolean wasActiveDuring(Date from, Date to) {
 		boolean wasActive = false;
 		for(TimeSpan ts : getActivity()) {
-			if(ts.contains(from) || ts.contains(to)) {
+			boolean tsContainsInput = (ts.contains(from) || ts.contains(to));
+			boolean inputContainsTs = (from.before(ts.getStart()) && to.after(ts.getEnd()));
+			if(tsContainsInput || inputContainsTs) {
 				wasActive = true;
 				break;
 			}
