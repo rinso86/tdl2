@@ -63,6 +63,14 @@ public class TimeSpan implements Serializable {
 		}
 	}
 	
+	public boolean contains(Date date) {
+		if(isComplete()) {
+			return (date.after(start) && date.before(end));
+		} else {
+			return date.after(start);
+		}
+	}
+	
 	public TimeSpan clone() {
 		return new TimeSpan(start, end);
 	}

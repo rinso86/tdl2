@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 import tdl.controller.Controller;
 import tdl.model.MutableTask;
 import tdl.model.Task;
+import tdl.model.TimeSpan;
 import tdl.utils.WorkHours;
 import tdl.utils.statmod.StatMod;
 
@@ -155,9 +156,32 @@ public class Scheduler {
 	}
 
 
-	public Task makeReport(Task baseTask, Date from, Date to) {
-		// TODO Auto-generated method stub
-		return null;
+	public MutableTask makeReport(MutableTask baseTask, Date from, Date to) {
+		MutableTask report;
+		if(baseTask.wasActiveDuring(from, to)) {
+			report = copyTask(baseTask);
+		}
+		for(MutableTask child : baseTask.getMutableChildren()) {
+			report.addChild(makeReport(child, from, to));
+		}
+		return report;
+	}
+
+
+	private MutableTask copyTask(Task task) {
+		MutableTask copy = new MutableTask();
+		copy.setTitle(task.getTitle());
+		copy.setCompleted(task.getCompleted());
+		copy.setDescription(task.getDescription());
+		copy.setDeadline(task.getDeadline());
+		for(TimeSpan act : task.getActivity()) {
+			try {
+				copy.appendActivity(act);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+		}
+		return copy;
 	}
 
 

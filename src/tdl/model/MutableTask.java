@@ -332,6 +332,22 @@ public class MutableTask implements Serializable, Task {
 		}
 		activity.add(newTimeSpan.clone()); 
 	}
+
+	public boolean wasActiveDuring(Date from, Date to) {
+		boolean wasActive = false;
+		for(TimeSpan ts : getActivity()) {
+			if(ts.contains(from) || ts.contains(to)) {
+				wasActive = true;
+				break;
+			}
+		}
+		return wasActive;
+	}
+
+	@Override
+	public ArrayList<TimeSpan> getActivity() {
+		return activity;
+	}
 	
 	
 }

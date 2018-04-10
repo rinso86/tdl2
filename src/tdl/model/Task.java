@@ -47,4 +47,8 @@ public interface Task {
 	public int getHeight();
 	
 	public int getDepth();
+
+	public boolean wasActiveDuring(Date from, Date to);
+
+	public ArrayList<TimeSpan> getActivity();
 }

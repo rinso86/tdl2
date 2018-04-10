@@ -104,8 +104,14 @@ public class CalendarView implements Recipient {
 	}
 	
 	private String formatReport(Task report) {
-		// TODO Auto-generated method stub
-		return "Report generated";
+		String title = report.getTitle();
+		double hoursActive = report.getSecondsActive() / (60.0 * 60.0);
+		boolean completed = report.isCompleted();
+		String r = title + "    Active for: " + hoursActive + " hours    Completed: " + completed + "\n"; 
+		for(Task child : report.getChildren()) {
+			r += "    " + formatReport(child);
+		}
+		return r;
 	}
 
 	private Task getReport(Date from, Date to) {
