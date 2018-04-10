@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.function.Predicate;
 
 import tdl.controller.Controller;
+import tdl.model.MutableTask;
 import tdl.model.Task;
 import tdl.utils.WorkHours;
 import tdl.utils.statmod.StatMod;
@@ -151,6 +152,12 @@ public class Scheduler {
 			}
 		});
 		return tasksF;
+	}
+
+
+	public Task makeReport(Task baseTask, Date from, Date to) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

@@ -112,6 +112,11 @@ public class Controller implements Recipient{
 		return scheduler.makeSchedule(baseTask);
 	}
 	
+	
+	public Task getReport(Date from, Date to) {
+		return scheduler.makeReport(baseTask, from, to);
+	}
+	
 
 	@Override
 	public void receiveMessage(Message message) {
@@ -188,6 +193,8 @@ public class Controller implements Recipient{
 		MutableTask mt = fetchMutableTask(t); 
 		String title = (String) message.getHeaders().get("title");
 		mt.setTitle(title);
+		
+		saveDetailsToTask();
 		
 		Message response = new Message(MessageType.UPDATED_TASK);
 		response.addHeader("task", (Task) mt);
@@ -391,4 +398,6 @@ public class Controller implements Recipient{
 			e.printStackTrace();
 		}
 	}
+
+
 }

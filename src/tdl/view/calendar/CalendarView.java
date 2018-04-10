@@ -4,8 +4,11 @@ package tdl.view.calendar;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
-
+import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
@@ -13,29 +16,56 @@ import javax.swing.JTextPane;
 import tdl.controller.Controller;
 import tdl.messages.Message;
 import tdl.messages.Recipient;
+import tdl.model.Task;
 import tdl.utils.scheduler.ScheduleItem;
 
 public class CalendarView implements Recipient {
 	
 	private Controller controller;
-	private JTextPane jep;
+	private JTextPane scheduleTextPane;
+	private JButton updateScheduleButton;
+	private JTextPane reportTextPane;
+	private JButton updateReportButton;
 	private JPanel jp;
 
 	public CalendarView(Controller controller) {
 		this.controller = controller; 
 		this.jp = new JPanel(new GridBagLayout());
 		
-		jep = new JTextPane();
-		jep.setEditable(false);
+		scheduleTextPane = new JTextPane();
+		scheduleTextPane.setEditable(false);
+		updateScheduleButton = new JButton("Update schedule");
 		
-		GridBagConstraints bigFieldConstraints = new GridBagConstraints();
-        bigFieldConstraints.gridx = 0;
-        bigFieldConstraints.gridy = 0;
-        bigFieldConstraints.gridwidth = 1;
-        bigFieldConstraints.weightx = bigFieldConstraints.weighty = 1.0;
-        bigFieldConstraints.fill = GridBagConstraints.BOTH;
+		reportTextPane = new JTextPane();
+		reportTextPane.setEditable(false);
+		updateReportButton = new JButton("Update report");
+		
+		GridBagConstraints leftBigFieldConstraints = new GridBagConstraints();
+        leftBigFieldConstraints.gridx = 0;
+        leftBigFieldConstraints.gridy = 0;
+        leftBigFieldConstraints.gridwidth = 1;
+        leftBigFieldConstraints.weightx = leftBigFieldConstraints.weighty = 1.0;
+        leftBigFieldConstraints.fill = GridBagConstraints.BOTH;
         
-		jp.add(jep, bigFieldConstraints);
+        GridBagConstraints leftSmallFieldConstraints = new GridBagConstraints();
+        leftSmallFieldConstraints.gridx = 0;
+        leftSmallFieldConstraints.gridy = 1;
+        
+        GridBagConstraints rightBigFieldConstraints = new GridBagConstraints();
+        rightBigFieldConstraints.gridx = 1;
+        rightBigFieldConstraints.gridy = 0;
+        rightBigFieldConstraints.gridwidth = 1;
+        rightBigFieldConstraints.weightx = rightBigFieldConstraints.weighty = 1.0;
+        rightBigFieldConstraints.fill = GridBagConstraints.BOTH;
+        
+        GridBagConstraints rightSmallFieldConstraints = new GridBagConstraints();
+        rightSmallFieldConstraints.gridx = 1;
+        rightSmallFieldConstraints.gridy = 1;
+        
+		jp.add(scheduleTextPane, leftBigFieldConstraints);
+		jp.add(updateScheduleButton, leftSmallFieldConstraints);
+		jp.add(reportTextPane, rightBigFieldConstraints);
+		jp.add(updateReportButton, rightSmallFieldConstraints);
 		
 		updateDisplay();
 	}
@@ -46,7 +76,7 @@ public class CalendarView implements Recipient {
 		switch(message.getMessageType()) {
 		case UPDATED_TASK:
 		case ADDED_SUBTASK:
-			updateDisplay();
+			//updateDisplay(); This now happens only on refresh click
 			break;
 		default:
 			break;
@@ -60,10 +90,27 @@ public class CalendarView implements Recipient {
 	private void updateDisplay() {
 		ArrayList<ScheduleItem> schedule = getSchedule();
 		String t = formatSchedule(schedule);
-		jep.setText(t);
-
+		scheduleTextPane.setText(t);
+		
+		Calendar cal = new GregorianCalendar();
+		cal.add(Calendar.DAY_OF_MONTH, -7);
+		Date sevenDaysAgo = cal.getTime();
+		cal.add(Calendar.DAY_OF_MONTH, 7);
+		Date inSevenDays = cal.getTime();
+		Task report = getReport(sevenDaysAgo, inSevenDays);
+		String r = formatReport(report);
+		reportTextPane.setText(r);
 	}
 	
+	private String formatReport(Task report) {
+		// TODO Auto-generated method stub
+		return "Report generated";
+	}
+
+	private Task getReport(Date from, Date to) {
+		return controller.getReport(from, to);
+	}
+
 	private ArrayList<ScheduleItem> getSchedule() {
 		return controller.getSchedule();
 	}
