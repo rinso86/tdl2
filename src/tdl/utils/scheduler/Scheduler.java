@@ -29,8 +29,18 @@ public class Scheduler {
 
 
 	public ArrayList<ScheduleItem> makeSchedule(Task tree) {
-		// TODO: Also make past
-		return makeScheduleFuture(tree);
+		ArrayList<ScheduleItem> all = new ArrayList<ScheduleItem>();
+		ArrayList<ScheduleItem> past = makeSchedulePast(tree);
+		ArrayList<ScheduleItem> future = makeScheduleFuture(tree);
+		all.addAll(past);
+		all.addAll(future);
+		return all;
+	}
+
+
+	private ArrayList<ScheduleItem> makeSchedulePast(Task tree) {
+		// TODO Auto-generated method stub
+		return new ArrayList<ScheduleItem> ();
 	}
 
 

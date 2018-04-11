@@ -3,6 +3,9 @@ package tdl.view.calendar;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -12,6 +15,8 @@ import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
+
+import org.jdesktop.swingx.JXDatePicker;
 
 import tdl.controller.Controller;
 import tdl.messages.Message;
@@ -25,51 +30,81 @@ public class CalendarView implements Recipient {
 	private JTextPane scheduleTextPane;
 	private JButton updateScheduleButton;
 	private JTextPane reportTextPane;
+	private JXDatePicker reportFromField;
+	private JXDatePicker reportToField;
 	private JButton updateReportButton;
 	private JPanel jp;
-	private Calendar cal;
 
 	public CalendarView(Controller controller) {
 		this.controller = controller; 
-		this.cal = new GregorianCalendar();
 		this.jp = new JPanel(new GridBagLayout());
 		
 		scheduleTextPane = new JTextPane();
 		scheduleTextPane.setEditable(false);
 		updateScheduleButton = new JButton("Update schedule");
+		updateScheduleButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				updateSchedule();
+			}
+		});
 		
 		reportTextPane = new JTextPane();
 		reportTextPane.setEditable(false);
 		updateReportButton = new JButton("Update report");
+		updateReportButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				updateReport();
+			}
+		});
+		reportFromField = new JXDatePicker();
+		reportToField = new JXDatePicker();
+		Calendar cal = new GregorianCalendar();
+		cal.add(Calendar.DAY_OF_MONTH, -7);
+		Date sevenDaysAgo = cal.getTime();
+		reportFromField.setDate(sevenDaysAgo);
+		cal.add(Calendar.DAY_OF_MONTH, 7);
+		Date inSevenDays = cal.getTime();
+		reportToField.setDate(inSevenDays);
 		
 		GridBagConstraints leftBigFieldConstraints = new GridBagConstraints();
         leftBigFieldConstraints.gridx = 0;
         leftBigFieldConstraints.gridy = 0;
-        leftBigFieldConstraints.gridwidth = 1;
+        leftBigFieldConstraints.gridwidth = 3;
         leftBigFieldConstraints.weightx = leftBigFieldConstraints.weighty = 1.0;
         leftBigFieldConstraints.fill = GridBagConstraints.BOTH;
+        leftBigFieldConstraints.insets = new Insets(3,3,3,3);
         
         GridBagConstraints leftSmallFieldConstraints = new GridBagConstraints();
         leftSmallFieldConstraints.gridx = 0;
         leftSmallFieldConstraints.gridy = 1;
         
         GridBagConstraints rightBigFieldConstraints = new GridBagConstraints();
-        rightBigFieldConstraints.gridx = 1;
+        rightBigFieldConstraints.gridx = 4;
         rightBigFieldConstraints.gridy = 0;
-        rightBigFieldConstraints.gridwidth = 1;
+        rightBigFieldConstraints.gridwidth = 3;
         rightBigFieldConstraints.weightx = rightBigFieldConstraints.weighty = 1.0;
         rightBigFieldConstraints.fill = GridBagConstraints.BOTH;
+        rightBigFieldConstraints.insets = new Insets(3,3,3,3);
         
-        GridBagConstraints rightSmallFieldConstraints = new GridBagConstraints();
-        rightSmallFieldConstraints.gridx = 1;
-        rightSmallFieldConstraints.gridy = 1;
+        GridBagConstraints rightLSmallFieldConstraints = new GridBagConstraints();
+        rightLSmallFieldConstraints.gridx = 4;
+        rightLSmallFieldConstraints.gridy = 1;
+        GridBagConstraints rightMSmallFieldConstraints = new GridBagConstraints();
+        rightMSmallFieldConstraints.gridx = 5;
+        rightMSmallFieldConstraints.gridy = 1;
+        GridBagConstraints rightRSmallFieldConstraints = new GridBagConstraints();
+        rightRSmallFieldConstraints.gridx = 6;
+        rightRSmallFieldConstraints.gridy = 1;
         
 		jp.add(scheduleTextPane, leftBigFieldConstraints);
 		jp.add(updateScheduleButton, leftSmallFieldConstraints);
 		jp.add(reportTextPane, rightBigFieldConstraints);
-		jp.add(updateReportButton, rightSmallFieldConstraints);
+		jp.add(updateReportButton, rightRSmallFieldConstraints);
+		jp.add(reportFromField, rightLSmallFieldConstraints);
+		jp.add(reportToField, rightMSmallFieldConstraints);
 		
-		updateDisplay();
+		updateSchedule();
+		updateReport();
 	}
 
 	@Override
@@ -78,7 +113,7 @@ public class CalendarView implements Recipient {
 		switch(message.getMessageType()) {
 		case UPDATED_TASK:
 		case ADDED_SUBTASK:
-			updateDisplay(); //This now happens only on refresh click
+			//updateSchedule(); //This now happens only on refresh click
 			break;
 		default:
 			break;
@@ -89,41 +124,17 @@ public class CalendarView implements Recipient {
 		return jp;
 	}
 	
-	private void updateDisplay() {
+	
+	private void updateSchedule() {
 		ArrayList<ScheduleItem> schedule = getSchedule();
 		String t = formatSchedule(schedule);
-		scheduleTextPane.setText(t);
-		
-		cal.add(Calendar.DAY_OF_MONTH, -7);
-		Date sevenDaysAgo = cal.getTime();
-		cal.add(Calendar.DAY_OF_MONTH, 7);
-		Date inSevenDays = cal.getTime();
-		Task baseTask = controller.getBaseTask();
-		String r = "Report:\n" + formatReport(baseTask, sevenDaysAgo, inSevenDays);
-		reportTextPane.setText(r);
+		scheduleTextPane.setText(t);		
 	}
 	
-	private String formatReport(Task task, Date from, Date to) {
-		String r = "";
-		
-		if(task.wasActiveDuring(from, to)) {
-			String title = task.getTitle();
-			double hoursActive = task.getSecondsActive() / (60.0 * 60.0);
-			boolean completed = task.isCompleted();
-			r += title + "    Active for: " + hoursActive + " hours    Completed: " + completed + "\n"; 			
-		}
-		
-		for(Task child : task.getChildren()) {
-			r += "    " + formatReport(child, from, to);
-		}
-		return r;
-	}
-
-
 	private ArrayList<ScheduleItem> getSchedule() {
 		return controller.getSchedule();
 	}
-
+	
 	private String formatSchedule(ArrayList<ScheduleItem> schedule) {
 		String formatted = "";
 		for(ScheduleItem si : schedule) {
@@ -134,4 +145,35 @@ public class CalendarView implements Recipient {
 		formatted += "";
 		return formatted;
 	}
+	
+	private void updateReport() {
+		String r = formatReport(controller.getBaseTask(), reportFromField.getDate(), reportToField.getDate());
+		reportTextPane.setText(r);
+	}
+	
+	private String formatReport(Task task, Date from, Date to) {
+		// TODO: move extra information (active, completed) all the way to the right
+		String r = "";
+		
+		if(task.wasActiveDuring(from, to)) {
+			String title = task.getTitle();
+			double hoursActive = round( task.getSecondsActive() / (60.0 * 60.0) , 2);
+			boolean completed = task.isCompleted();
+			r += title + "    Active for: " + hoursActive + " hours    Completed: " + completed + "\n"; 			
+		}
+		
+		for(Task child : task.getChildren()) {
+			r += "    " + formatReport(child, from, to);
+		}
+		return r;
+	}
+	
+	private double round(double value, int places) {
+	    if (places < 0) throw new IllegalArgumentException();
+	    long factor = (long) Math.pow(10, places);
+	    value = value * factor;
+	    long tmp = Math.round(value);
+	    return (double) tmp / factor;
+	}
+
 }
