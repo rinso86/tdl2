@@ -1,4 +1,4 @@
 Controller now calling scheduler
-Controller received PREPARE_WINDOController received PREPARE_WINDOW_CLOSING
+Controller received PREPARE_WINDOW_CLOSING
 Controller is saving data before shutdown.
 Controller fetches and saves details to task Base task: 

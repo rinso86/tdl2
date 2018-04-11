@@ -146,28 +146,55 @@ public class CalendarView implements Recipient {
 		return formatted;
 	}
 	
+	
+	
+	
+	
+	private class ReportRow {
+		public String description;
+		public Double active;
+		public boolean completed;
+		public ReportRow(String description, double active, boolean completed) {
+			this.description = description;
+			this.active = active;
+			this.completed = completed; 
+		}
+	}
+	
+	
+	
 	private void updateReport() {
 		String r = formatReport(controller.getBaseTask(), reportFromField.getDate(), reportToField.getDate());
 		reportTextPane.setText(r);
 	}
 	
 	private String formatReport(Task task, Date from, Date to) {
-		// TODO: move extra information (active, completed) all the way to the right
-		String r = "";
+		String report = "";
+		double timeTotal = 0.0;
+		for(ReportRow s : doFormatReport(task, from, to) ) {
+			report += s.description + "\n";
+			timeTotal += s.active;
+		}
+		report += "Total time active: " + round(timeTotal, 2) + " hours\n";
+		return report;
+	}
+	
+	private ArrayList<ReportRow> doFormatReport(Task task, Date from, Date to) {
+		ArrayList<ReportRow> r = new ArrayList<ReportRow>();
 		
 		if(task.wasActiveDuring(from, to)) {
-			String title = task.getTitle();
-			double hoursActive = round( task.getSecondsActive() / (60.0 * 60.0) , 2);
-			boolean completed = task.isCompleted();
-			r += title + "    Active for: " + hoursActive + " hours    Completed: " + completed + "\n"; 			
+			r.add( new ReportRow(task.getTitle(), task.getSecondsActive() / (60.0 * 60.0), task.isCompleted() )  );	
 		}
 		
 		for(Task child : task.getChildren()) {
-			r += "    " + formatReport(child, from, to);
+			for(ReportRow s : doFormatReport(child, from, to) ) {
+				s.description = "    " + s.description;
+				r.add(s);
+			}
 		}
 		return r;
 	}
-	
+
 	private double round(double value, int places) {
 	    if (places < 0) throw new IllegalArgumentException();
 	    long factor = (long) Math.pow(10, places);
@@ -175,5 +202,4 @@ public class CalendarView implements Recipient {
 	    long tmp = Math.round(value);
 	    return (double) tmp / factor;
 	}
-
 }
