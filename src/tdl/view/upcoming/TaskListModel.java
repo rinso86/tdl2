@@ -1,9 +1,11 @@
 package tdl.view.upcoming;
 
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractListModel;
 
@@ -92,15 +94,34 @@ public class TaskListModel extends AbstractListModel<Task> {
 		fireContentsChanged(this, 0, tasks.length);
 	}
 	
-	public void filterTasksByText(String text) {
+	public void filterTasksByText(String searchedText) {
+		
 		ArrayList<Task> newTasks = new ArrayList<Task>();
-		for(Task task : this.tasks) {
-			String title = task.getTitle();
-			String body = task.getDescription();
-			if(title.contains(text) || body.contains(text)) {
-				newTasks.add(task);
+		
+		String[] searchWords = searchedText.split(";");
+		for(String searchWord : searchWords) {
+			
+			Pattern regex = Pattern.compile(Pattern.quote(searchWord), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);	
+			for(Task task : this.tasks) {
+				
+				String title = task.getTitle();
+				String body = task.getDescription();
+				if( regex.matcher(title).find() || regex.matcher(body).find() ) {
+					newTasks.add(task);
+				} else {
+					ArrayList<File> attachments = task.getAttachments();
+					for(File attachment : attachments) {
+						if( regex.matcher( attachment.getName() ).find() ) {
+							newTasks.add(task);
+							break;
+						}
+					}
+				}
+				
 			}
+			
 		}
+		
 		Task[] tasks = newTasks.toArray(new Task[0]);
 		this.tasks = tasks;
 	}
