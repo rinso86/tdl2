@@ -14,6 +14,7 @@ import tdl.utils.statmod.StatMod;
  */
 public class WBuvs implements StatMod {
 	
+	private Double weightingExponent = 2.0;
 	private TreeParser tp;
 	private DistanceMatrix dm;
 	private Double globalMeanTimeNet;
@@ -87,7 +88,7 @@ public class WBuvs implements StatMod {
 		
 		for(Task task : tasks) {
 			Integer distance = dm.distance(baseTask, task);
-			Double weight = 1.0/distance;
+			Double weight = Math.pow( 1.0/distance, weightingExponent );
 			sumW += weight;
 			sum += weight * task.getSecondsActive();
 		}
@@ -123,7 +124,7 @@ public class WBuvs implements StatMod {
 		
 		for(Task task : completedTasks) {
 			Integer distance = dm.distance(baseTask, task);
-			Double weight = 1.0/distance;
+			Double weight = Math.pow( 1.0/distance, weightingExponent );
 			sumW += weight;
 			sum += weight * task.getChildCount();
 		}
@@ -186,7 +187,7 @@ public class WBuvs implements StatMod {
 		
 		for(Task task : tasks) {
 			Integer distance = dm.distanceToNthChild(parent, n, task);
-			Double weight = 1.0/distance;
+			Double weight = Math.pow( 1.0/distance, weightingExponent );
 			sumW += weight;
 			sum += weight * task.getSecondsActive();
 		}
@@ -218,7 +219,7 @@ public class WBuvs implements StatMod {
 
 		for(Task task : tasks) {
 			Integer distance = dm.distanceToNthChild(parent, n, task);
-			Double weight = 1.0/distance;
+			Double weight = Math.pow( 1.0/distance, weightingExponent );
 			sumW += weight;
 			sum += weight * task.getChildCount();
 		}
