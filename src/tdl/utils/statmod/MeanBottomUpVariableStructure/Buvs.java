@@ -14,6 +14,8 @@ import tdl.utils.statmod.StatMod;
 
 /**
  * Bottom-Up Variable Structure Model
+ * Assumes that child count follows same, binominal distribution on one depth.
+ * Assumes that net-time follows same, exponential distribution on one depth.
  * @TODO: extract all of the tree-parsing methods into the TreeParser class
  * 
  */

@@ -43,12 +43,12 @@ String description = "";
 			description += "Expected time to completion: " + expectedTimeString + " ("+ perz + "% finished)\n <br/>";
 			
 			int depth = task.getDepth();
-			description += "Depth: " + depth + "\n";
+			description += "Depth: " + depth + "\n <br/>";
 			
-//			int children = task.getChildCountRecursive();
-//			double childrenExpected = model.getExpectedChildCountCondRecursive(task);
-//			description += "Current children: " + children + " Expected children: " + childrenExpected + "\n <br/>";
-//			
+			int children = task.getChildCount();
+			double netChildrenExpected = model.expectedNrChildrenNet(task);
+			description += "Current children (nonrecur): " + children + " Expected children (nonrecur): " + (netChildrenExpected - children) + "\n <br/>";
+			
 //			double mix = model.getMixingFactor(depth);
 //			description += "Mixing factor: " + mix + "\n <br/>";
 //			

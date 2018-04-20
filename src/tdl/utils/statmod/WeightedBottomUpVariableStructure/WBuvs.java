@@ -98,7 +98,7 @@ public class WBuvs implements StatMod {
 	}
 
 	
-	private Double expectedNrChildrenNet(Task task) {
+	public Double expectedNrChildrenNet(Task task) {
 		
 		if(task.isCompleted()) {
 			return (double) task.getChildCount();
@@ -115,13 +115,13 @@ public class WBuvs implements StatMod {
 	private Double weightedMeanNrChildren(Task baseTask) {
 		Double sum = 0.0;
 		Double sumW = 0.0;
-		ArrayList<Task> tasks = tp.getTasksCompleted();
+		ArrayList<Task> completedTasks = tp.getTasksCompleted();
 		
-		if(tasks.size() == 0) {
+		if(completedTasks.size() == 0) {
 			return 0.0;
 		}
 		
-		for(Task task : tasks) {
+		for(Task task : completedTasks) {
 			Integer distance = dm.distance(baseTask, task);
 			Double weight = 1.0/distance;
 			sumW += weight;
