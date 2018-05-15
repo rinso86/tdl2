@@ -1,6 +1,7 @@
 package tdl.utils.statmod.ensemble;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import tdl.model.Task;
 import tdl.utils.statmod.StatMod;
@@ -28,6 +29,16 @@ public class Ensemble implements StatMod {
 		}
 		double mean = calcMean(predictions);
 		return mean;
+	}
+	
+	public HashMap<String, Double> getSeparateEstimates(Task task) {
+		HashMap<String, Double> estimates = new HashMap<String, Double>();
+		for(StatMod model : models) {
+			String modelName = model.getClass().getSimpleName();
+			double estimate = model.estimateTimeToComplete(task);
+			estimates.put(modelName, estimate);
+		}
+		return estimates;
 	}
 	
 	private double calcMean(double[] data) {

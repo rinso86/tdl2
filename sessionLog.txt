@@ -1,6 +1,11 @@
+Depth | Data
+------|------------------------
+1     |  13  
+2     |  
+3     |  
 Controller now calling scheduler
 Controller received NEW_TASK_ACTIVE_REQUEST
-Controller changing active task from Base task to erstes kind
+Controller changing active task from Base task to diese aufgabe ist gerade aktiv
 Controller fetches and saves details to task Base task: 
 Controller now broadcasting NEW_TASK_ACTIVE
 TreeView now receiving NEW_TASK_ACTIVE
@@ -11,4 +16,4 @@ CalendarView now receiving NEW_TASK_ACTIVE
 StatsView now receiving NEW_TASK_ACTIVE
 Controller received PREPARE_WINDOW_CLOSING
 Controller is saving data before shutdown.
-Controller fetches and saves details to task erstes kind: 
+Controller fetches and saves details to task diese aufgabe ist gerade aktiv: 
