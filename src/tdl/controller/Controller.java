@@ -19,8 +19,12 @@ import tdl.utils.scheduler.ScheduleItem;
 import tdl.utils.scheduler.Scheduler;
 import tdl.utils.statmod.ModRenderer;
 import tdl.utils.statmod.StatMod;
+import tdl.utils.statmod.MeanBottomUpVariableStructure.Buvs;
+import tdl.utils.statmod.TopDownStaticStructure.Tdss;
 import tdl.utils.statmod.WeightedBottomUpVariableStructure.WBuvs;
 import tdl.utils.statmod.WeightedBottomUpVariableStructure.WBuvsRenderer;
+import tdl.utils.statmod.ensemble.Ensemble;
+import tdl.utils.statmod.ensemble.EnsembleRenderer;
 import tdl.messages.Message;
 import tdl.messages.MessageType;
 import tdl.messages.Recipient;
@@ -49,6 +53,8 @@ public class Controller implements Recipient{
 	// Utils
 	private ResourceManager resourceManager;
 	private Savior savior;
+
+	// StatMod
 	private StatMod statMod;
 	private ModRenderer statModRenderer;
 	private Scheduler scheduler;
@@ -68,16 +74,22 @@ public class Controller implements Recipient{
 		logFile = new PrintStream(LOGFILE);
 		System.setOut(logFile);
 		
-		// Model and utils
+		// Model and utilities
 		resourceManager = new ResourceManager();
 		savior = new Savior();
 		baseTask = savior.loadTree(SAVEFILE);
 		currentTask = baseTask;
-		statMod = new WBuvs();
-		statMod.calculateModelParameters(baseTask);
-		statModRenderer = new WBuvsRenderer((WBuvs) statMod);
-		scheduler = new Scheduler(statMod, this);
 		currentTimeSpan = new TimeSpan(new Date());
+
+		// StatMods
+		ArrayList<StatMod> models = new ArrayList<StatMod>();
+		models.add(new Buvs());
+		models.add(new WBuvs());
+		models.add(new Tdss());
+		statMod = new Ensemble(models);
+		statMod.calculateModelParameters(baseTask);
+		statModRenderer = new EnsembleRenderer((Ensemble) statMod);
+		scheduler = new Scheduler(statMod, this);
 		
 		// Views
 		treeView = new TreeView(this);
