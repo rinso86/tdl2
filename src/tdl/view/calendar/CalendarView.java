@@ -14,6 +14,7 @@ import java.util.GregorianCalendar;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
 import org.jdesktop.swingx.JXDatePicker;
@@ -28,8 +29,10 @@ public class CalendarView implements Recipient {
 	
 	private Controller controller;
 	private JTextPane scheduleTextPane;
+	private JScrollPane scrollingScheduleTextPane;
 	private JButton updateScheduleButton;
 	private JTextPane reportTextPane;
+	private JScrollPane scrollingReportTextPane;
 	private JXDatePicker reportFromField;
 	private JXDatePicker reportToField;
 	private JButton updateReportButton;
@@ -41,6 +44,7 @@ public class CalendarView implements Recipient {
 		
 		scheduleTextPane = new JTextPane();
 		scheduleTextPane.setEditable(false);
+		scrollingScheduleTextPane = new JScrollPane(scheduleTextPane);
 		updateScheduleButton = new JButton("Update schedule");
 		updateScheduleButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -50,6 +54,7 @@ public class CalendarView implements Recipient {
 		
 		reportTextPane = new JTextPane();
 		reportTextPane.setEditable(false);
+		scrollingReportTextPane = new JScrollPane(reportTextPane);
 		updateReportButton = new JButton("Update report");
 		updateReportButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -96,9 +101,9 @@ public class CalendarView implements Recipient {
         rightRSmallFieldConstraints.gridx = 6;
         rightRSmallFieldConstraints.gridy = 1;
         
-		jp.add(scheduleTextPane, leftBigFieldConstraints);
+		jp.add(scrollingScheduleTextPane, leftBigFieldConstraints);
 		jp.add(updateScheduleButton, leftSmallFieldConstraints);
-		jp.add(reportTextPane, rightBigFieldConstraints);
+		jp.add(scrollingReportTextPane, rightBigFieldConstraints);
 		jp.add(updateReportButton, rightRSmallFieldConstraints);
 		jp.add(reportFromField, rightLSmallFieldConstraints);
 		jp.add(reportToField, rightMSmallFieldConstraints);
