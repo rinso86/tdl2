@@ -1,19 +1,18 @@
 package tdl.plugins.bugzilla;
 
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
+import java.net.Proxy;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Invocation.Builder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.glassfish.jersey.client.spi.ConnectorProvider;
+import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONObject;
 
 import tdl.model.Task;
@@ -31,7 +30,7 @@ public class BugzillaConnection {
 	private URL bugzillaUrl;
 	private String userEmail;
 	private String userPassword;
-	private Client client;
+	private Proxy proxy;
 
 	
 	/**
@@ -46,18 +45,9 @@ public class BugzillaConnection {
 	public BugzillaConnection(	String bugzillaUrl, String userEmail, String userPassword, 
 								String proxyUrl, int proxyPort) throws MalformedURLException {
 		
-		this.bugzillaUrl = new URL(bugzillaUrl);
-		this.userEmail = userEmail;
-		this.userPassword = userPassword;
+		this(bugzillaUrl, userEmail, userPassword);
+		this.proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyUrl, proxyPort));
 		
-		
-		ClientConfig config = new DefaultClientConfig();
-	    config.property(ClientProperties.PROXY_URI, proxyUrl + ":" + proxyPort);
-	    //config.property(ClientProperties.PROXY_USERNAME,user);
-	    //config.property(ClientProperties.PROXY_PASSWORD,pass);
-	    this.client = JerseyClientBuilder.newClient(config);
-		
-
 	}
 	
 	
@@ -66,7 +56,6 @@ public class BugzillaConnection {
 		this.bugzillaUrl = new URL(bugzillaUrl);
 		this.userEmail = userEmail;
 		this.userPassword = userPassword;
-		this.client = JerseyClientBuilder.newClient();
 		
 	}
 	
@@ -83,7 +72,7 @@ public class BugzillaConnection {
 	}
 
 	/**
-	 * Get new tasks that can not yet be found in the tasktree. 
+	 * Get new tasks that can not yet be found in the task-tree. 
 	 * 
 	 * @param baseTask
 	 */
@@ -93,27 +82,69 @@ public class BugzillaConnection {
 	}
 	
 	
-	public JSONObject executeQuery(HashMap<String, String> paras) {
-		// @TODO: 
+	public JSONObject executeQuery(String path, HashMap<String, String> paras) throws URISyntaxException, IOException {
+		
+		String fullPath = bugzillaUrl.toString() + path;
 		
 		// Create uri from paras
+		URIBuilder ub = new URIBuilder(fullPath);
+		for(String key : paras.keySet()) {
+			String value = paras.get(key);
+			ub.addParameter(key, value);
+		}
+		String urlString = ub.build().toString();
+		
 		// get String by execureGet
-		// parse String into JSON object
-		return null;
+		JSONObject jo = executeJsonRestCall(urlString);
+		
+		return jo;
 	}
 	
+	public JSONObject executeJsonRestCall(String requestString) throws IOException {
+
+		URL url = new URL(requestString);
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection(proxy);
+		connection.setRequestMethod("GET");
+		connection.setRequestProperty("Content-Type", "application/json");
+		connection.setRequestProperty("Accept", "application/json");
+		
+		int respCode = connection.getResponseCode();
+		if(respCode != 200) throw new IOException("Kein gültiger Aufruf! ResponseCode = " + respCode);
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader((connection.getInputStream())));
+		StringBuilder sb = new StringBuilder();
+		String output;
+		while ((output = br.readLine()) != null) {
+			sb.append(output);
+		}
+		
+		JSONObject jo = new JSONObject(sb.toString());
+		
+		return jo;
+	}
+	
+	
 	/**
-	 * http://www.baeldung.com/jersey-jax-rs-client
-	 * 
 	 * @param requestString
 	 * @return
+	 * @throws IOException 
 	 */
-	public String executeGet(String requestString) {
-		WebTarget webTarget = client.target(requestString);
-		Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-		Response response = invocationBuilder.get();
-		String output = response.getEntity().toString();
-		return output;
+	public String executeGet(String requestString) throws IOException {
+
+		URL url = new URL(requestString);
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection(proxy);
+		connection.setRequestMethod("GET");
+		int respCode = connection.getResponseCode();
+		if(respCode != 200) throw new IOException("Kein gültiger Aufruf! ResponseCode = " + respCode);
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader((connection.getInputStream())));
+		StringBuilder sb = new StringBuilder();
+		String output;
+		while ((output = br.readLine()) != null) {
+			sb.append(output);
+		}
+		return sb.toString();
+		
 	}
 
 }
