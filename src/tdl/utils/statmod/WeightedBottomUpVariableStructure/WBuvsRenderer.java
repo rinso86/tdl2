@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.swing.JPanel;
 
 import tdl.model.Task;
-import tdl.utils.WorkHours;
+import tdl.utils.scheduler.WorkHours;
 import tdl.utils.statmod.ModRenderer;
 
 public class WBuvsRenderer implements ModRenderer {

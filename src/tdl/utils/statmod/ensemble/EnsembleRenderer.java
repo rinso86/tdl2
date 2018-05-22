@@ -6,7 +6,7 @@ import java.util.HashMap;
 import javax.swing.JPanel;
 
 import tdl.model.Task;
-import tdl.utils.WorkHours;
+import tdl.utils.scheduler.WorkHours;
 import tdl.utils.statmod.ModRenderer;
 import tdl.utils.statmod.StatMod;
 

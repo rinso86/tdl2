@@ -12,7 +12,6 @@ import tdl.controller.Controller;
 import tdl.model.MutableTask;
 import tdl.model.Task;
 import tdl.model.TimeSpan;
-import tdl.utils.WorkHours;
 import tdl.utils.statmod.StatMod;
 
 public class Scheduler {

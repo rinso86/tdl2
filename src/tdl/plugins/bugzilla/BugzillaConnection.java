@@ -6,16 +6,16 @@ import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
+
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.client.urlconnection.URLConnectionClientHandler;
 
 import tdl.model.MutableTask;
 import tdl.model.Task;
+import tdl.utils.network.ProxyConnectionFactory;
 
 
 
@@ -30,7 +30,8 @@ public class BugzillaConnection {
 	private URL bugzillaUrl;
 	private String userEmail;
 	private String userPassword;
-	private CloseableHttpClient httpclient;
+	private Client client;
+
 	
 	/**
 	 * Versichere, dass wir auf die REST API von bugzilla zugreifen können
@@ -41,12 +42,22 @@ public class BugzillaConnection {
 	 * 
 	 * @throws MalformedURLException 
 	 */
+	public BugzillaConnection(String bugzillaUrl, String userEmail, String userPassword, String proxyUrl, int proxyPort) throws MalformedURLException {
+		this.bugzillaUrl = new URL(bugzillaUrl);
+		this.userEmail = userEmail;
+		this.userPassword = userPassword;
+		URLConnectionClientHandler ch  = new URLConnectionClientHandler(new ProxyConnectionFactory(proxyUrl, proxyPort));
+		this.client = new Client(ch);
+	}
+	
+	
 	public BugzillaConnection(String bugzillaUrl, String userEmail, String userPassword) throws MalformedURLException {
 		this.bugzillaUrl = new URL(bugzillaUrl);
 		this.userEmail = userEmail;
 		this.userPassword = userPassword;
-		this.httpclient = HttpClients.createDefault();
+		this.client = Client.create();
 	}
+	
 
 	/**
 	 * Schließe eine Aufgabe in bugzilla ab
@@ -69,7 +80,8 @@ public class BugzillaConnection {
 		return null;
 	}
 	
-	private JSONObject executeQuery(HashMap<String, String> paras) {
+	
+	public JSONObject executeQuery(HashMap<String, String> paras) {
 		// @TODO: 
 		
 		// Create uri from paras
@@ -78,25 +90,19 @@ public class BugzillaConnection {
 		return null;
 	}
 	
-	private String executeGet(URI request) throws Exception {
-		String body = "";
-		HttpGet httpget = new HttpGet(request);
-		CloseableHttpResponse response = httpclient.execute(httpget);
-		try {
-			HttpEntity entity = response.getEntity();
-		    if (entity != null) {
-		        long len = entity.getContentLength();
-		        if (len != -1) {
-		        	body = EntityUtils.toString(entity);
-		        } else {
-		        	throw new Exception("No response!");
-		        }
-		    }
-		} catch (Exception ex) {
-		    response.close();
-		    throw ex;
+	
+	public String executeGet(String requestString) {
+		WebResource webResource = client.resource(requestString);
+
+		ClientResponse response = webResource.accept("application/json").get(ClientResponse.class);
+
+		if (response.getStatus() != 200) {
+		   throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
 		}
-		return body;
+
+		String output = response.getEntity(String.class);
+		
+		return output;
 	}
 
 }

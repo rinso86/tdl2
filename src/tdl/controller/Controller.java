@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Properties;
 import java.util.UUID;
 
 import javax.swing.JFrame;
@@ -14,8 +15,9 @@ import tdl.model.MutableTask;
 import tdl.model.Task;
 import tdl.model.TimeSpan;
 import tdl.plugins.bugzilla.BugzillaConnection;
-import tdl.utils.ResourceManager;
-import tdl.utils.Savior;
+import tdl.utils.localFiles.ConfigurationHelper;
+import tdl.utils.localFiles.ResourceManager;
+import tdl.utils.localFiles.Savior;
 import tdl.utils.scheduler.ScheduleItem;
 import tdl.utils.scheduler.Scheduler;
 import tdl.utils.statmod.ModRenderer;
@@ -23,7 +25,6 @@ import tdl.utils.statmod.StatMod;
 import tdl.utils.statmod.MeanBottomUpVariableStructure.Buvs;
 import tdl.utils.statmod.TopDownStaticStructure.Tdss;
 import tdl.utils.statmod.WeightedBottomUpVariableStructure.WBuvs;
-import tdl.utils.statmod.WeightedBottomUpVariableStructure.WBuvsRenderer;
 import tdl.utils.statmod.ensemble.Ensemble;
 import tdl.utils.statmod.ensemble.EnsembleRenderer;
 import tdl.messages.Message;
@@ -40,10 +41,8 @@ import tdl.view.wisecrack.WiseCrackerView;
 
 public class Controller implements Recipient{
 
-	
-	private static final String SAVEFILE = "mytree.bin";
-	private static final String LOGFILE = "sessionLog.txt";
-	private PrintStream logFile;
+	// Configuration
+	private Properties props;
 	
 	// Model
 	private MutableTask baseTask;
@@ -52,7 +51,8 @@ public class Controller implements Recipient{
 	private TimeSpan currentTimeSpan;
 	private BugzillaConnection bugzillaConnection;
 	
-	// Utils
+	// Utilities
+	private PrintStream logFile;
 	private ResourceManager resourceManager;
 	private Savior savior;
 
@@ -73,16 +73,18 @@ public class Controller implements Recipient{
 	
 	
 	public Controller() throws ClassNotFoundException, IOException {
-		logFile = new PrintStream(LOGFILE);
+		props = ConfigurationHelper.loadProperties();
+		
+		logFile = new PrintStream(props.getProperty("tdl.logfile", "sessionLog.txt"));
 		System.setOut(logFile);
 		
 		// Model and utilities
 		resourceManager = new ResourceManager();
 		savior = new Savior();
-		baseTask = savior.loadTree(SAVEFILE);
+		baseTask = savior.loadTree(props.getProperty("tdl.savefile", "mytree.bin"));
 		currentTask = baseTask;
 		currentTimeSpan = new TimeSpan(new Date());
-		bugzillaConnection = new BugzillaConnection("http://www.hnd.bybn.de/bugzilla", "michael.langbein@lfu.bayern.de", "12345678");
+		bugzillaConnection = new BugzillaConnection(props.getProperty("bugzilla.url"), props.getProperty("bugzilla.user"), props.getProperty("bugzilla.password"), props.getProperty("proxy.url"), Integer.parseInt(props.getProperty("proxy.port")) );
 		Task[] newBugzillaTasks = bugzillaConnection.getNewTasks(baseTask);
 		addNewTasksToBugzillaTree(newBugzillaTasks);
 
@@ -406,7 +408,7 @@ public class Controller implements Recipient{
 
 	private void saveModelToFile() {
 		try {
-			savior.saveTree(baseTask, SAVEFILE);
+			savior.saveTree(baseTask, props.getProperty("tdl.savefile", "mytree.bin"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -417,4 +419,5 @@ public class Controller implements Recipient{
 		// TODO Auto-generated method stub
 		
 	}
+	
 }

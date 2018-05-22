@@ -1,4 +1,4 @@
-package tdl.utils;
+package tdl.utils.ui;
 
 import java.awt.Insets;
 import java.awt.Point;

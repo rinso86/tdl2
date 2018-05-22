@@ -1,4 +1,4 @@
-package tdl.utils;
+package tdl.utils.ui;
 
 
 import java.awt.datatransfer.DataFlavor;

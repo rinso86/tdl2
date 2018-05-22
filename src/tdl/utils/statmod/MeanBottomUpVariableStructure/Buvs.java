@@ -8,7 +8,7 @@ import java.util.function.Function;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import tdl.model.Task;
-import tdl.utils.WorkHours;
+import tdl.utils.scheduler.WorkHours;
 import tdl.utils.statmod.StatMod;
 
 

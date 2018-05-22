@@ -4,3 +4,4 @@ bin
 .classpath
 target
 mytree.bin
+app.properties
