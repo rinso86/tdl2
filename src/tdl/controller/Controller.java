@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import tdl.model.MutableTask;
 import tdl.model.Task;
 import tdl.model.TimeSpan;
+import tdl.plugins.bugzilla.BugzillaConnection;
 import tdl.utils.ResourceManager;
 import tdl.utils.Savior;
 import tdl.utils.scheduler.ScheduleItem;
@@ -49,6 +50,7 @@ public class Controller implements Recipient{
 	// Model - State
 	private MutableTask currentTask;
 	private TimeSpan currentTimeSpan;
+	private BugzillaConnection bugzillaConnection;
 	
 	// Utils
 	private ResourceManager resourceManager;
@@ -80,6 +82,9 @@ public class Controller implements Recipient{
 		baseTask = savior.loadTree(SAVEFILE);
 		currentTask = baseTask;
 		currentTimeSpan = new TimeSpan(new Date());
+		bugzillaConnection = new BugzillaConnection("http://www.hnd.bybn.de/bugzilla", "michael.langbein@lfu.bayern.de", "12345678");
+		Task[] newBugzillaTasks = bugzillaConnection.getNewTasks(baseTask);
+		addNewTasksToBugzillaTree(newBugzillaTasks);
 
 		// StatMods
 		ArrayList<StatMod> models = new ArrayList<StatMod>();
@@ -408,4 +413,8 @@ public class Controller implements Recipient{
 	}
 
 
+	private void addNewTasksToBugzillaTree(Task[] newBugzillaTasks) {
+		// TODO Auto-generated method stub
+		
+	}
 }
