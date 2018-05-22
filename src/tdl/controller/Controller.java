@@ -75,16 +75,23 @@ public class Controller implements Recipient{
 	public Controller() throws ClassNotFoundException, IOException {
 		props = ConfigurationHelper.loadProperties();
 		
+		// Utilities
 		logFile = new PrintStream(props.getProperty("tdl.logfile", "sessionLog.txt"));
 		System.setOut(logFile);
-		
-		// Model and utilities
 		resourceManager = new ResourceManager();
 		savior = new Savior();
+		
+		// Model
 		baseTask = savior.loadTree(props.getProperty("tdl.savefile", "mytree.bin"));
 		currentTask = baseTask;
 		currentTimeSpan = new TimeSpan(new Date());
-		bugzillaConnection = new BugzillaConnection(props.getProperty("bugzilla.url"), props.getProperty("bugzilla.user"), props.getProperty("bugzilla.password"), props.getProperty("proxy.url"), Integer.parseInt(props.getProperty("proxy.port")) );
+		bugzillaConnection = new BugzillaConnection(
+				props.getProperty("bugzilla.url"), 
+				props.getProperty("bugzilla.user"), 
+				props.getProperty("bugzilla.password"), 
+				props.getProperty("proxy.url"), 
+				Integer.parseInt(props.getProperty("proxy.port")) 
+		);
 		Task[] newBugzillaTasks = bugzillaConnection.getNewTasks(baseTask);
 		addNewTasksToBugzillaTree(newBugzillaTasks);
 

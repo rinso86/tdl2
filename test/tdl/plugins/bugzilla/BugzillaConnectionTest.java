@@ -16,7 +16,13 @@ public class BugzillaConnectionTest {
 	@Test
 	public void executeGetTest() throws Exception  {
 		Properties props = ConfigurationHelper.loadProperties();
-		BugzillaConnection conn = new BugzillaConnection(props.getProperty("bugzilla.url"), props.getProperty("bugzilla.user"), props.getProperty("bugzilla.password"), props.getProperty("proxy.url"), Integer.parseInt(props.getProperty("proxy.port")) );
+		BugzillaConnection conn = new BugzillaConnection(
+				props.getProperty("bugzilla.url"), 
+				props.getProperty("bugzilla.user"), 
+				props.getProperty("bugzilla.password"), 
+				props.getProperty("proxy.url"), 
+				Integer.parseInt(props.getProperty("proxy.port")) 
+		);
 		String body = conn.executeGet("https://www.google.com");
 		assertNotNull(body);
 		assertTrue(body != "");
