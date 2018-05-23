@@ -48,24 +48,14 @@ public class BugzillaConnection {
 	public BugzillaConnection(	String bugzillaUrl, String userEmail, String userPassword, 
 								String proxyUrl, int proxyPort) throws URISyntaxException, IOException {
 		
-		this(bugzillaUrl, userEmail, userPassword);
-		this.proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyUrl, proxyPort));
-		
-	}
-	
-	
-	public BugzillaConnection(String bugzillaUrl, String userEmail, String userPassword) throws URISyntaxException, IOException {
-		
-		this(bugzillaUrl);
+		this.bugzillaUrl = new URL(bugzillaUrl);
 		this.userEmail = userEmail;
 		this.userPassword = userPassword;
+		this.proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyUrl, proxyPort));
 		this.token = authenticateGetToken(userEmail, userPassword);
 		
 	}
 	
-	public BugzillaConnection(String bugzillaUrl) throws MalformedURLException {		
-		this.bugzillaUrl = new URL(bugzillaUrl);
-	}
 	
 	public String authenticateGetToken(String userMail, String userPassword) throws URISyntaxException, IOException {
 		String path = "/rest/login";
@@ -80,6 +70,7 @@ public class BugzillaConnection {
 
 	/**
 	 * Let bugzilla know that we have completed a task.
+	 * http://bugzilla.readthedocs.io/en/latest/api/core/v1/bug.html#update-bug
 	 * 
 	 * @param bugzillaId
 	 * @param description
@@ -107,19 +98,44 @@ public class BugzillaConnection {
 		
 		JSONArray bugs = response.getJSONArray("bugs");
 		for(int i = 0; i < bugs.length(); i++) {
-			
 			JSONObject bug = bugs.getJSONObject(i);
 			int id = bug.getInt("id");
-			String title = bug.getString("summary");
-			String description = bug.getString("description");
-			
-			BugzillaTask bt = new BugzillaTask(this, id, title);
-			bt.setDescription(description);
-			
+			Task bt = getTask(id);
 			tasks.add(bt);
 		}
 		
 		return tasks;
+	}
+	
+	public Task getTask(int bugzillaId) throws URISyntaxException, IOException {
+		
+		String path = "/rest/bug/" + bugzillaId;
+		HashMap<String, String> paras = new HashMap<String, String>();
+		JSONObject response = executeQuery(path, paras);
+		
+		JSONObject bug = response.getJSONArray("bugs").getJSONObject(0);
+		int id = bug.getInt("id");
+		String title = bug.getString("summary");
+		BugzillaTask bt = new BugzillaTask(this, id, title);
+		
+		JSONArray comments = getComments(bugzillaId);
+		String description = "";
+		for(int i = 0; i < comments.length(); i++) {
+			description += comments.getJSONObject(i).getString("text") + "\n";
+		}
+		bt.setDescription(description);
+		
+		return bt;
+	}
+	
+	public JSONArray getComments(int bugzillaId) throws URISyntaxException, IOException {
+		
+		String path = "/rest/bug/" + bugzillaId + "/comment";
+		HashMap<String, String> paras = new HashMap<String, String>();
+		JSONObject response = executeQuery(path, paras);
+		JSONArray comments = response.getJSONObject("bugs").getJSONObject("" + bugzillaId).getJSONArray("comments");
+		
+		return comments;
 	}
 	
 	
@@ -137,6 +153,7 @@ public class BugzillaConnection {
 		String urlString = ub.build().toString();
 		
 		// get String by execureGet
+		System.out.println("Now executing Query: " + urlString);
 		JSONObject jo = executeJsonRestCall(urlString);
 		
 		return jo;

@@ -3,6 +3,7 @@ package tdl.controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -72,7 +73,7 @@ public class Controller implements Recipient{
 
 	
 	
-	public Controller() throws ClassNotFoundException, IOException {
+	public Controller() throws ClassNotFoundException, IOException, NumberFormatException, URISyntaxException {
 		props = ConfigurationHelper.loadProperties();
 		
 		// Utilities
@@ -92,7 +93,7 @@ public class Controller implements Recipient{
 				props.getProperty("proxy.url"), 
 				Integer.parseInt(props.getProperty("proxy.port")) 
 		);
-		Task[] newBugzillaTasks = bugzillaConnection.getNewTasks(baseTask);
+		ArrayList<Task> newBugzillaTasks = bugzillaConnection.getTasks();
 		addNewTasksToBugzillaTree(newBugzillaTasks);
 
 		// StatMods
@@ -422,7 +423,7 @@ public class Controller implements Recipient{
 	}
 
 
-	private void addNewTasksToBugzillaTree(Task[] newBugzillaTasks) {
+	private void addNewTasksToBugzillaTree(ArrayList<Task> newBugzillaTasks) {
 		// TODO Auto-generated method stub
 		
 	}
