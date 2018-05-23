@@ -8,6 +8,7 @@ import tdl.utils.localFiles.ConfigurationHelper;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
@@ -86,6 +87,23 @@ public class BugzillaConnectionTest {
 		JSONObject response = conn.executeQuery(path, paras);
 		
 		assertNotNull(response);
+	}
+	
+	@Test
+	public void authenticateGetTokenTest() throws FileNotFoundException, IOException, URISyntaxException {
+		
+		Properties props = ConfigurationHelper.loadProperties();
+		BugzillaConnection conn = new BugzillaConnection(
+				props.getProperty("bugzilla.url"), 
+				props.getProperty("bugzilla.user"), 
+				props.getProperty("bugzilla.password"), 
+				props.getProperty("proxy.url"), 
+				Integer.parseInt(props.getProperty("proxy.port")) 
+		);
+		
+		String token = conn.authenticateGetToken(props.getProperty("bugzilla.user"), props.getProperty("bugzilla.password"));
+		System.out.println("Token is " + token);
+		assertNotNull(token);
 	}
 	
 

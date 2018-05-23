@@ -10,9 +10,11 @@ import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.http.client.utils.URIBuilder;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import tdl.model.Task;
@@ -30,6 +32,7 @@ public class BugzillaConnection {
 	private URL bugzillaUrl;
 	private String userEmail;
 	private String userPassword;
+	private String token;
 	private Proxy proxy;
 
 	
@@ -39,11 +42,11 @@ public class BugzillaConnection {
 	 * @param bugzillaUrl
 	 * @param userEmail
 	 * @param userPassword
-	 * 
-	 * @throws MalformedURLException 
+	 * @throws IOException 
+	 * @throws URISyntaxException 
 	 */
 	public BugzillaConnection(	String bugzillaUrl, String userEmail, String userPassword, 
-								String proxyUrl, int proxyPort) throws MalformedURLException {
+								String proxyUrl, int proxyPort) throws URISyntaxException, IOException {
 		
 		this(bugzillaUrl, userEmail, userPassword);
 		this.proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyUrl, proxyPort));
@@ -51,12 +54,27 @@ public class BugzillaConnection {
 	}
 	
 	
-	public BugzillaConnection(String bugzillaUrl, String userEmail, String userPassword) throws MalformedURLException {
+	public BugzillaConnection(String bugzillaUrl, String userEmail, String userPassword) throws URISyntaxException, IOException {
 		
-		this.bugzillaUrl = new URL(bugzillaUrl);
+		this(bugzillaUrl);
 		this.userEmail = userEmail;
 		this.userPassword = userPassword;
+		this.token = authenticateGetToken(userEmail, userPassword);
 		
+	}
+	
+	public BugzillaConnection(String bugzillaUrl) throws MalformedURLException {		
+		this.bugzillaUrl = new URL(bugzillaUrl);
+	}
+	
+	public String authenticateGetToken(String userMail, String userPassword) throws URISyntaxException, IOException {
+		String path = "/rest/login";
+		HashMap<String, String> paras = new HashMap<String, String>();
+		paras.put("login", userMail);
+		paras.put("password", userPassword);
+		JSONObject response = executeQuery(path, paras);
+		String token = response.getString("token");
+		return token;
 	}
 	
 
@@ -70,15 +88,38 @@ public class BugzillaConnection {
 		// TODO Auto-generated method stub
 		
 	}
+	
 
 	/**
-	 * Get new tasks that can not yet be found in the task-tree. 
 	 * 
 	 * @param baseTask
+	 * @throws IOException 
+	 * @throws URISyntaxException 
 	 */
-	public Task[] getNewTasks(Task baseTask) {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<Task> getTasks() throws URISyntaxException, IOException {
+
+		ArrayList<Task> tasks = new ArrayList<Task>();
+		
+		String path = "/rest/bug";
+		HashMap<String, String> paras = new HashMap<String, String>();
+		paras.put("assigned_to", userEmail);
+		JSONObject response = executeQuery(path, paras);
+		
+		JSONArray bugs = response.getJSONArray("bugs");
+		for(int i = 0; i < bugs.length(); i++) {
+			
+			JSONObject bug = bugs.getJSONObject(i);
+			int id = bug.getInt("id");
+			String title = bug.getString("summary");
+			String description = bug.getString("description");
+			
+			BugzillaTask bt = new BugzillaTask(this, id, title);
+			bt.setDescription(description);
+			
+			tasks.add(bt);
+		}
+		
+		return tasks;
 	}
 	
 	
@@ -92,6 +133,7 @@ public class BugzillaConnection {
 			String value = paras.get(key);
 			ub.addParameter(key, value);
 		}
+		if(token != null) ub.addParameter("token", token);
 		String urlString = ub.build().toString();
 		
 		// get String by execureGet
