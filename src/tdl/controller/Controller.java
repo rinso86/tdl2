@@ -78,7 +78,7 @@ public class Controller implements Recipient{
 		
 		// Utilities
 		logFile = new PrintStream(props.getProperty("tdl.logfile", "sessionLog.txt"));
-		System.setOut(logFile);
+		//System.setOut(logFile);
 		resourceManager = new ResourceManager();
 		savior = new Savior();
 		
@@ -93,8 +93,8 @@ public class Controller implements Recipient{
 				props.getProperty("proxy.url"), 
 				Integer.parseInt(props.getProperty("proxy.port")) 
 		);
-		ArrayList<Task> newBugzillaTasks = bugzillaConnection.getTasks();
-		addNewTasksToBugzillaTree(newBugzillaTasks);
+		//ArrayList<Task> newBugzillaTasks = bugzillaConnection.getTasks();
+		//addNewTasksToBugzillaTree(newBugzillaTasks);
 
 		// StatMods
 		ArrayList<StatMod> models = new ArrayList<StatMod>();

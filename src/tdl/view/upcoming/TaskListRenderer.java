@@ -81,9 +81,17 @@ public class TaskListRenderer extends DefaultListCellRenderer {
 			
 			
 			// Set text
-			String labelText = datum + " -- " + task.getTitle();
+			String labelText = datum + " -- " + getPathString(task.getParent()) + "/  " + task.getTitle();
 			comp.setText(labelText);
 		}
 		return comp;
+	}
+
+	private String getPathString(Task task) {
+		if(task == null) return "";
+		Task parent = task.getParent();
+		String pathUpToHere = getPathString(parent);
+		String fullPath = pathUpToHere + "/" + task.getTitle().substring(0, 3);
+		return fullPath;
 	}
 }
