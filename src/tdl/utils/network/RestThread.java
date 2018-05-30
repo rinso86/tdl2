@@ -31,11 +31,15 @@ public class RestThread extends Thread {
 	
 	private class RestRequest {
 		
+		public Proxy proxy;
+		public String key;
 		public URL path; 
 		public HashMap<String, String> paras; 
 		public RestRecipient recipient;
 		
-		public RestRequest(URL path, HashMap<String, String> paras, RestRecipient responseHandler) {
+		public RestRequest(Proxy proxy, String key, URL path, HashMap<String, String> paras, RestRecipient responseHandler) {
+			this.proxy = proxy;
+			this.key = key;
 			this.path = path;
 			this.paras = paras;
 			this.recipient = responseHandler;
@@ -43,10 +47,7 @@ public class RestThread extends Thread {
 		
 	}
 	
-	
-	
 	private boolean alive;
-	private Proxy proxy;
 	private LinkedBlockingQueue<RestRequest> queue;
 	private long sleepTimeMilis;
 	
@@ -54,17 +55,14 @@ public class RestThread extends Thread {
 		this.sleepTimeMilis = 1000;
 		this.queue = new LinkedBlockingQueue<RestRequest>();
 	}
-	
-	public void setProxy (String proxyUrl, int proxyPort) {
-		this.proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyUrl, proxyPort));
-	}
+
 	
 	public void setSleepTimeMilis(long stm) {
 		sleepTimeMilis = stm;
 	}
 	
-	public void enqueueQuery(URL path, HashMap<String, String> paras, RestRecipient recipient) throws InterruptedException, TimeLimitExceededException {
-		RestRequest rr = new RestRequest(path, paras, recipient);
+	public void enqueueQuery(Proxy proxy, String key, URL path, HashMap<String, String> paras, RestRecipient recipient) throws InterruptedException, TimeLimitExceededException {
+		RestRequest rr = new RestRequest(proxy, key, path, paras, recipient);
 		boolean success = queue.offer(rr, 1, TimeUnit.SECONDS);
 		if(!success) {
 			throw new TimeLimitExceededException("Could not add the request " + path + " to the queue.");
@@ -79,8 +77,8 @@ public class RestThread extends Thread {
 			if(rr != null) {
 				
 				try {
-					JSONObject jo = RestUtils.executeQuery(proxy, rr.path, rr.paras);
-					rr.recipient.handleRestResponse(jo, rr.path, rr.paras);
+					JSONObject jo = RestUtils.executeQuery(rr.proxy, rr.path, rr.paras);
+					rr.recipient.handleRestResponse(rr.key, jo, rr.path, rr.paras);
 				} catch (URISyntaxException | IOException e) {
 					e.printStackTrace();
 				}

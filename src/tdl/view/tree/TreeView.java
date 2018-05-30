@@ -35,10 +35,10 @@ import javax.swing.tree.TreeSelectionModel;
 import tdl.controller.Controller;
 import tdl.messages.Message;
 import tdl.messages.MessageType;
-import tdl.messages.Recipient;
+import tdl.messages.MessageRecipient;
 import tdl.model.Task;
 
-public class TreeView implements Recipient {
+public class TreeView implements MessageRecipient {
 	
 	private Controller controller;
 	private TaskNode baseTaskNode;

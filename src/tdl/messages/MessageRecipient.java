@@ -1,6 +1,6 @@
 package tdl.messages;
 
-public interface Recipient {
+public interface MessageRecipient {
 
 	public void receiveMessage(Message message);
 }

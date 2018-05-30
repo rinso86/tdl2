@@ -13,7 +13,7 @@ import javax.swing.JScrollPane;
 
 import tdl.messages.Message;
 import tdl.messages.MessageType;
-import tdl.messages.Recipient;
+import tdl.messages.MessageRecipient;
 import tdl.model.Task;
 import tdl.utils.ui.FileDrop;
 import tdl.utils.ui.FileDrop.Listener;
@@ -21,7 +21,7 @@ import tdl.view.details.DetailView;
 import tdl.view.details.attachments.popup.AttachmentPopup;
 import tdl.view.details.attachments.popup.AttachmentPopupListener;
 
-public class AttachmentView implements Recipient {
+public class AttachmentView implements MessageRecipient {
 
 	private DetailView view;
 	private JPanel jp;

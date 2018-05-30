@@ -13,33 +13,49 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.naming.TimeLimitExceededException;
+
 import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import tdl.controller.Controller;
+import tdl.messages.Message;
+import tdl.messages.MessageType;
 import tdl.model.Task;
+import tdl.utils.network.RestRecipient;
+import tdl.utils.network.RestThread;
 import tdl.utils.network.RestUtils;
 
 
 
 /**
  * 
+ * Originally intended to have this class use the RestThread to do the Internet-Stuff in 
+ * a separate thread. BUT: the problem is not the time one get/bugs query takes, 
+ * but the fact that for every but we need to also call get/big/<nr>/comments.
+ * This would not have been mitigated by using RestThread. Instead, we'll make 
+ * this connection its own thread, having it execute getTasksAsync in another thread. 
+ * 
  * https://wiki.mozilla.org/Bugzilla:REST_API
  *
  */
 
-public class BugzillaConnection {
+public class BugzillaConnection extends Thread {
 
 	private URL bugzillaUrl;
 	private String userEmail;
 	private String userPassword;
 	private String token;
 	private Proxy proxy;
+	private Controller controller;
 
 	
 	/**
 	 * Our access client to the bugzilla rest-api.
+	 * 
+	 * @param restThread 
+	 * @param controller 
 	 * 
 	 * @param bugzillaUrl
 	 * @param userEmail
@@ -47,9 +63,12 @@ public class BugzillaConnection {
 	 * @throws IOException 
 	 * @throws URISyntaxException 
 	 */
-	public BugzillaConnection(	String bugzillaUrl, String userEmail, String userPassword, 
+	public BugzillaConnection(	Controller controller,  
+								String bugzillaUrl, String userEmail, String userPassword, 
 								String proxyUrl, int proxyPort) throws URISyntaxException, IOException {
 		
+		
+		this.controller = controller;
 		this.bugzillaUrl = new URL(bugzillaUrl);
 		this.userEmail = userEmail;
 		this.userPassword = userPassword;
@@ -90,26 +109,21 @@ public class BugzillaConnection {
 	 * @param baseTask
 	 * @throws IOException 
 	 * @throws URISyntaxException 
+	 * @throws InterruptedException 
+	 * @throws TimeLimitExceededException 
 	 */
-	public ArrayList<Task> getTasks() throws URISyntaxException, IOException {
-
-		ArrayList<Task> tasks = new ArrayList<Task>();
+	public void getTasksAsync() throws URISyntaxException, IOException, TimeLimitExceededException, InterruptedException {
 		
 		URL path = new URL(bugzillaUrl.toString() + "/rest/bug");
 		HashMap<String, String> paras = new HashMap<String, String>();
 		paras.put("assigned_to", userEmail);
-		JSONObject response = RestUtils.executeQuery(proxy, path, paras);
+
+		// TODO
 		
-		JSONArray bugs = response.getJSONArray("bugs");
-		for(int i = 0; i < bugs.length(); i++) {
-			JSONObject bug = bugs.getJSONObject(i);
-			int id = bug.getInt("id");
-			Task bt = getTask(id);
-			tasks.add(bt);
-		}
 		
-		return tasks;
+		
 	}
+	
 	
 	public Task getTask(int bugzillaId) throws URISyntaxException, IOException {
 		
@@ -141,6 +155,8 @@ public class BugzillaConnection {
 		
 		return comments;
 	}
+
+
 	
 
 

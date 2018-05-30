@@ -19,14 +19,14 @@ import javax.swing.ToolTipManager;
 import tdl.controller.Controller;
 import tdl.messages.Message;
 import tdl.messages.MessageType;
-import tdl.messages.Recipient;
+import tdl.messages.MessageRecipient;
 import tdl.model.Task;
 import tdl.view.details.attachments.AttachmentView;
 
 import org.jdesktop.swingx.JXDatePicker;
 
 
-public class DetailView implements Recipient {
+public class DetailView implements MessageRecipient {
 
 	private Controller controller;
 	private JPanel jp;

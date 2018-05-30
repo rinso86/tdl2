@@ -18,13 +18,13 @@ import javax.swing.JTextField;
 import tdl.controller.Controller;
 import tdl.messages.Message;
 import tdl.messages.MessageType;
-import tdl.messages.Recipient;
+import tdl.messages.MessageRecipient;
 import tdl.model.Task;
 import tdl.view.upcoming.popup.UpcomingPopup;
 import tdl.view.upcoming.popup.UpcomingPopupListener;
 
 
-public class UpcomingView implements Recipient {
+public class UpcomingView implements MessageRecipient {
 
 	private Controller controller;
 	private JPanel jp;

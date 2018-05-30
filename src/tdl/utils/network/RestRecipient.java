@@ -7,6 +7,6 @@ import org.json.JSONObject;
 
 public interface RestRecipient {
 
-	public void handleRestResponse (JSONObject response, URL path, HashMap<String, String> paras);
+	public void handleRestResponse (String key, JSONObject response, URL path, HashMap<String, String> paras);
 	
 }

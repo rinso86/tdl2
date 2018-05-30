@@ -8,10 +8,10 @@ import javax.swing.JFrame;
 import javax.swing.Timer;
 
 import tdl.messages.Message;
-import tdl.messages.Recipient;
+import tdl.messages.MessageRecipient;
 import tdl.model.WiseCracker;
 
-public class WiseCrackerView implements ActionListener, Recipient {
+public class WiseCrackerView implements ActionListener, MessageRecipient {
 	private JFrame jf;
 	private WiseCracker wc;
 	private Timer timer;

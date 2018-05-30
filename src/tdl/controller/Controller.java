@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.UUID;
 
+import javax.naming.TimeLimitExceededException;
 import javax.swing.JFrame;
 
 import tdl.model.MutableTask;
@@ -19,6 +20,7 @@ import tdl.plugins.bugzilla.BugzillaConnection;
 import tdl.utils.localFiles.ConfigurationHelper;
 import tdl.utils.localFiles.ResourceManager;
 import tdl.utils.localFiles.Savior;
+import tdl.utils.network.RestThread;
 import tdl.utils.scheduler.ScheduleItem;
 import tdl.utils.scheduler.Scheduler;
 import tdl.utils.statmod.ModRenderer;
@@ -30,7 +32,7 @@ import tdl.utils.statmod.ensemble.Ensemble;
 import tdl.utils.statmod.ensemble.EnsembleRenderer;
 import tdl.messages.Message;
 import tdl.messages.MessageType;
-import tdl.messages.Recipient;
+import tdl.messages.MessageRecipient;
 import tdl.view.overal.OveralView;
 import tdl.view.stats.StatsView;
 import tdl.view.calendar.CalendarView;
@@ -40,7 +42,7 @@ import tdl.view.upcoming.UpcomingView;
 import tdl.view.wisecrack.WiseCrackerView;
 
 
-public class Controller implements Recipient{
+public class Controller implements MessageRecipient {
 
 	// Configuration
 	private Properties props;
@@ -81,20 +83,22 @@ public class Controller implements Recipient{
 		System.setOut(logFile);
 		resourceManager = new ResourceManager();
 		savior = new Savior();
+
 		
 		// Model
 		baseTask = savior.loadTree(props.getProperty("tdl.savefile", "mytree.bin"));
 		currentTask = baseTask;
 		currentTimeSpan = new TimeSpan(new Date());
 		bugzillaConnection = new BugzillaConnection(
+				this,
 				props.getProperty("bugzilla.url"), 
 				props.getProperty("bugzilla.user"), 
 				props.getProperty("bugzilla.password"), 
 				props.getProperty("proxy.url"), 
 				Integer.parseInt(props.getProperty("proxy.port")) 
 		);
-		//ArrayList<Task> newBugzillaTasks = bugzillaConnection.getTasks();
-		//addNewTasksToBugzillaTree(newBugzillaTasks);
+		// TODO: bugzillaConnection.getTasksAsync();
+
 
 		// StatMods
 		ArrayList<StatMod> models = new ArrayList<StatMod>();

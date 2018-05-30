@@ -8,11 +8,11 @@ import javax.swing.JScrollPane;
 
 import tdl.controller.Controller;
 import tdl.messages.Message;
-import tdl.messages.Recipient;
+import tdl.messages.MessageRecipient;
 import tdl.model.Task;
 import tdl.utils.statmod.ModRenderer;
 
-public class StatsView  implements Recipient {
+public class StatsView  implements MessageRecipient {
 	
 	private Controller controller;
 	private ModRenderer renderer;
