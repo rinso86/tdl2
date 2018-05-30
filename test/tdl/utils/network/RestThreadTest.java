@@ -26,14 +26,24 @@ public class RestThreadTest {
 	
 	private class Recipient implements RestRecipient {
 		private JSONObject response;
+		private RestThread rt;
 		
-		@Override
-		public void handleRestResponse(JSONObject jo) {
-			response = jo;
+		public Recipient(RestThread rt) {
+			this.rt = rt;
+			rt.startRestThread();
+		}
+		
+		public void makeQuery(URL path, HashMap<String, String> paras) throws TimeLimitExceededException, InterruptedException {
+			rt.enqueueQuery(path, paras, this);
 		}
 		
 		public JSONObject getResponse() {
 			return response;
+		}
+
+		@Override
+		public void handleRestResponse(JSONObject jo, URL path, HashMap<String, String> paras) {
+			response = jo;
 		}
 		
 	}
@@ -46,23 +56,22 @@ public class RestThreadTest {
 		
 		String proxyUrl = props.getProperty("proxy.url");
 		int proxyPort = Integer.parseInt(props.getProperty("proxy.port"));
-		
 		RestThread rt = new RestThread();
 		rt.setProxy(proxyUrl, proxyPort);
-		rt.startRestThread();
 		
+		Recipient recipient = new Recipient(rt);
 	
 		URL path = new URL("http://hnd.bybn.de/bugzilla/rest/bug/35");
 		HashMap<String, String> paras = new HashMap<String, String>();
 		paras.put("include_fields", "summary,status,resolution");
-		Recipient recipient = new Recipient();
 		
-		rt.enqueueQuery(path, paras, recipient);
+		recipient.makeQuery(path, paras);
+		
 		Thread.sleep(3000);
 		
 		assertNotNull(recipient.getResponse());
 		
 		
-		rt.killRestThread();
+
 	}
 }

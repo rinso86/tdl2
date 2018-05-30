@@ -18,6 +18,13 @@ import javax.naming.TimeLimitExceededException;
 import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONObject;
 
+
+/**
+ * RestUtils is perfectly fine for any short REST Queries you may have. 
+ * But when you have long running operations, it makes sense to out-source 
+ * these tasks to a separate thread. This is what this class is for.
+ *
+ */
 public class RestThread extends Thread {
 	
 	
@@ -73,13 +80,12 @@ public class RestThread extends Thread {
 				
 				try {
 					JSONObject jo = RestUtils.executeQuery(proxy, rr.path, rr.paras);
-					rr.recipient.handleRestResponse(jo);
+					rr.recipient.handleRestResponse(jo, rr.path, rr.paras);
 				} catch (URISyntaxException | IOException e) {
 					e.printStackTrace();
 				}
 				
-			} 
-			else {
+			} else {
 				try {
 					Thread.sleep(sleepTimeMilis);
 				} catch (InterruptedException e) {
@@ -100,7 +106,11 @@ public class RestThread extends Thread {
 		alive = false;
 	}
 	
-	
+	@Override
+	protected void finalize() throws Throwable {
+		killRestThread();
+		super.finalize();
+	}
 
 
 }

@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import tdl.controller.Controller;
 import tdl.model.Task;
+import tdl.utils.network.RestUtils;
 
 
 
@@ -59,11 +60,11 @@ public class BugzillaConnection {
 	
 	
 	public String authenticateGetToken(String userMail, String userPassword) throws URISyntaxException, IOException {
-		String path = "/rest/login";
+		URL path = new URL(bugzillaUrl.toString() + "/rest/login");
 		HashMap<String, String> paras = new HashMap<String, String>();
 		paras.put("login", userMail);
 		paras.put("password", userPassword);
-		JSONObject response = executeQuery(path, paras);
+		JSONObject response = RestUtils.executeQuery(proxy, path, paras);
 		String token = response.getString("token");
 		return token;
 	}
@@ -83,6 +84,8 @@ public class BugzillaConnection {
 	
 
 	/**
+	 * TODO: better to call RestThread from this method. There are so many tasks it makes 
+	 * little sense to fetch them all at once. 
 	 * 
 	 * @param baseTask
 	 * @throws IOException 
@@ -92,10 +95,10 @@ public class BugzillaConnection {
 
 		ArrayList<Task> tasks = new ArrayList<Task>();
 		
-		String path = "/rest/bug";
+		URL path = new URL(bugzillaUrl.toString() + "/rest/bug");
 		HashMap<String, String> paras = new HashMap<String, String>();
 		paras.put("assigned_to", userEmail);
-		JSONObject response = executeQuery(path, paras);
+		JSONObject response = RestUtils.executeQuery(proxy, path, paras);
 		
 		JSONArray bugs = response.getJSONArray("bugs");
 		for(int i = 0; i < bugs.length(); i++) {
@@ -110,9 +113,9 @@ public class BugzillaConnection {
 	
 	public Task getTask(int bugzillaId) throws URISyntaxException, IOException {
 		
-		String path = "/rest/bug/" + bugzillaId;
+		URL path = new URL(bugzillaUrl.toString() +  "/rest/bug/" + bugzillaId);
 		HashMap<String, String> paras = new HashMap<String, String>();
-		JSONObject response = executeQuery(path, paras);
+		JSONObject response = RestUtils.executeQuery(proxy, path, paras);
 		
 		JSONObject bug = response.getJSONArray("bugs").getJSONObject(0);
 		int id = bug.getInt("id");
@@ -131,80 +134,14 @@ public class BugzillaConnection {
 	
 	public JSONArray getComments(int bugzillaId) throws URISyntaxException, IOException {
 		
-		String path = "/rest/bug/" + bugzillaId + "/comment";
+		URL path = new URL(bugzillaUrl.toString() + "/rest/bug/" + bugzillaId + "/comment");
 		HashMap<String, String> paras = new HashMap<String, String>();
-		JSONObject response = executeQuery(path, paras);
+		JSONObject response = RestUtils.executeQuery(proxy, path, paras);
 		JSONArray comments = response.getJSONObject("bugs").getJSONObject("" + bugzillaId).getJSONArray("comments");
 		
 		return comments;
 	}
 	
-	
-	public JSONObject executeQuery(String path, HashMap<String, String> paras) throws URISyntaxException, IOException {
-		
-		String fullPath = bugzillaUrl.toString() + path;
-		
-		// Create uri from paras
-		URIBuilder ub = new URIBuilder(fullPath);
-		for(String key : paras.keySet()) {
-			String value = paras.get(key);
-			ub.addParameter(key, value);
-		}
-		if(token != null) ub.addParameter("token", token);
-		String urlString = ub.build().toString();
-		
-		// get String by execureGet
-		System.out.println("Now executing Query: " + urlString);
-		JSONObject jo = executeJsonRestCall(urlString);
-		
-		return jo;
-	}
-	
-	public JSONObject executeJsonRestCall(String requestString) throws IOException {
 
-		URL url = new URL(requestString);
-		HttpURLConnection connection = (HttpURLConnection) url.openConnection(proxy);
-		connection.setRequestMethod("GET");
-		connection.setRequestProperty("Content-Type", "application/json");
-		connection.setRequestProperty("Accept", "application/json");
-		
-		int respCode = connection.getResponseCode();
-		if(respCode != 200) throw new IOException("Kein gültiger Aufruf! ResponseCode = " + respCode);
-		
-		BufferedReader br = new BufferedReader(new InputStreamReader((connection.getInputStream())));
-		StringBuilder sb = new StringBuilder();
-		String output;
-		while ((output = br.readLine()) != null) {
-			sb.append(output);
-		}
-		
-		JSONObject jo = new JSONObject(sb.toString());
-		
-		return jo;
-	}
-	
-	
-	/**
-	 * @param requestString
-	 * @return
-	 * @throws IOException 
-	 */
-	public String executeGet(String requestString) throws IOException {
-
-		URL url = new URL(requestString);
-		HttpURLConnection connection = (HttpURLConnection) url.openConnection(proxy);
-		connection.setRequestMethod("GET");
-		int respCode = connection.getResponseCode();
-		if(respCode != 200) throw new IOException("Kein gültiger Aufruf! ResponseCode = " + respCode);
-		
-		BufferedReader br = new BufferedReader(new InputStreamReader((connection.getInputStream())));
-		StringBuilder sb = new StringBuilder();
-		String output;
-		while ((output = br.readLine()) != null) {
-			sb.append(output);
-		}
-		return sb.toString();
-		
-	}
 
 }
