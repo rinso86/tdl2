@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 
 public class ResourceManager {
 
@@ -23,9 +24,16 @@ public class ResourceManager {
 		return resourceDir;
 	}
 
-	
+	/**
+	 * Not only saves file, but also prepends a timestamp to the name to avoid overwrite on duplicate.
+	 * 
+	 * @param sourceFile
+	 * @return
+	 * @throws IOException
+	 */
 	public File saveToResources(File sourceFile) throws IOException {
-		File savedFile = new File(resourceDir, sourceFile.getName());
+		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss.SSS").format(new java.util.Date());
+		File savedFile = new File(resourceDir, timeStamp + "_" + sourceFile.getName());
 		copyFileUsingStream(sourceFile, savedFile);
 		return savedFile;
 	}

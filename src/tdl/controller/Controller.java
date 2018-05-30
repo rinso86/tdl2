@@ -78,7 +78,7 @@ public class Controller implements Recipient{
 		
 		// Utilities
 		logFile = new PrintStream(props.getProperty("tdl.logfile", "sessionLog.txt"));
-		//System.setOut(logFile);
+		System.setOut(logFile);
 		resourceManager = new ResourceManager();
 		savior = new Savior();
 		
@@ -369,7 +369,7 @@ public class Controller implements Recipient{
 		HashMap<String, Object> headers = message.getHeaders();
 		File f = (File) headers.get("file");
 		Task t = (Task) headers.get("task");
-		MutableTask mt = fetchMutableTask(t);
+		MutableTask mt = fetchMutableTask(t);	
 		
 		File savedFile = null;
 		try {
