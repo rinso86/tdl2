@@ -29,6 +29,8 @@ public class WiseCracker {
 		wiseStuff.add("If as a programmer you need more time, ask your client for details, example-data, use-cases, tests etc.");
 		wiseStuff.add("At work, you should'nt ask yourself: what do I need to do? You should ask yourself: What can I do to add to my achievement list?");
 		wiseStuff.add("You will always be dealing with legacy code. Here is how to work with it without going mental: 1. add really good, on demand logging. 2. add a repl like testenvironment 3. add unit tests when you change things");
+		wiseStuff.add("Fight is better than flight.");
+		wiseStuff.add("If your app depends on a db, make sure it immediately breaks when the db-structure changes. This is an overlooked advantage of orm.");
 	}
 
 	public String getWiseStuff(int i) {
