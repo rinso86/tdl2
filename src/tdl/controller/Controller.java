@@ -206,7 +206,7 @@ public class Controller implements MessageRecipient {
 		moldParent.deleteChild(mtask);
 		mnewParent.addChild(mtask);
 
-		//statMod.calculateModelParameters(baseTask);
+		statMod.calculateModelParameters(baseTask);
 		
 		Message response = new Message(MessageType.MOVED_TASK);
 		response.addHeader("task", (Task) mtask);
@@ -304,7 +304,7 @@ public class Controller implements MessageRecipient {
 		currentTimeSpan = new TimeSpan(new Date());
 		
 		saveDetailsToTask();
-		//statMod.calculateModelParameters(baseTask);
+		statMod.calculateModelParameters(baseTask);
 		
 		Message response = new Message(MessageType.COMPLETED_TASK);
 		response.addHeader("task", (Task) task);
@@ -322,7 +322,7 @@ public class Controller implements MessageRecipient {
 		MutableTask parent = fetchMutableTask((Task) message.getHeaders().get("task"));
 		MutableTask child = new MutableTask(parent, "new task");
 
-		//statMod.calculateModelParameters(baseTask);
+		statMod.calculateModelParameters(baseTask);
 		
 		Message response = new Message(MessageType.ADDED_SUBTASK);
 		response.addHeader("child", child);
