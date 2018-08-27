@@ -257,6 +257,9 @@ public class Controller implements MessageRecipient {
 	private void reactivateTask(Message message) {
 		MutableTask task = fetchMutableTask((Task) message.getHeaders().get("task"));
 		task.setCompleted(null);
+		
+		statMod.calculateModelParameters(baseTask);
+		
 		Message response = new Message(MessageType.REACTIVATED_TASK);
 		response.addHeader("task", (Task) task);
 		System.out.println("Controller reactivated task " +task.getTitle());
