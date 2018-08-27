@@ -80,7 +80,7 @@ public class Controller implements MessageRecipient {
 		
 		// Utilities
 		logFile = new PrintStream(props.getProperty("tdl.logfile", "sessionLog.txt"));
-		System.setOut(logFile);
+		//System.setOut(logFile);
 		resourceManager = new ResourceManager();
 		savior = new Savior();
 

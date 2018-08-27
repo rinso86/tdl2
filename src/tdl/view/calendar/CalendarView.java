@@ -16,6 +16,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
 
 import org.jdesktop.swingx.JXDatePicker;
 
@@ -44,7 +45,7 @@ public class CalendarView implements MessageRecipient {
 		
 		scheduleTextPane = new JTextPane();
 		scheduleTextPane.setEditable(false);
-		scrollingScheduleTextPane = new JScrollPane(scheduleTextPane);
+		scrollingScheduleTextPane = new JScrollPane(scheduleTextPane, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED); 
 		updateScheduleButton = new JButton("Update schedule");
 		updateScheduleButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -54,7 +55,7 @@ public class CalendarView implements MessageRecipient {
 		
 		reportTextPane = new JTextPane();
 		reportTextPane.setEditable(false);
-		scrollingReportTextPane = new JScrollPane(reportTextPane);
+		scrollingReportTextPane = new JScrollPane(reportTextPane, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		updateReportButton = new JButton("Update report");
 		updateReportButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -71,35 +72,49 @@ public class CalendarView implements MessageRecipient {
 		Date inSevenDays = cal.getTime();
 		reportToField.setDate(inSevenDays);
 		
-		GridBagConstraints leftBigFieldConstraints = new GridBagConstraints();
-        leftBigFieldConstraints.gridx = 0;
-        leftBigFieldConstraints.gridy = 0;
-        leftBigFieldConstraints.gridwidth = 3;
-        leftBigFieldConstraints.weightx = leftBigFieldConstraints.weighty = 1.0;
-        leftBigFieldConstraints.fill = GridBagConstraints.BOTH;
-        leftBigFieldConstraints.insets = new Insets(3,3,3,3);
-        
+		
         GridBagConstraints leftSmallFieldConstraints = new GridBagConstraints();
         leftSmallFieldConstraints.gridx = 0;
-        leftSmallFieldConstraints.gridy = 1;
-        
-        GridBagConstraints rightBigFieldConstraints = new GridBagConstraints();
-        rightBigFieldConstraints.gridx = 4;
-        rightBigFieldConstraints.gridy = 0;
-        rightBigFieldConstraints.gridwidth = 3;
-        rightBigFieldConstraints.weightx = rightBigFieldConstraints.weighty = 1.0;
-        rightBigFieldConstraints.fill = GridBagConstraints.BOTH;
-        rightBigFieldConstraints.insets = new Insets(3,3,3,3);
+        leftSmallFieldConstraints.gridy = 0;
         
         GridBagConstraints rightLSmallFieldConstraints = new GridBagConstraints();
         rightLSmallFieldConstraints.gridx = 4;
-        rightLSmallFieldConstraints.gridy = 1;
+        rightLSmallFieldConstraints.gridy = 0;
+        rightLSmallFieldConstraints.weightx = 0.33; 
+        rightLSmallFieldConstraints.weighty = 0.2;
+        rightLSmallFieldConstraints.fill = GridBagConstraints.BOTH;
         GridBagConstraints rightMSmallFieldConstraints = new GridBagConstraints();
         rightMSmallFieldConstraints.gridx = 5;
-        rightMSmallFieldConstraints.gridy = 1;
+        rightMSmallFieldConstraints.gridy = 0;
+        rightMSmallFieldConstraints.weightx = 0.33; 
+        rightMSmallFieldConstraints.weighty = 0.2;
+        rightMSmallFieldConstraints.fill = GridBagConstraints.BOTH;
         GridBagConstraints rightRSmallFieldConstraints = new GridBagConstraints();
         rightRSmallFieldConstraints.gridx = 6;
-        rightRSmallFieldConstraints.gridy = 1;
+        rightRSmallFieldConstraints.gridy = 0;
+        rightRSmallFieldConstraints.weightx = 0.33; 
+        rightRSmallFieldConstraints.weighty = 0.2;
+        rightRSmallFieldConstraints.fill = GridBagConstraints.BOTH;
+		
+		GridBagConstraints leftBigFieldConstraints = new GridBagConstraints();
+        leftBigFieldConstraints.gridx = 0;
+        leftBigFieldConstraints.gridy = 1;
+        leftBigFieldConstraints.gridwidth = 3;
+        leftBigFieldConstraints.weightx = 0.5;
+        leftBigFieldConstraints.weighty = 0.8;
+        leftBigFieldConstraints.fill = GridBagConstraints.BOTH;
+        leftBigFieldConstraints.insets = new Insets(3,3,3,3);
+        
+        
+        GridBagConstraints rightBigFieldConstraints = new GridBagConstraints();
+        rightBigFieldConstraints.gridx = 4;
+        rightBigFieldConstraints.gridy = 1;
+        rightBigFieldConstraints.gridwidth = 3;
+        rightBigFieldConstraints.weightx = 0.5; 
+        rightBigFieldConstraints.weighty = 0.8;
+        rightBigFieldConstraints.fill = GridBagConstraints.BOTH;
+        rightBigFieldConstraints.insets = new Insets(3,3,3,3);
+
         
 		jp.add(scrollingScheduleTextPane, leftBigFieldConstraints);
 		jp.add(updateScheduleButton, leftSmallFieldConstraints);

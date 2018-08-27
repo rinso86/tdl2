@@ -91,7 +91,8 @@ public class TaskListRenderer extends DefaultListCellRenderer {
 		if(task == null) return "";
 		Task parent = task.getParent();
 		String pathUpToHere = getPathString(parent);
-		String fullPath = pathUpToHere + "/" + task.getTitle().substring(0, 3);
+		int length = Math.min(3, task.getTitle().length());
+		String fullPath = pathUpToHere + "/" + task.getTitle().substring(0, length);
 		return fullPath;
 	}
 }
