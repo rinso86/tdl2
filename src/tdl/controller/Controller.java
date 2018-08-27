@@ -89,14 +89,14 @@ public class Controller implements MessageRecipient {
 		baseTask = savior.loadTree(props.getProperty("tdl.savefile", "mytree.bin"));
 		currentTask = baseTask;
 		currentTimeSpan = new TimeSpan(new Date());
-		bugzillaConnection = new BugzillaConnection(
-				this,
-				props.getProperty("bugzilla.url"), 
-				props.getProperty("bugzilla.user"), 
-				props.getProperty("bugzilla.password"), 
-				props.getProperty("proxy.url"), 
-				Integer.parseInt(props.getProperty("proxy.port")) 
-		);
+//		bugzillaConnection = new BugzillaConnection(
+//				this,
+//				props.getProperty("bugzilla.url"), 
+//				props.getProperty("bugzilla.user"), 
+//				props.getProperty("bugzilla.password"), 
+//				props.getProperty("proxy.url"), 
+//				Integer.parseInt(props.getProperty("proxy.port")) 
+//		);
 		// TODO: bugzillaConnection.getTasksAsync();
 
 
@@ -206,7 +206,7 @@ public class Controller implements MessageRecipient {
 		moldParent.deleteChild(mtask);
 		mnewParent.addChild(mtask);
 
-		statMod.calculateModelParameters(baseTask);
+		//statMod.calculateModelParameters(baseTask);
 		
 		Message response = new Message(MessageType.MOVED_TASK);
 		response.addHeader("task", (Task) mtask);
@@ -304,7 +304,7 @@ public class Controller implements MessageRecipient {
 		currentTimeSpan = new TimeSpan(new Date());
 		
 		saveDetailsToTask();
-		statMod.calculateModelParameters(baseTask);
+		//statMod.calculateModelParameters(baseTask);
 		
 		Message response = new Message(MessageType.COMPLETED_TASK);
 		response.addHeader("task", (Task) task);
@@ -322,7 +322,7 @@ public class Controller implements MessageRecipient {
 		MutableTask parent = fetchMutableTask((Task) message.getHeaders().get("task"));
 		MutableTask child = new MutableTask(parent, "new task");
 
-		statMod.calculateModelParameters(baseTask);
+		//statMod.calculateModelParameters(baseTask);
 		
 		Message response = new Message(MessageType.ADDED_SUBTASK);
 		response.addHeader("child", child);
@@ -361,7 +361,7 @@ public class Controller implements MessageRecipient {
 		broadcast(response);
 	}
 	
-	// This is a unfortunate special case, where the controller has to go out to the view and fetch the changes.
+	// This is an unfortunate special case, where the controller has to go out to the view and fetch the changes.
 	private void saveDetailsToTask() {
 		System.out.println("Controller fetches and saves details to task " + currentTask.getTitle() + ": " + detailView.getDescription());
 		currentTask.setDescription( detailView.getDescription() );
