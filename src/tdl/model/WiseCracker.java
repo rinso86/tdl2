@@ -33,6 +33,7 @@ public class WiseCracker {
 		wiseStuff.add("If your app depends on a db, make sure it immediately breaks when the db-structure changes. This is an overlooked advantage of orm.");
 		wiseStuff.add("Selbstbewusstsein und Empathie");
 		wiseStuff.add("Trag dein Zuhause in dir");
+		wiseStuff.add("A person is very much defined by his surroundings. You may have a rich inner life, but if you dont expose it, others wont know about it, you miss the feedback of your ideas interacting with others, you will be forgotten when you leave.");
 	}
 
 	public String getWiseStuff(int i) {
