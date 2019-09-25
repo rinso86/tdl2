@@ -34,6 +34,8 @@ public class WiseCracker {
 		wiseStuff.add("Selbstbewusstsein und Empathie");
 		wiseStuff.add("Trag dein Zuhause in dir");
 		wiseStuff.add("A person is very much defined by his surroundings. You may have a rich inner life, but if you dont expose it, others wont know about it, you miss the feedback of your ideas interacting with others, you will be forgotten when you leave.");
+		wiseStuff.add("Learn to laugh at yourself in public. Teamwork is the most important part of programming. Personal failure is the most intense part of teamwork.");
+		wiseStuff.add("In shared projects, avoid architecture decisions - in fact, avoid architecture as much as possible. The flatter, the better.");
 	}
 
 	public String getWiseStuff(int i) {
